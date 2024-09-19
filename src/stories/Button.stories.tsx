@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 
 const meta: Meta<typeof Button> = {
   title: "Components/ui/Button",
@@ -23,7 +23,7 @@ const meta: Meta<typeof Button> = {
     },
     size: {
       control: { type: "select" },
-      options: ["sm", "md", "lg"],
+      options: ["sm", "default", "lg"],
     },
     onClick: { action: "clicked" },
   },
@@ -35,7 +35,7 @@ export const Default: StoryObj<typeof Button> = {
   args: {
     variant: "default",
     size: "default",
-    children: "Click Me",
+    children: "Outline Button",
     onClick: action("default click"),
     disabled: false,
     className: "",

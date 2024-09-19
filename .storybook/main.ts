@@ -8,6 +8,7 @@ const config: StorybookConfig = {
     "@storybook/addon-essentials",
     "@chromatic-com/storybook",
     "@storybook/addon-interactions",
+    "@storybook/addon-designs",
   ],
   core: {
     builder: "@storybook/builder-vite",
@@ -15,6 +16,9 @@ const config: StorybookConfig = {
   framework: {
     name: "@storybook/react-vite",
     options: {},
+  },
+  docs: {
+    autodocs: true,
   },
   async viteFinal(config) {
     const { mergeConfig } = await import("vite");
