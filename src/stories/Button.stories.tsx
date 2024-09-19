@@ -45,7 +45,7 @@ export const Default: StoryObj<typeof Button> = {
 export const Outline: StoryObj<typeof Button> = {
   args: {
     variant: "outline",
-    size: "default",
+    size: "sm",
     children: "Outline Button",
     onClick: action("default click"),
     disabled: false,
