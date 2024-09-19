@@ -20,6 +20,9 @@ importers:
       '@shadcn/ui':
         specifier: ^0.0.4
         version: 0.0.4
+      chromatic:
+        specifier: ^11.10.2
+        version: 11.10.2
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -2135,8 +2138,8 @@ packages:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
     engines: {node: '>=10'}
 
-  chromatic@11.7.1:
-    resolution: {integrity: sha512-LvgPimdQdnQB07ZDxLEC2KtxgYeqTw0X71GA7fi3zhgtKLxZcE+BSZ/5I9rrQp1V8ydmfElfw0ZwnUH4fVgUAQ==}
+  chromatic@11.10.2:
+    resolution: {integrity: sha512-EbVlhmOLGdx9QRX3RMOTF3UzoyC1aaXNRjlzm1mc++2OI5+6C5Bzwt2ZUYJ3Jnf/pJa23q0y5Y3QEDcfRVqIbg==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -4970,7 +4973,7 @@ snapshots:
 
   '@chromatic-com/storybook@1.9.0(react@18.3.1)':
     dependencies:
-      chromatic: 11.7.1
+      chromatic: 11.10.2
       filesize: 10.1.6
       jsonfile: 6.1.0
       react-confetti: 6.1.0(react@18.3.1)
@@ -6404,7 +6407,7 @@ snapshots:
 
   chownr@2.0.0: {}
 
-  chromatic@11.7.1: {}
+  chromatic@11.10.2: {}
 
   citty@0.1.6:
     dependencies:
