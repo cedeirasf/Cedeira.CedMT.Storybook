@@ -1,4 +1,4 @@
-name: Chromatic Storybook Validation
+name: Chromatic Validation
 
 on:
   pull_request:
@@ -11,14 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -27,7 +23,7 @@ jobs:
         run: pnpm install
 
       - name: Publish to Chromatic
-        uses: chromaui/action@latest
+      - uses: chromaui/action@v10
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           exitOnceUploaded: true
