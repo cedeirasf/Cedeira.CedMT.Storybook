@@ -56,7 +56,7 @@ export const Outline: StoryObj<typeof Button> = {
 export const Ghost: StoryObj<typeof Button> = {
   args: {
     variant: "ghost",
-    size: "lg",
+    size: "default",
     children: "Ghost Button",
     onClick: action("default click"),
     disabled: false,
@@ -67,7 +67,7 @@ export const Ghost: StoryObj<typeof Button> = {
 export const Link: StoryObj<typeof Button> = {
   args: {
     variant: "link",
-    size: "lg",
+    size: "default",
     children: "Link Button",
     onClick: action("default click"),
     disabled: false,
