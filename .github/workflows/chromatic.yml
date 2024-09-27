@@ -7,7 +7,7 @@ on:
 
 jobs:
   chromatic:
-    name: Run Chromatic
+    name: Chromatic
     runs-on: ubuntu-latest
 
     steps:
