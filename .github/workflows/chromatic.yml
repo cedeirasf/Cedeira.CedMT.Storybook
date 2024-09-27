@@ -25,10 +25,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Publish to Chromatic
-        uses: chromaui/action@latest
-        with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          zip: true
-          exitOnceUploaded: true
-          script: "npx chromatic --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }} --exit-zero-on-changes"
+      - name: Wait for Chromatic approval
+        run: |
+          npx chromatic --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }} --exit-zero-on-changes"
