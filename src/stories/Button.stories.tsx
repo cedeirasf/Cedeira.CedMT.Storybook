@@ -67,7 +67,7 @@ export const Ghost: StoryObj<typeof Button> = {
 export const Link: StoryObj<typeof Button> = {
   args: {
     variant: "link",
-    size: "default",
+    size: "lg",
     children: "Link Button",
     onClick: action("default click"),
     disabled: false,
