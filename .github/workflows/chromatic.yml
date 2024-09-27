@@ -31,7 +31,3 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           zip: true
           exitOnceUploaded: true
-
-      - name: Wait for Chromatic to be approved
-        run: |
-          npx chromatic --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
