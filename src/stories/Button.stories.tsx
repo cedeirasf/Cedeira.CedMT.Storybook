@@ -34,7 +34,7 @@ export default meta;
 export const Default: StoryObj<typeof Button> = {
   args: {
     variant: "default",
-    size: "lg",
+    size: "sm",
     children: "Outline Button",
     onClick: action("default click"),
     disabled: false,
