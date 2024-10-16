@@ -34,7 +34,7 @@ export default meta;
 export const Default: StoryObj<typeof Button> = {
   args: {
     variant: "default",
-    size: "default",
+    size: "lg",
     children: "Outline Button",
     onClick: action("default click"),
     disabled: false,
@@ -56,7 +56,7 @@ export const Outline: StoryObj<typeof Button> = {
 export const Ghost: StoryObj<typeof Button> = {
   args: {
     variant: "ghost",
-    size: "default",
+    size: "sm",
     children: "Ghost Button",
     onClick: action("default click"),
     disabled: false,
