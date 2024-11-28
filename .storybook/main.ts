@@ -24,6 +24,11 @@ const config: StorybookConfig = {
     const { mergeConfig } = await import("vite");
 
     return mergeConfig(config, {
+      resolve: {
+        alias: {
+          "@": "/src",
+        },
+      },
       optimizeDeps: {
         include: ["storybook-dark-mode"],
       },
