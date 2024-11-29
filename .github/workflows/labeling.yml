@@ -1,0 +1,16 @@
+name: Labeling
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  call-labeling-workflow:
+    uses: cedeirasf/CedMT-devops-workflows/.github/workflows/labeling.yml@v1
+    secrets:
+      github-token: ${{ secrets.GH_PROJECT_AUTOMATION }}
+      
