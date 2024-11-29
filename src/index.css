@@ -2,61 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    /* Fondo general */
+    --background: 0 0% 100%; /* Blanco puro */
+    --foreground: 222.2 84% 4.9%; /* Texto principal oscuro */
+  
+    /* Componentes */
+    --card: 0 0% 98%; /* Fondo de tarjetas ligeramente gris */
+    --card-foreground: 222.2 84% 4.9%; /* Texto en tarjetas */
+    --popover: 0 0% 98%; /* Fondos desplegables */
+    --popover-foreground: 222.2 84% 4.9%; /* Texto desplegables */
+  
+    /* Colores principales */
+    --primary: 221.2 83.2% 53.3%; /* Azul fuerte */
+    --primary-foreground: 0 0% 100%; /* Texto blanco sobre azul */
+    --secondary: 210 40% 96.1%; /* Gris muy claro */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Texto gris oscuro */
+  
+    /* Colores neutrales */
+    --muted: 214.3 31.8% 91.4%; /* Fondo gris claro */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Texto gris medio */
+  
+    /* Énfasis */
+    --accent: 210 40% 96.1%; /* Azul claro para detalles */
+    --accent-foreground: 222.2 47.4% 11.2%; /* Texto gris oscuro sobre azul claro */
+  
+    /* Estados destructivos */
+    --destructive: 0 84.2% 60.2%; /* Rojo brillante */
+    --destructive-foreground: 0 0% 100%; /* Texto blanco sobre rojo */
+  
+    /* Bordes y separadores */
+    --border: 214.3 31.8% 91.4%; /* Bordes gris claro */
+    --input: 0 0% 100%; /* Fondo de campos de texto blanco */
+  
+    /* Elementos interactivos */
+    --ring: 221.2 83.2% 53.3%; /* Azul fuerte para estados de foco */
+    --radius: 0.75rem; /* Radio de bordes */
+  
+    /* Gráficos y visualizaciones */
+    --chart-1: 12 76% 61%; /* Rojo para gráficos */
+    --chart-2: 173 58% 39%; /* Verde brillante */
+    --chart-3: 197 37% 24%; /* Azul oscuro */
+    --chart-4: 43 74% 66%; /* Amarillo claro */
+    --chart-5: 27 87% 67%; /* Naranja */
   }
+  
+
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Fondo general */
+    --background: 222.2 84% 4.9%; /* Fondo principal oscuro */
+    --foreground: 210 40% 98%; /* Texto claro sobre fondo oscuro */
+  
+    /* Componentes */
+    --card: 217.2 32.6% 17.5%; /* Fondo de tarjetas */
+    --card-foreground: 210 40% 98%; /* Texto en tarjetas */
+    --popover: 217.2 32.6% 17.5%; /* Fondo desplegables */
+    --popover-foreground: 210 40% 98%; /* Texto desplegables */
+  
+    /* Colores principales */
+    --primary: 217.2 91.2% 59.8%; /* Azul claro */
+    --primary-foreground: 210 40% 98%; /* Texto claro sobre fondo azul */
+    --secondary: 217.2 40% 35%; /* Gris azulado oscuro */
+    --secondary-foreground: 210 40% 98%; /* Texto sobre fondo secundario */
+  
+    /* Colores neutrales */
+    --muted: 217.2 32.6% 20%; /* Fondo neutro */
+    --muted-foreground: 215 20.2% 75%; /* Texto neutro */
+  
+    /* Énfasis */
+    --accent: 224.3 76.3% 48%; /* Azul vívido para detalles */
+    --accent-foreground: 210 40% 98%; /* Texto sobre fondo de énfasis */
+    
+    /* Estados destructivos */
+    --destructive: 0 62.8% 40%; /* Rojo oscuro */
+    --destructive-foreground: 210 40% 98%; /* Texto claro sobre rojo */
+  
+    /* Bordes y separadores */
+    --border: 217.2 32.6% 20%; /* Líneas y bordes oscuros */
+    --input: 217.2 32.6% 20%; /* Fondo de campos de texto */
+  
+    /* Elementos interactivos */
+    --ring: 217.2 91.2% 59.8%; /* Azul claro para estados de foco */
+    --radius: 0.75rem; /* Radio de bordes */
+  
+    /* Gráficos y visualizaciones */
+    --chart-1: 220 70% 50%; /* Azul para gráficos */
+    --chart-2: 160 60% 45%; /* Verde oscuro */
+    --chart-3: 30 80% 55%; /* Amarillo/naranja */
+    --chart-4: 280 65% 60%; /* Púrpura */
+    --chart-5: 340 75% 55%; /* Rosa */
   }
 }
+
 @layer base {
   * {
     @apply border-border;

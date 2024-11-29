@@ -1,0 +1,26 @@
+name: Liberation
+
+on:
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: write
+
+jobs:
+  call-versioning-workflow:
+    uses: cedeirasf/CedMT-devops-workflows/.github/workflows/versioning.yml@v1
+    secrets:
+      github-token: ${{ secrets.GH_PROJECT_AUTOMATION || secrets.github-token || secrets.GITHUB_TOKEN }}
+
+      #demo de tag para actalizar version=2.0.0
+
+  call-release-workflow:
+    needs: call-versioning-workflow
+    uses: cedeirasf/CedMT-devops-workflows/.github/workflows/release.yml@v1
+    with:
+      next: ${{ needs.call-versioning-workflow.outputs.next-patch }}
+      include-artifacts: false
+    secrets:
+      github-token: ${{ secrets.GH_PROJECT_AUTOMATION || secrets.github-token || secrets.GITHUB_TOKEN }}
