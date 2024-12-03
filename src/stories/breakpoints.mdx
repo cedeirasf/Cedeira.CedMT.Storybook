@@ -1,0 +1,56 @@
+import { Meta, Description } from "@storybook/blocks";
+
+<Meta title="Tokens/Breakpoints" />
+
+# Breakpoints
+
+Los Breakpoints definen cómo las interfaces se adaptan a diferentes tamaños de pantalla. TailwindCSS ofrece clases predefinidas para los breakpoints más comunes.
+
+## Escala de breakpoints
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Clase</th>
+      <th>Tamaño mínimo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Small</b></td>
+      <td><code>sm</code></td>
+      <td>640px</td>
+    </tr>
+    <tr>
+      <td><b>Medium</b></td>
+      <td><code>md</code></td>
+      <td>768px</td>
+    </tr>
+    <tr>
+      <td><b>Large</b></td>
+      <td><code>lg</code></td>
+      <td>1024px</td>
+    </tr>
+    <tr>
+      <td><b>Extra Large</b></td>
+      <td><code>xl</code></td>
+      <td>1280px</td>
+    </tr>
+    <tr>
+      <td><b>2XL</b></td>
+      <td><code>2xl</code></td>
+      <td>1536px</td>
+    </tr>
+  </tbody>
+</table>
+
+## Ejemplo de uso
+
+```tsx
+<div className="hidden md:block">
+  Este texto es visible desde pantallas medianas (md) hacia arriba.
+</div>
+<div className="hidden lg:block">
+  Este texto es visible desde pantallas grandes (lg) hacia arriba.
+</div>

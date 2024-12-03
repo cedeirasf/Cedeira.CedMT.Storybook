@@ -1,0 +1,65 @@
+import { Meta, Description, Story } from "@storybook/blocks";
+
+<Meta title="Tokens/Typography" />
+
+# Tipografía
+
+La tipografía establece el tono de la interfaz de usuario y mejora la legibilidad. Utilizamos clases de TailwindCSS y seguimos la escala tipográfica basada en las pautas de Material Design.
+
+## Escalas tipográficas
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Clase</th>
+      <th>Tamaño</th>
+      <th>Peso</th>
+      <th>Uso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Display</b></td>
+      <td><code>text-4xl font-bold</code></td>
+      <td>36px</td>
+      <td>Bold</td>
+      <td>Títulos grandes</td>
+    </tr>
+    <tr>
+      <td><b>Headline</b></td>
+      <td><code>text-2xl font-semibold</code></td>
+      <td>24px</td>
+      <td>SemiBold</td>
+      <td>Encabezados principales</td>
+    </tr>
+    <tr>
+      <td><b>Subhead</b></td>
+      <td><code>text-xl font-medium</code></td>
+      <td>20px</td>
+      <td>Medium</td>
+      <td>Subtítulos</td>
+    </tr>
+    <tr>
+      <td><b>Body</b></td>
+      <td><code>text-base font-normal</code></td>
+      <td>16px</td>
+      <td>Normal</td>
+      <td>Texto principal</td>
+    </tr>
+    <tr>
+      <td><b>Caption</b></td>
+      <td><code>text-sm font-light</code></td>
+      <td>14px</td>
+      <td>Light</td>
+      <td>Notas o texto pequeño</td>
+    </tr>
+  </tbody>
+</table>
+
+## Ejemplo de uso
+
+```tsx
+<p className="text-base font-normal">Este es un texto de cuerpo.</p>
+<h1 className="text-4xl font-bold">Este es un título Display.</h1>
+<Button className="text-xl font-semibold">Botón con estilo Headline</Button>
