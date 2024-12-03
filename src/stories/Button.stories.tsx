@@ -28,14 +28,30 @@ const meta: Meta<typeof Button> = {
         "outline",
         "ghost",
         "link",
+        "elevated",
+        "tonal",
       ],
-   
+      description:
+        "Determina el estilo visual del botón. Cada variante tiene un propósito específico, como acciones destructivas, secundarias o estilos de enlace.",
+      defaultValue: "default",
     },
     size: {
       control: { type: "select" },
       options: ["sm", "default", "lg", "icon"],
+      description:
+        "Define el tamaño del botón. Los tamaños disponibles incluyen pequeño (`sm`), predeterminado (`default`), grande (`lg`) e íconos (`icon`).",
+      defaultValue: "default",
     },
-    onClick: { action: "clicked" },
+    className: {
+      control: { type: "text" },
+      description:
+        "Permite añadir clases personalizadas de Tailwind CSS para modificar el estilo del botón según tus necesidades.",
+      defaultValue: "",
+    },
+    onClick: {
+      action: "clicked",
+      description: "Callback que se ejecuta cuando se hace clic en el botón.",
+    },
   },
 };
 
@@ -47,48 +63,24 @@ type VariantType =
   | "destructive"
   | "outline"
   | "ghost"
-  | "link";
+  | "link"
+  | "elevated"
+  | "tonal";
 
-const createStory = (variant: VariantType, label: string): StoryObj<typeof Button> => ({
-  args: {
-    variant,
-    size: "default",
-    children: label,
-    onClick: action(`${variant} clicked`),
-    disabled: false,
-  },
-  decorators: [
-    (Story, context) => {
-      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+type SizeType = "sm" | "default" | "lg" | "icon";
 
-      if (typeof window !== "undefined") {
-        const root = document.documentElement;
-        root.classList.remove("light", "dark");
-        root.classList.add(theme);
-      }
-
-      return <Story />;
-    },
-  ],
-});
-
-const createStoryWithIcons = (
+const createStory = (
   variant: VariantType,
-  label: string,
-  iconPosition: "left" | "right"
+  size: SizeType,
+  label: string
 ): StoryObj<typeof Button> => ({
   args: {
     variant,
-    size: "default",
-    children: (
-      <>
-        {iconPosition === "left" && <PlusIcon className="mr-2 w-4 h-4" />}
-        {label}
-        {iconPosition === "right" && <CheckIcon className="ml-2 w-4 h-4" />}
-      </>
-    ),
-    onClick: action(`${variant} with icon ${iconPosition} clicked`),
+    size,
+    children: label,
+    onClick: action(`${variant} clicked`),
     disabled: false,
+    className: "", // Soporte para personalización de estilos
   },
   decorators: [
     (Story, context) => {
@@ -105,44 +97,81 @@ const createStoryWithIcons = (
   ],
 });
 
-// General Stories
-export const Default = createStory("default", "Default Button");
-export const Secondary = createStory("secondary", "Secondary Button");
-export const Destructive = createStory("destructive", "Destructive Button");
-export const Outline = createStory("outline", "Outline Button");
-export const Ghost = createStory("ghost", "Ghost Button");
-export const Link = createStory("link", "Link Button");
-
-export const WithIconLeft = createStoryWithIcons(
+// Historias generales para todas las variantes
+export const Default = createStory("default", "default", "Botón Predeterminado");
+export const Secondary = createStory(
+  "secondary",
   "default",
-  "Button with Icon",
-  "left"
+  "Botón Secundario"
 );
-export const WithIconRight = createStoryWithIcons(
+export const Destructive = createStory(
+  "destructive",
   "default",
-  "Button with Icon",
-  "right"
+  "Botón Destructivo"
 );
+export const Outline = createStory("outline", "default", "Botón Outline");
+export const Ghost = createStory("ghost", "default", "Botón Ghost");
+export const Link = createStory("link", "default", "Botón Link");
+export const Elevated = createStory("elevated", "default", "Botón Elevado");
+export const Tonal = createStory("tonal", "default", "Botón Tonal");
 
-// Icon-only Story
+// Historias de botones con íconos
+export const WithIconLeft = {
+  args: {
+    variant: "default",
+    size: "default",
+    className: "",
+    children: (
+      <>
+        <PlusIcon className="mr-2 w-4 h-4" />
+        Botón con Ícono Izquierdo
+      </>
+    ),
+    onClick: action("con-ícono-izquierdo clicado"),
+  },
+};
+
+export const WithIconRight = {
+  args: {
+    variant: "default",
+    size: "default",
+    className: "",
+    children: (
+      <>
+        Botón con Ícono Derecho
+        <CheckIcon className="ml-2 w-4 h-4" />
+      </>
+    ),
+    onClick: action("con-ícono-derecho clicado"),
+  },
+};
+
+// Historias de tamaño de íconos
 export const IconOnly: StoryObj<typeof Button> = {
   args: {
     variant: "default",
     size: "icon",
     children: <CheckIcon className="w-5 h-5" />,
-    onClick: action("icon-only clicked"),
+    onClick: action("solo-ícono clicado"),
+    className: "", // Soporte para personalización de estilos
   },
-  decorators: [
-    (Story, context) => {
-      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+};
 
-      if (typeof window !== "undefined") {
-        const root = document.documentElement;
-        root.classList.remove("light", "dark");
-        root.classList.add(theme);
-      }
-
-      return <Story />;
+// Historia personalizada con clase dinámica
+export const CustomClass: StoryObj<typeof Button> = {
+  args: {
+    variant: "default",
+    size: "default",
+    className: "bg-red-500 border-2 border-black shadow-md", // Clase predeterminada
+    children: "Botón Personalizado",
+    onClick: action("clase-personalizada clicada"),
+  },
+  argTypes: {
+    className: {
+      control: { type: "text" },
+      description:
+        "Añade clases personalizadas para estilizar el botón de forma dinámica.",
+      defaultValue: "",
     },
-  ],
+  },
 };
