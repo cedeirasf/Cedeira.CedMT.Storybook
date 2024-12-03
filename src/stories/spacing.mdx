@@ -1,0 +1,53 @@
+import { Meta, Description } from "@storybook/blocks";
+
+<Meta title="Tokens/Spacing" />
+
+# Espaciado
+
+Los espaciados son utilizados para definir márgenes, rellenos y distancias entre elementos en la interfaz.
+
+## Escala de espaciado
+
+<table>
+  <thead>
+    <tr>
+      <th>Valor</th>
+      <th>Clase</th>
+      <th>Tamaño</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Extra Small</b></td>
+      <td><code>p-1</code></td>
+      <td>4px</td>
+    </tr>
+    <tr>
+      <td><b>Small</b></td>
+      <td><code>p-2</code></td>
+      <td>8px</td>
+    </tr>
+    <tr>
+      <td><b>Medium</b></td>
+      <td><code>p-4</code></td>
+      <td>16px</td>
+    </tr>
+    <tr>
+      <td><b>Large</b></td>
+      <td><code>p-8</code></td>
+      <td>32px</td>
+    </tr>
+    <tr>
+      <td><b>Extra Large</b></td>
+      <td><code>p-16</code></td>
+      <td>64px</td>
+    </tr>
+  </tbody>
+</table>
+
+## Ejemplo de uso
+
+```tsx
+<div className="p-4 bg-gray-100">Relleno de 16px</div>
+<div className="p-8 bg-gray-200">Relleno de 32px</div>
+<div className="m-4 bg-gray-300">Margen de 16px</div>
