@@ -66,40 +66,68 @@ export default meta;
 
 type Story = StoryObj<typeof Badge>;
 
-// Historias para cada color
+// Historias para mostrar todas las variantes con controles habilitados
+export const Controlable: Story = {
+  args: {
+    color: "neutral",
+    size: "md",
+    rounded: "md",
+    border: true,
+    icon: <CheckIcon className="size-4" />,
+    iconPosition: "start",
+    children: "Badge Controlable",
+  },
+};
+
+// Historias con múltiples ejemplos de args
 export const Colores: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Badge color="neutral">Neutral</Badge>
-      <Badge color="green">Éxito</Badge>
-      <Badge color="blue">Información</Badge>
-      <Badge color="red">Error</Badge>
-      <Badge color="orange">Pendiente</Badge>
-      <Badge color="yellow">Advertencia</Badge>
-      <Badge color="violet">Etiqueta</Badge>
+  args: {
+    size: "md",
+    rounded: "md",
+    border: true,
+  },
+  render: (args) => (
+    <div className="flex flex-row flex-wrap gap-2">
+      <Badge {...args} color="neutral">Neutral</Badge>
+      <Badge {...args} color="green">Éxito</Badge>
+      <Badge {...args} color="blue">Información</Badge>
+      <Badge {...args} color="red">Error</Badge>
+      <Badge {...args} color="orange">Pendiente</Badge>
+      <Badge {...args} color="yellow">Advertencia</Badge>
+      <Badge {...args} color="violet">Etiqueta</Badge>
     </div>
   ),
 };
 
 // Historias con sombras
 export const Sombra: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Badge className="shadow-sm">Sombra pequeña</Badge>
-      <Badge className="shadow-md">Sombra mediana</Badge>
-      <Badge className="shadow-lg">Sombra grande</Badge>
+  args: {
+    size: "md",
+    rounded: "md",
+    border: true,
+  },
+  render: (args) => (
+    <div className="flex flex-row flex-wrap gap-2">
+      <Badge {...args} className="shadow-sm">Sombra pequeña</Badge>
+      <Badge {...args} className="shadow-md">Sombra mediana</Badge>
+      <Badge {...args} className="shadow-lg">Sombra grande</Badge>
     </div>
   ),
 };
 
 // Historias con gradientes personalizados
 export const Gradientes: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+  args: {
+    size: "md",
+    rounded: "full",
+    border: true,
+  },
+  render: (args) => (
+    <div className="flex flex-row flex-wrap gap-2">
+      <Badge {...args} className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
         Gradiente Azul-Púrpura
       </Badge>
-      <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
+      <Badge {...args} className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
         Gradiente Rojo-Naranja
       </Badge>
     </div>
@@ -108,36 +136,22 @@ export const Gradientes: Story = {
 
 // Historias con iconos
 export const ConIconos: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Badge icon={<CheckIcon className="size-4" />}>Con icono al inicio</Badge>
-      <Badge icon={<InfoIcon className="size-4" />} iconPosition="end">
+  args: {
+    size: "md",
+    rounded: "md",
+    border: true,
+  },
+  render: (args) => (
+    <div className="flex flex-row flex-wrap gap-2">
+      <Badge {...args} icon={<CheckIcon className="size-4" />}>
+        Con icono al inicio
+      </Badge>
+      <Badge {...args} icon={<InfoIcon className="size-4" />} iconPosition="end">
         Con icono al final
       </Badge>
-      <Badge icon={<XIcon className="size-4" />}>Con icono de cierre</Badge>
-    </div>
-  ),
-};
-
-// Historias para tamaños
-export const Tamaños: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Badge size="sm">Pequeña</Badge>
-      <Badge size="md">Mediana</Badge>
-      <Badge size="lg">Grande</Badge>
-    </div>
-  ),
-};
-
-// Historias con bordes y redondeado
-export const BordesYRedondeado: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Badge rounded="sm">Borde pequeño</Badge>
-      <Badge rounded="md">Borde mediano</Badge>
-      <Badge rounded="lg">Borde grande</Badge>
-      <Badge rounded="full">Borde completo</Badge>
+      <Badge {...args} icon={<XIcon className="size-4" />}>
+        Con icono de cierre
+      </Badge>
     </div>
   ),
 };
