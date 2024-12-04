@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Badge from "../components/ui/badge"; // Ajusta la ruta si es necesario
-import { CheckIcon, InfoIcon } from "lucide-react";
+import { CheckIcon, InfoIcon, XIcon } from "lucide-react";
 import React from "react";
 
 const meta: Meta<typeof Badge> = {
@@ -46,6 +46,20 @@ const meta: Meta<typeof Badge> = {
       description: "Define la posición del icono en relación al texto.",
     },
   },
+  decorators: [
+    (Story, context) => {
+      const theme =
+        context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
+      }
+
+      return <Story />;
+    },
+  ],
 };
 
 export default meta;
@@ -53,140 +67,77 @@ export default meta;
 type Story = StoryObj<typeof Badge>;
 
 // Historias para cada color
-export const Neutral: Story = {
-  args: {
-    color: "neutral",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Neutral",
-  },
+export const Colores: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge color="neutral">Neutral</Badge>
+      <Badge color="green">Éxito</Badge>
+      <Badge color="blue">Información</Badge>
+      <Badge color="red">Error</Badge>
+      <Badge color="orange">Pendiente</Badge>
+      <Badge color="yellow">Advertencia</Badge>
+      <Badge color="violet">Etiqueta</Badge>
+    </div>
+  ),
 };
 
-export const Green: Story = {
-  args: {
-    color: "green",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Éxito",
-  },
+// Historias con sombras
+export const Sombra: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge className="shadow-sm">Sombra pequeña</Badge>
+      <Badge className="shadow-md">Sombra mediana</Badge>
+      <Badge className="shadow-lg">Sombra grande</Badge>
+    </div>
+  ),
 };
 
-export const Blue: Story = {
-  args: {
-    color: "blue",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Información",
-  },
+// Historias con gradientes personalizados
+export const Gradientes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+        Gradiente Azul-Púrpura
+      </Badge>
+      <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
+        Gradiente Rojo-Naranja
+      </Badge>
+    </div>
+  ),
 };
 
-export const Red: Story = {
-  args: {
-    color: "red",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Error",
-  },
+// Historias con iconos
+export const ConIconos: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge icon={<CheckIcon className="size-4" />}>Con icono al inicio</Badge>
+      <Badge icon={<InfoIcon className="size-4" />} iconPosition="end">
+        Con icono al final
+      </Badge>
+      <Badge icon={<XIcon className="size-4" />}>Con icono de cierre</Badge>
+    </div>
+  ),
 };
 
-export const Orange: Story = {
-  args: {
-    color: "orange",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Pendiente",
-  },
+// Historias para tamaños
+export const Tamaños: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge size="sm">Pequeña</Badge>
+      <Badge size="md">Mediana</Badge>
+      <Badge size="lg">Grande</Badge>
+    </div>
+  ),
 };
 
-export const Yellow: Story = {
-  args: {
-    color: "yellow",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Advertencia",
-  },
-};
-
-export const Violet: Story = {
-  args: {
-    color: "violet",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Etiqueta",
-  },
-};
-
-// Historia con icono
-export const ConIcono: Story = {
-  args: {
-    color: "green",
-    size: "md",
-    rounded: "full",
-    border: true,
-    icon: <CheckIcon className="size-4" />,
-    children: "Éxito",
-  },
-};
-
-// Historia con icono al final
-export const ConIconoFinal: Story = {
-  args: {
-    color: "blue",
-    size: "lg",
-    rounded: "md",
-    border: true,
-    icon: <InfoIcon className="size-4" />,
-    iconPosition: "end",
-    children: "Información",
-  },
-};
-
-// Historia con estilos personalizados
-export const EtiquetaPersonalizada: Story = {
-  args: {
-    color: "neutral",
-    size: "lg",
-    rounded: "full",
-    border: true,
-    className: "bg-gradient-to-r from-blue-400 to-purple-500 text-white shadow-lg",
-    children: "Etiqueta Personalizada",
-  },
-};
-
-// Historias para diferentes tamaños
-export const Pequeña: Story = {
-  args: {
-    color: "neutral",
-    size: "sm",
-    rounded: "md",
-    border: true,
-    children: "Etiqueta Pequeña",
-  },
-};
-
-export const Mediana: Story = {
-  args: {
-    color: "neutral",
-    size: "md",
-    rounded: "md",
-    border: true,
-    children: "Etiqueta Mediana",
-  },
-};
-
-export const Grande: Story = {
-  args: {
-    color: "neutral",
-    size: "lg",
-    rounded: "md",
-    border: true,
-    children: "Etiqueta Grande",
-  },
+// Historias con bordes y redondeado
+export const BordesYRedondeado: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge rounded="sm">Borde pequeño</Badge>
+      <Badge rounded="md">Borde mediano</Badge>
+      <Badge rounded="lg">Borde grande</Badge>
+      <Badge rounded="full">Borde completo</Badge>
+    </div>
+  ),
 };
