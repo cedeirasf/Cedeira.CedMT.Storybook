@@ -1,0 +1,14 @@
+# Ignorar carpetas generadas
+dist
+storybook-static
+node_modules
+
+# Ignorar configuraciones del entorno local
+.env
+.env.local
+
+
+# Ignorar subdirectorios específicos
+**/dist
+**/storybook-static
+**/node_modules
