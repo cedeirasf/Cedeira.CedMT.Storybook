@@ -1,127 +1,177 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
-import { Input } from "../components/ui/input"; // Ajusta la ruta si es necesario
+import type { Meta, StoryObj } from "@storybook/react"
+import { Input } from "../components/ui/Input"
+import React from "react"
 
 const meta: Meta<typeof Input> = {
   title: "Components/ui/Input",
   component: Input,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    backgrounds: {
+      default: "light",
+      values: [
+        { name: "light", value: "#ffffff" },
+        { name: "dark", value: "#1a202c" },
+      ],
+    },
+  },
   argTypes: {
-    inputSize: {
+    size: {
       control: { type: "select" },
       options: ["small", "medium", "large"],
-      description: "Define el tamaño del input.",
+      description: "Define el tamaño del campo de entrada. Afecta al padding y tamaño de fuente.",
       defaultValue: "medium",
     },
-    inputState: {
+    state: {
       control: { type: "select" },
       options: ["default", "error", "active"],
-      description: "Define el estado visual del input.",
+      description: "Estado visual del input que indica su condición actual.",
       defaultValue: "default",
     },
     type: {
       control: { type: "select" },
       options: ["text", "number", "email", "password", "date", "tel", "url"],
-      description: "Define el tipo de entrada del input.",
+      description: "Tipo de datos que acepta el campo de entrada.",
       defaultValue: "text",
+    },
+    label: {
+      control: "text",
+      description: "Etiqueta descriptiva que aparece sobre el campo de entrada.",
+    },
+    helperText: {
+      control: "text",
+      description: "Texto de ayuda que aparece debajo del campo de entrada.",
     },
     placeholder: {
       control: "text",
-      description: "Texto que se muestra cuando el campo está vacío.",
+      description: "Texto provisional que se muestra cuando el campo está vacío.",
     },
     disabled: {
       control: "boolean",
-      description: "Desactiva el input si está configurado como true.",
-      defaultValue: false,
+      description: "Determina si el campo de entrada está deshabilitado.",
     },
     className: {
       control: "text",
-      description: "Clases CSS adicionales para personalización.",
-    },
-    onChange: {
-      action: "onChange",
-      description: "Evento que se dispara al cambiar el valor del input.",
-    },
-    onFocus: {
-      action: "onFocus",
-      description: "Evento que se dispara al enfocar el input.",
-    },
-    onBlur: {
-      action: "onBlur",
-      description: "Evento que se dispara al perder el foco del input.",
+      description: "Clases personalizadas de Tailwind CSS para modificar el estilo.",
     },
   },
-  parameters: {
-    layout: "centered",
-  },
-};
+}
 
-export default meta;
+export default meta
+/* type Story = StoryObj<typeof Input> */
 
-type Story = StoryObj<typeof Input>;
+const createStory = (
+  args: Partial<React.ComponentProps<typeof Input>>
+): StoryObj<typeof Input> => ({
+  args,
+  decorators: [
+    (Story, context) => {
+      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light"
 
-// Historia básica
-export const Default: Story = {
-  args: {
-    placeholder: "Escribe aquí...",
-    inputSize: "medium",
-    type: "text",
-  },
-};
+      if (typeof window !== "undefined") {
+        const root = document.documentElement
+        root.classList.remove("light", "dark")
+        root.classList.add(theme)
+      }
 
-// Historia para tamaños
-export const Sizes: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Input inputSize="small" placeholder="Small input" />
-      <Input inputSize="medium" placeholder="Medium input" />
-      <Input inputSize="large" placeholder="Large input" />
-    </div>
-  ),
-};
+      return <Story />
+    },
+  ],
+})
 
-// Historia para estados
-export const States: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Input inputState="default" placeholder="Default input" />
-      <Input inputState="error" placeholder="Error input" />
-      <Input inputState="active" placeholder="Active input" />
-      <Input disabled placeholder="Disabled input" />
-    </div>
-  ),
-};
+export const Default = createStory({
+  size: "medium",
+  state: "default",
+  type: "text",
+  label: "Label",
+  helperText: "This is a helper text",
+  placeholder: "Placeholder",
+})
 
-// Historia para tipos de entrada
-export const Types: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Input type="text" placeholder="Text input" />
-      <Input type="number" placeholder="Number input" />
-      <Input type="email" placeholder="Email input" />
-      <Input type="password" placeholder="Password input" />
-      <Input type="date" placeholder="Date input" />
-      <Input type="tel" placeholder="Tel input" />
-      <Input type="url" placeholder="URL input" />
-    </div>
-  ),
-};
+export const Email = createStory({
+  ...Default.args,
+  type: "email",
+  label: "Email",
+  placeholder: "ejemplo@dominio.com",
+  helperText: "Ingrese un email válido",
+})
 
-// Historia con personalización de clases
-export const CustomStyles: Story = {
-  args: {
-    className: "bg-gray-100 border-blue-500 focus-visible:ring-blue-500",
-    placeholder: "Input personalizado",
-  },
-};
+export const Password = createStory({
+  ...Default.args,
+  type: "password",
+  label: "Contraseña",
+  placeholder: "••••••••",
+  helperText: "Mínimo 8 caracteres",
+})
 
-/* // Historia para temas claro y oscuro
-export const Themes: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4 bg-background text-foreground p-4 dark:bg-gray-900 dark:text-white">
-      <Input inputSize="medium" placeholder="Light theme input" />
-      <div className="dark">
-        <Input inputSize="medium" placeholder="Dark theme input" />
-      </div>
-    </div>
-  ),
-}; */
+export const Number = createStory({
+  ...Default.args,
+  type: "number",
+  label: "Edad",
+  placeholder: "18",
+  helperText: "Debe ser mayor de edad",
+})
+
+export const Date = createStory({
+  ...Default.args,
+  type: "date",
+  label: "Fecha de nacimiento",
+  helperText: "Seleccione su fecha de nacimiento",
+})
+
+export const Small = createStory({
+  ...Default.args,
+  size: "small",
+  label: "Campo pequeño",
+})
+
+export const Large = createStory({
+  ...Default.args,
+  size: "large",
+  label: "Campo grande",
+})
+
+export const Error = createStory({
+  ...Default.args,
+  state: "error",
+  label: "Campo con error",
+  helperText: "Este campo es requerido",
+})
+
+export const Active = createStory({
+  ...Default.args,
+  state: "active",
+  label: "Campo activo",
+})
+
+export const Disabled = createStory({
+  ...Default.args,
+  disabled: true,
+  label: "Campo deshabilitado",
+  helperText: "Este campo no se puede editar",
+})
+
+export const WithCustomClass = createStory({
+  ...Default.args,
+  label: "Campo personalizado",
+  className: "border-2 border-purple-500 focus-visible:ring-purple-500",
+  helperText: "Con estilos personalizados",
+})
+
+export const URL = createStory({
+  ...Default.args,
+  type: "url",
+  label: "Sitio web",
+  placeholder: "https://ejemplo.com",
+  helperText: "Ingrese una URL válida",
+})
+
+export const Tel = createStory({
+  ...Default.args,
+  type: "tel",
+  label: "Teléfono",
+  placeholder: "+34 123 456 789",
+  helperText: "Ingrese un número de teléfono válido",
+})
+

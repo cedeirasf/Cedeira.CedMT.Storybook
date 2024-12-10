@@ -1,58 +1,94 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
 
-// Tipos permitidos para el tamaño y estados
-type InputSize = "small" | "medium" | "large";
-type InputState = "default" | "error" | "active";
+const inputVariants = cva(
+  "flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  {
+    variants: {
+      size: {
+        small: "h-8 text-xs",
+        medium: "h-10",
+        large: "h-12 text-lg",
+      },
+      state: {
+        default: "border-input",
+        error: "border-destructive focus-visible:ring-destructive",
+        active: "border-primary ring-2 ring-primary",
+      },
+    },
+    defaultVariants: {
+      size: "medium",
+      state: "default",
+    },
+  }
+)
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  inputSize?: InputSize;
-  inputState?: InputState;
-  type?: "text" | "number" | "email" | "password" | "date" | "tel" | "url";
-  className?: string;
+
+type InputVariantsProps = VariantProps<typeof inputVariants>
+
+export interface InputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+    InputVariantsProps {
+  label?: string
+  helperText?: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, inputSize = "medium", inputState = "default", type = "text", disabled, ...props }, ref) => {
-    // Clases dinámicas basadas en el tamaño y estado
-    const sizeClasses = {
-      small: "h-8 text-sm",
-      medium: "h-10 text-base",
-      large: "h-12 text-lg",
-    };
-
-    const stateClasses = {
-      default:
-        "border-input focus-visible:ring-ring dark:border-gray-700 dark:focus-visible:ring-gray-500",
-      error:
-        "border-red-500 focus-visible:ring-red-500 dark:border-red-700 dark:focus-visible:ring-red-400",
-      active:
-        "border-blue-500 focus-visible:ring-blue-500 dark:border-blue-700 dark:focus-visible:ring-blue-400",
-      disabled:
-        "cursor-not-allowed opacity-50 border-muted-foreground bg-muted-foreground",
-    };
+  ({ className, size, state, type, label, helperText, id, ...props }, ref) => {
+    const inputId = React.useId()
+    const actualId = id || inputId
 
     return (
-      <input
-        type={type}
-        aria-invalid={inputState === "error" ? true : undefined}
-        aria-disabled={disabled}
-        disabled={disabled}
-        className={cn(
-          "flex w-full rounded-md bg-background px-3 py-2 placeholder:text-muted-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-          "dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-400",
-          sizeClasses[inputSize],
-          stateClasses[inputState],
-          className
+      <div className="flex flex-col gap-1.5">
+        {label && (
+          <label
+            htmlFor={actualId}
+            className={cn(
+              "text-sm font-medium text-foreground",
+              state === "error" && "text-destructive",
+              props.disabled && "opacity-50"
+            )}
+          >
+            {label}
+          </label>
         )}
-        ref={ref}
-        {...props}
-      />
-    );
+        <div className="relative">
+          <input
+            type={type}
+            id={actualId}
+            className={cn(inputVariants({ size, state, className }))}
+            ref={ref}
+            aria-invalid={state === "error"}
+            aria-describedby={helperText ? `${actualId}-description` : undefined}
+            {...props}
+          />
+          {state === "error" && (
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+              <svg className="h-5 w-5 text-destructive" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+          )}
+        </div>
+        {helperText && (
+          <p
+            id={`${actualId}-description`}
+            className={cn(
+              "text-sm text-muted-foreground",
+              state === "error" && "text-destructive",
+              props.disabled && "opacity-50"
+            )}
+          >
+            {helperText}
+          </p>
+        )}
+      </div>
+    )
   }
-);
+)
 
+Input.displayName = "Input"
 
-Input.displayName = "Input";
+export { Input, inputVariants }
 
-export { Input };
