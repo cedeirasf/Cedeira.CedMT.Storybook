@@ -12,7 +12,7 @@ const inputVariants = cva(
         large: "h-12 text-lg",
       },
       state: {
-        default: "border-input",
+        default: "border-input-dark dark:border-input",
         error: "border-destructive focus-visible:ring-destructive",
         active: "border-primary ring-2 ring-primary",
       },

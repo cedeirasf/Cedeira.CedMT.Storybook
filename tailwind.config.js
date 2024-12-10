@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
   	extend: {
+		borderColor: {
+			'input': 'hsl(var(--input))',
+			'input-dark': 'hsl(var(--input-dark))',
+		  },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
