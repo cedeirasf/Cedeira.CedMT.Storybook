@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+
+
     /* Fondo general */
     --background: 0 0% 100%; /* Blanco puro */
     --foreground: 222.2 84% 4.9%; /* Texto principal oscuro */
@@ -35,6 +37,7 @@
     /* Bordes y separadores */
     --border: 214.3 31.8% 91.4%; /* Bordes gris claro */
     --input: 0 0% 100%; /* Fondo de campos de texto blanco */
+    --input-dark: 220 13% 91%; 
 
     /* Elementos interactivos */
     --ring: 221.2 83.2% 53.3%; /* Azul fuerte para estados de foco */
@@ -49,6 +52,7 @@
   }
 
   .dark {
+    --input-dark: 220 13% 91%;
     /* Fondo general */
     --background: 222.2 84% 4.9%; /* Fondo principal oscuro */
     --foreground: 210 40% 98%; /* Texto claro sobre fondo oscuro */
