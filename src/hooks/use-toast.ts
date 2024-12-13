@@ -16,6 +16,11 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  /* Custom */
+  toastDuration?: "short" | "long" | "sticky";
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  variant?: "success" | "error" | "warning" | "info";
+  icon?: React.ReactNode; // Nuevo prop para el icono personalizado
 }
 
 const actionTypes = {

@@ -1,121 +1,94 @@
-import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
-import React from "react";
-import {
-    Toast as BaseToast,
-    ToastAction,
-    ToastClose,
-    ToastDescription,
-    ToastProvider,
-    ToastTitle,
-    ToastViewport,
-} from "../../components/ui/toast";
-import { useToast } from "../../hooks/use-toast";
+import * as React from "react";
+import * as ToastPrimitives from "@radix-ui/react-toast";
+import { X } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { useToast } from "../../hooks/use-toast";
 
-interface CustomToastProps {
-    variant?: "success" | "error" | "warning" | "info";
-    position?: keyof typeof positionClassMap; // Nueva propiedad
-    toastDuration?: "short" | "long" | "sticky";
-    title?: string;
-    description?: React.ReactNode;
-    action?: React.ReactNode;
+// Mapa de estilos para las variantes
+const variantStyles = {
+  default: "border-gray-200 bg-gray-50 text-gray-800 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-200",
+  success: "border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200",
+  error: "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200",
+  warning: "border-yellow-200 bg-yellow-50 text-yellow-800 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-200",
+  info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200",
+};
+
+// Tipos de las propiedades del Toast
+export interface CustomToastProps {
+  title?: string;
+  description?: string;
+  action?: React.ReactNode;
+  icon?: React.ReactNode; // Nuevo prop para el icono personalizado
+  toastDuration?: "short" | "long" | "sticky";
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  variant?: "success" | "error" | "warning" | "info";
 }
 
-const variantStyles = {
-    success:
-        "bg-green-50 border-green-200 text-green-800 dark:bg-green-950 dark:border-green-800 dark:text-green-200",
-    error:
-        "bg-red-50 border-red-200 text-red-800 dark:bg-red-950 dark:border-red-800 dark:text-red-200",
-    warning:
-        "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-950 dark:border-yellow-800 dark:text-yellow-200",
-    info:
-        "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200",
-};
+// Componente principal del Toast
+export const CustomToast: React.FC = () => {
+  const { toasts } = useToast();
 
-const iconMap = {
-    success: CheckCircle2,
-    error: AlertCircle,
-    warning: AlertTriangle,
-    info: Info,
-};
-
-const positionClassMap = {
-    "bottom-right": "bottom-0 right-0",
-    "bottom-left": "bottom-0 left-0",
-};
-
-export const CustomToast: React.FC<CustomToastProps> = ({
-    variant = "info",
-    toastDuration = "short",
-    title,
-    description,
-    action,
-}) => {
-    const Icon = iconMap[variant];
-    const duration =
-        toastDuration === "short"
-            ? 3000
-            : toastDuration === "long"
-                ? 7000
-                : undefined;
-
-    return (
-        <BaseToast
-            className={cn(
-                "flex items-center space-x-4 p-4 rounded-md shadow-lg",
-                variantStyles[variant]
-            )}
-            duration={duration}
-        >
-            <Icon className="h-6 w-6" />
-            <div className="flex-1">
-                {title && (
-                    <ToastTitle className="font-semibold text-sm">{title}</ToastTitle>
-                )}
-                {description && <ToastDescription>{description}</ToastDescription>}
-            </div>
-            {action && <ToastAction altText="Close">{action}</ToastAction>}
-            <ToastClose />
-        </BaseToast>
-    );
-};
-
-export const CustomToastProvider: React.FC<{
-    children: React.ReactNode;
-  }> = ({ children }) => {
-    const { toasts } = useToast();
-  
-    const groupedToasts = toasts.reduce((groups, toast) => {
-      const position = (toast as { position?: string }).position || "bottom-right";
+  const groupedToasts = React.useMemo(() => {
+    return toasts.reduce((groups, toast) => {
+      const position = toast.position || "bottom-right";
       if (!groups[position]) groups[position] = [];
       groups[position].push(toast);
       return groups;
     }, {} as Record<string, typeof toasts>);
+  }, [toasts]);
 
-    return (
-      <ToastProvider>
-        {children}
-        {Object.entries(groupedToasts).map(([position, toasts]) => {
-          const positionClass = positionClassMap[position as keyof typeof positionClassMap];
-          return (
-            <ToastViewport
-              key={position}
-              className={cn(
-                `fixed flex flex-col gap-2 p-4 max-w-[420px] z-50`,
-                positionClass
-              )}
-            >
-              {toasts.map(({ id, variant = "info", ...toastProps }) => (
-                <CustomToast
-                  key={id}
-                  variant={variant as "success" | "error" | "warning" | "info"}
-                  {...toastProps}
-                />
-              ))}
-            </ToastViewport>
-          );
-        })}
-      </ToastProvider>
-    );
-  };
-  
+  return (
+    <ToastPrimitives.Provider>
+      {Object.entries(groupedToasts).map(([position, positionToasts]) => (
+        <ToastPrimitives.Viewport
+          key={position}
+          className={cn(
+            "fixed z-[100] flex flex-col gap-2 p-4 max-w-[420px]",
+            position === "top-left" && "top-0 left-0",
+            position === "top-right" && "top-0 right-0",
+            position === "bottom-left" && "bottom-0 left-0",
+            position === "bottom-right" && "bottom-0 right-0"
+          )}
+        >
+          {positionToasts.map(({ id, variant = "info", icon, toastDuration = "short", title, description, action }) => {
+            const duration =
+              toastDuration === "short"
+                ? 3000
+                : toastDuration === "long"
+                ? 7000
+                : Infinity;
+
+            return (
+              <ToastPrimitives.Root
+                key={id}
+                className={cn(
+                  "group pointer-events-auto relative flex items-center space-x-4 rounded-md border p-4 pr-8 shadow-lg transition-all",
+                  "data-[state=open]:animate-in data-[state=closed]:animate-out",
+                  "data-[state=open]:fade-in data-[state=closed]:fade-out",
+                  "data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-right-full",
+                  variantStyles[variant as keyof typeof variantStyles]
+                )}
+                duration={duration}
+              >
+                {icon && <div className="h-5 w-5">{icon}</div>}
+                <div className="flex-1">
+                  {title && <ToastPrimitives.Title className="text-sm font-semibold">{title}</ToastPrimitives.Title>}
+                  {description && (
+                    <ToastPrimitives.Description className="text-sm opacity-90">{description}</ToastPrimitives.Description>
+                  )}
+                </div>
+                {action}
+                <ToastPrimitives.Close
+                  className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 hover:text-foreground focus:outline-none"
+                  toast-close=""
+                >
+                  <X className="h-4 w-4" />
+                </ToastPrimitives.Close>
+              </ToastPrimitives.Root>
+            );
+          })}
+        </ToastPrimitives.Viewport>
+      ))}
+    </ToastPrimitives.Provider>
+  );
+};
