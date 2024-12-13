@@ -2,7 +2,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import { AlertTriangle, CheckCircle, Smile } from "lucide-react";
 import React from "react";
 import { CustomToast } from "../components/custom/CustomToast";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
 
 const meta: Meta = {
