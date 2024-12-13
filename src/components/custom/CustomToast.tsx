@@ -1,8 +1,8 @@
 import * as React from "react";
-import * as ToastPrimitives from "@radix-ui/react-toast";
-import { X } from "lucide-react";
+import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle } from "../ui/toast";
 import { cn } from "../../lib/utils";
 import { useToast } from "../../hooks/use-toast";
+import { ToastViewport } from "@radix-ui/react-toast";
 
 // Mapa de estilos para las variantes
 const variantStyles = {
@@ -13,23 +13,22 @@ const variantStyles = {
   info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200",
 };
 
-// Tipos de las propiedades del Toast
 export interface CustomToastProps {
   title?: string;
   description?: string;
-  action?: React.ReactNode;
-  icon?: React.ReactNode; // Nuevo prop para el icono personalizado
+  action?: React.ReactNode; // Permitir acciones personalizadas
+  icon?: React.ReactNode; // Permitir íconos personalizados
   toastDuration?: "short" | "long" | "sticky";
   position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
   variant?: "success" | "error" | "warning" | "info";
 }
 
-// Componente principal del Toast
 export const CustomToast: React.FC = () => {
   const { toasts } = useToast();
 
+  // Agrupa los toasts por posición
   const groupedToasts = React.useMemo(() => {
-    return toasts.reduce((groups, toast) => {
+    return (toasts || []).reduce((groups, toast) => {
       const position = toast.position || "bottom-right";
       if (!groups[position]) groups[position] = [];
       groups[position].push(toast);
@@ -37,10 +36,12 @@ export const CustomToast: React.FC = () => {
     }, {} as Record<string, typeof toasts>);
   }, [toasts]);
 
+  if (!toasts || toasts.length === 0) return null; // Manejo de estado vacío
+
   return (
-    <ToastPrimitives.Provider>
+    <ToastProvider>
       {Object.entries(groupedToasts).map(([position, positionToasts]) => (
-        <ToastPrimitives.Viewport
+        <ToastViewport
           key={position}
           className={cn(
             "fixed z-[100] flex flex-col gap-2 p-4 max-w-[420px]",
@@ -59,7 +60,7 @@ export const CustomToast: React.FC = () => {
                 : Infinity;
 
             return (
-              <ToastPrimitives.Root
+              <Toast
                 key={id}
                 className={cn(
                   "group pointer-events-auto relative flex items-center space-x-4 rounded-md border p-4 pr-8 shadow-lg transition-all",
@@ -72,23 +73,18 @@ export const CustomToast: React.FC = () => {
               >
                 {icon && <div className="h-5 w-5">{icon}</div>}
                 <div className="flex-1">
-                  {title && <ToastPrimitives.Title className="text-sm font-semibold">{title}</ToastPrimitives.Title>}
+                  {title && <ToastTitle className="text-sm font-semibold">{title}</ToastTitle>}
                   {description && (
-                    <ToastPrimitives.Description className="text-sm opacity-90">{description}</ToastPrimitives.Description>
+                    <ToastDescription className="text-sm opacity-90">{description}</ToastDescription>
                   )}
                 </div>
                 {action}
-                <ToastPrimitives.Close
-                  className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 hover:text-foreground focus:outline-none"
-                  toast-close=""
-                >
-                  <X className="h-4 w-4" />
-                </ToastPrimitives.Close>
-              </ToastPrimitives.Root>
+                <ToastClose />
+              </Toast>
             );
           })}
-        </ToastPrimitives.Viewport>
+        </ToastViewport>
       ))}
-    </ToastPrimitives.Provider>
+    </ToastProvider>
   );
 };

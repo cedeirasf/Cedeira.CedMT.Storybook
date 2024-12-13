@@ -3,10 +3,10 @@ import { Meta, StoryFn } from "@storybook/react";
 import { Button } from "../components/ui/Button";
 import { CustomToast } from "../components/custom/CustomToast";
 import { useToast } from "../hooks/use-toast";
-import { Smile, AlertTriangle } from "lucide-react";
+import { Smile, AlertTriangle, CheckCircle } from "lucide-react";
 
 const meta: Meta = {
-  title: "Componentes/CustomToast",
+  title: "Components/ui/Toast",
   component: CustomToast,
   parameters: {
     docs: {
@@ -39,6 +39,14 @@ const meta: Meta = {
       control: "text",
       description: "La descripción del toast.",
     },
+    action: {
+      control: false,
+      description: "Acción personalizada en el toast, como un botón.",
+    },
+    icon: {
+      control: false,
+      description: "Icono personalizado para el toast.",
+    },
   },
 };
 
@@ -55,6 +63,7 @@ const Template: StoryFn = (args) => {
       toastDuration: args.toastDuration,
       position: args.position,
       icon: args.icon, // Icono personalizado si es proporcionado
+      action: args.action, // Acción personalizada si es proporcionada
     });
   };
 
@@ -81,7 +90,8 @@ Success.args = {
   toastDuration: "long",
   position: "bottom-right",
   title: "Success Toast",
-  description: "This toast indicates success.",
+  description: "This toast indicates success.", 
+  icon: <CheckCircle className="text-green-600" />, // Otro ejemplo con un icono personalizado
 };
 
 export const Error = Template.bind({});
@@ -91,6 +101,7 @@ Error.args = {
   position: "top-left",
   title: "Error Toast",
   description: "An error has occurred.",
+  icon: <AlertTriangle className="text-red-600" />, // Otro ejemplo con un icono personalizado
 };
 
 export const Warning = Template.bind({});
@@ -100,6 +111,7 @@ Warning.args = {
   position: "bottom-left",
   title: "Warning Toast",
   description: "This is a warning notification.",
+  icon: <AlertTriangle className="text-red-600" />, // Otro ejemplo con un icono personalizado
 };
 
 export const CustomIcon = Template.bind({});
@@ -120,4 +132,14 @@ AlertIcon.args = {
   title: "Alert Icon Toast",
   description: "This toast uses an alert icon.",
   icon: <AlertTriangle className="text-red-600" />, // Otro ejemplo con un icono personalizado
+};
+
+export const WithAction = Template.bind({});
+WithAction.args = {
+  variant: "info",
+  toastDuration: "long",
+  position: "top-right",
+  title: "Toast with Action",
+  description: "This toast includes an action button.",
+  action: <Button size="sm" variant={"outline"} onClick={() => alert("Action triggered!")}> Undo </Button>, // Acción personalizada
 };
