@@ -58,7 +58,7 @@ const Template: StoryFn = (args) => {
   const showToast = () => {
     toast({
       title: args.title || `${args.variant} Toast`,
-      description: args.description || `This is a ${args.variant} toast in the ${args.position} position.`,
+      description: args.description ||  `Este es un toast de tipo ${args.variant} en la posición ${args.position}.`,
       variant: args.variant,
       toastDuration: args.toastDuration,
       position: args.position,
@@ -81,7 +81,7 @@ Default.args = {
   toastDuration: "short",
   position: "top-right",
   title: "Default Toast",
-  description: "This is the default toast.",
+  description:  "Este es el toast por defecto.",
 };
 
 export const Success = Template.bind({});
@@ -89,8 +89,8 @@ Success.args = {
   variant: "success",
   toastDuration: "long",
   position: "bottom-right",
-  title: "Success Toast",
-  description: "This toast indicates success.",
+  title: "Success",
+  description:  "Este es un toast de tipo success.",
   icon: <CheckCircle className="text-green-600" />, // Otro ejemplo con un icono personalizado
 };
 
@@ -99,8 +99,8 @@ Error.args = {
   variant: "error",
   toastDuration: "sticky",
   position: "top-left",
-  title: "Error Toast",
-  description: "An error has occurred.",
+  title:  "Error",
+  description:  "Ocurrió un error.",
   icon: <AlertTriangle className="text-red-600" />, // Otro ejemplo con un icono personalizado
 };
 
@@ -109,8 +109,8 @@ Warning.args = {
   variant: "warning",
   toastDuration: "short",
   position: "bottom-left",
-  title: "Warning Toast",
-  description: "This is a warning notification.",
+  title: "Warning",
+  description:  "Este es un toast de tipo warning.",
   icon: <AlertTriangle className="text-red-600" />, // Otro ejemplo con un icono personalizado
 };
 
@@ -119,8 +119,8 @@ CustomIcon.args = {
   variant: "info",
   toastDuration: "short",
   position: "top-right",
-  title: "Custom Icon Toast",
-  description: "This toast uses a custom icon.",
+  title:  "Custom Icon",
+  description:  "Este es un toast que utiliza un icono personalizado.",
   icon: <Smile className="text-yellow-600" />, // Icono personalizado enviado como prop
 };
 
@@ -129,8 +129,8 @@ AlertIcon.args = {
   variant: "error",
   toastDuration: "short",
   position: "top-left",
-  title: "Alert Icon Toast",
-  description: "This toast uses an alert icon.",
+  title:  "Alert Icon",
+  description:  "Este es un toast que utiliza un icono de alerta.",
   icon: <AlertTriangle className="text-red-600" />, // Otro ejemplo con un icono personalizado
 };
 
@@ -139,7 +139,7 @@ WithAction.args = {
   variant: "info",
   toastDuration: "long",
   position: "top-right",
-  title: "Toast with Action",
-  description: "This toast includes an action button.",
+  title:  "Toast with Action",
+  description:  "Este es un toast que incluye un botón de acción.",
   action: <Button size="sm" variant={"outline"} onClick={() => alert("Action triggered!")}> Undo </Button>, // Acción personalizada
 };
