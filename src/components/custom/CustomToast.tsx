@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle } from "../ui/toast";
-import { cn } from "../../lib/utils";
-import { useToast } from "../../hooks/use-toast";
 import { ToastViewport } from "@radix-ui/react-toast";
+import * as React from "react";
+import { useToast } from "../../hooks/use-toast";
+import { cn } from "../../lib/utils";
+import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle } from "../ui/toast";
 
 // Mapa de estilos para las variantes
 const variantStyles = {
@@ -56,8 +56,8 @@ export const CustomToast: React.FC = () => {
               toastDuration === "short"
                 ? 3000
                 : toastDuration === "long"
-                ? 7000
-                : Infinity;
+                  ? 7000
+                  : Infinity;
 
             return (
               <Toast

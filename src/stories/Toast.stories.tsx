@@ -1,9 +1,9 @@
-import React from "react";
 import { Meta, StoryFn } from "@storybook/react";
-import { Button } from "../components/ui/Button";
+import { AlertTriangle, CheckCircle, Smile } from "lucide-react";
+import React from "react";
 import { CustomToast } from "../components/custom/CustomToast";
+import { Button } from "../components/ui/Button";
 import { useToast } from "../hooks/use-toast";
-import { Smile, AlertTriangle, CheckCircle } from "lucide-react";
 
 const meta: Meta = {
   title: "Components/ui/Toast",
@@ -90,7 +90,7 @@ Success.args = {
   toastDuration: "long",
   position: "bottom-right",
   title: "Success Toast",
-  description: "This toast indicates success.", 
+  description: "This toast indicates success.",
   icon: <CheckCircle className="text-green-600" />, // Otro ejemplo con un icono personalizado
 };
 
