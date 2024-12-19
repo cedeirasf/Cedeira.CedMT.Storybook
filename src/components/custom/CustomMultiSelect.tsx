@@ -14,7 +14,7 @@ const multiselectVariants = cva(
   {
     variants: {
       size: {
-        small: "h-8 text-xs",
+        small: "min-h-8 text-xs py-0.5",
         medium: "min-h-10",
         large: "min-h-12 text-lg",
       },
@@ -126,7 +126,7 @@ export function CustomMultiselect({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className={cn(multiselectVariants({ size, state: internalState }), className)}>
-            <div className="flex flex-wrap items-center gap-1 p-2 pe-8">
+            <div className="flex flex-wrap items-center gap-1 p-2 pe-8 overflow-hidden">
               {safeSelected.length > 0 ? (
                 <>
                   {visibleTags.map((value) => {
@@ -136,19 +136,21 @@ export function CustomMultiselect({
                         key={value}
                         label={option?.label || value}
                         onRemove={() => handleSelect(value)}
-                        size="sm"
+                        size={size === "small" ? "sm" : "sm"}
                         color="blue"
                         rounded="full"
                         truncate
+                        className="my-0.5"
                       />
                     )
                   })}
                   {hiddenTagsCount > 0 && (
                     <TagFilter
-                      label={`+${hiddenTagsCount} more`}
-                      size="sm"
+                      label={`+${hiddenTagsCount}`}
+                      size={size === "small" ? "sm" : "sm"}
                       color="neutral"
                       rounded="full"
+                      className="my-0.5"
                     />
                   )}
                 </>
@@ -218,7 +220,7 @@ export function CustomMultiselect({
                 className="flex items-center"
                 type="button"
               >
-                <Trash2 className=" h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
               <Button
                 variant="outline"
