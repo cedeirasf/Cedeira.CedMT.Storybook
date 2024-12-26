@@ -1,250 +1,313 @@
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
-import { cva, type VariantProps } from "class-variance-authority"
-import { Check, ChevronDown, Trash2 } from 'lucide-react'
-import * as React from "react"
-import TagFilter from "./CustomTagFilter"
+'use client';
+
+import TagFilter from './CustomTagFilter';
+import {
+  Command,
+  CommandItem,
+  CommandEmpty,
+  CommandList,
+  CommandGroup,
+  CommandInput,
+} from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
+import React, {
+  KeyboardEvent,
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
+import { Button } from '@/components/ui/button';
+import { MultiSelectContextProps, MultiSelectorProps, TagFilterStyleProps } from '@/types/components/custom-multiselect.type';
 
 
-const multiselectVariants = cva(
-  "relative flex w-full rounded-md border bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-none",
-  {
-    variants: {
-      size: {
-        small: "min-h-8 text-xs py-0.5",
-        medium: "min-h-10",
-        large: "min-h-12 text-lg",
-      },
-      state: {
-        default: "border-input-dark dark:border-input",
-        error: "border-destructive focus-within:ring-destructive",
-        active: "border-primary ring-2 ring-primary",
-      },
-    },
-    defaultVariants: {
-      size: "medium",
-      state: "default",
-    },
+
+const MultiSelectContext = createContext<MultiSelectContextProps | null>(null);
+
+const useMultiSelect = () => {
+  const context = useContext(MultiSelectContext);
+  if (!context) {
+    throw new Error('useMultiSelect must be used within MultiSelectProvider');
   }
-)
+  return context;
+};
 
-export type Option = {
-  value: string
-  label: string
-}
-
-interface CustomMultiselectProps extends VariantProps<typeof multiselectVariants> {
-  options?: Option[]
-  selected?: string[]
-  onChange: (selected: string[]) => void
-  placeholder?: string
-  label?: string
-  maxCount?: number
-  className?: string
-  helperText?: string
-}
-
-export function CustomMultiselect({
-  options = [],
-  selected = [],
-  onChange,
-  placeholder = "Select options...",
-  label,
-  maxCount = 3,
+const MultiSelector = ({
+  values: value,
+  onValuesChange: onValueChange,
+  options,
+  maxCount,
+  placeholder,
   className,
-  size,
-  state,
-  helperText,
-}: CustomMultiselectProps) {
-  const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState("")
-  const [internalState, setInternalState] = React.useState(state)
+  tagStyles,
+  children,
+  ...props
+}: MultiSelectorProps) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState('');
 
-  const safeOptions = React.useMemo(() => options ?? [], [options])
-  const safeSelected = React.useMemo(() => selected ?? [], [selected])
+  const selectAll = useCallback(() => {
+    onValueChange(options.map(option => option.value));
+  }, [options, onValueChange]);
 
-  const filteredOptions = React.useMemo(() =>
-    safeOptions.filter((option) =>
-      option.label.toLowerCase().includes(searchValue.toLowerCase())
-    ),
-    [safeOptions, searchValue]
-  )
+  const deselectAll = useCallback(() => {
+    onValueChange([]);
+  }, [onValueChange]);
 
-  const handleSelect = React.useCallback((currentValue: string) => {
-    const newSelected = safeSelected.includes(currentValue)
-      ? safeSelected.filter((item) => item !== currentValue)
-      : [...safeSelected, currentValue]
-    onChange(newSelected)
-  }, [safeSelected, onChange])
+  const onValueChangeHandler = useCallback(
+    (val: string) => {
+      const newValues = value.includes(val)
+        ? value.filter((v) => v !== val)
+        : [...value, val];
+      onValueChange(newValues);
+    },
+    [value, onValueChange]
+  );
 
-  const handleSelectAll = React.useCallback(() => {
-    const allValues = safeOptions.map((option) => option.value)
-    onChange(allValues)
-  }, [safeOptions, onChange])
+  const isAllSelected = value.length === options.length;
 
-  const handleClear = React.useCallback(() => {
-    onChange([])
-    setOpen(false)
-  }, [onChange])
-
-  const visibleTags = React.useMemo(() =>
-    safeSelected.slice(0, maxCount),
-    [safeSelected, maxCount]
-  )
-
-  const hiddenTagsCount = React.useMemo(() =>
-    Math.max(0, safeSelected.length - maxCount),
-    [safeSelected.length, maxCount]
-  )
-
-  const inputId = React.useId()
-
-  React.useEffect(() => {
-    if (state === 'error' && safeSelected.length > 0) {
-      setInternalState('default')
-    } else {
-      setInternalState(state)
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      setOpen(false);
     }
-  }, [state, safeSelected])
+  };
 
   return (
-    <div className="flex flex-col gap-1.5">
-      {label && (
-        <label
-          htmlFor={inputId}
-          className={cn(
-            "text-sm font-medium text-foreground",
-            internalState === "error" && "text-destructive"
-          )}
-        >
-          {label}
-        </label>
+    <MultiSelectContext.Provider
+      value={{
+        value,
+        options,
+        onValueChange: onValueChangeHandler,
+        open,
+        setOpen,
+        search,
+        setSearch,
+        selectAll,
+        deselectAll,
+        isAllSelected,
+        maxCount,
+        placeholder,
+        tagStyles
+      }}
+    >
+      <div className="relative w-full" onKeyDown={handleKeyDown} {...props}>
+        <Command className={cn('w-full', className)}>
+          {children}
+        </Command>
+      </div>
+    </MultiSelectContext.Provider>
+  );
+};
+
+// Omitir 'color' de HTMLAttributes para evitar el conflicto
+type MultiSelectorTriggerProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'color'> & TagFilterStyleProps;
+
+const MultiSelectorTrigger = forwardRef<
+  HTMLDivElement,
+  MultiSelectorTriggerProps
+>(({ className, color, size, rounded, ...props }, ref) => {
+  const { value, options, onValueChange, open, setOpen, maxCount, placeholder, tagStyles } = useMultiSelect();
+
+  const displayedTags = maxCount && value.length > maxCount 
+    ? value.slice(0, maxCount)
+    : value;
+
+  // Combine passed props with context tagStyles, with props taking precedence
+  const finalTagStyles: TagFilterStyleProps = {
+    ...tagStyles,
+    color: color || tagStyles?.color || 'blue',
+    size: size || tagStyles?.size || 'sm',
+    rounded: rounded || tagStyles?.rounded || 'full',
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'group relative cursor-pointer rounded-md border border-input bg-transparent px-3  text-start py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+        className
       )}
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <div className={cn(multiselectVariants({ size, state: internalState }), className)}>
-            <div className="flex flex-wrap items-center gap-1 p-2 pe-8 overflow-hidden">
-              {safeSelected.length > 0 ? (
-                <>
-                  {visibleTags.map((value) => {
-                    const option = safeOptions.find((opt) => opt.value === value)
-                    return (
-                      <TagFilter
-                        key={value}
-                        label={option?.label || value}
-                        onRemove={() => handleSelect(value)}
-                        size={size === "small" ? "sm" : "sm"}
-                        color="blue"
-                        rounded="full"
-                        truncate
-                        className="my-0.5"
-                      />
-                    )
-                  })}
-                  {hiddenTagsCount > 0 && (
-                    <TagFilter
-                      label={`+${hiddenTagsCount}`}
-                      size={size === "small" ? "sm" : "sm"}
-                      color="neutral"
-                      rounded="full"
-                      className="my-0.5"
-                    />
-                  )}
-                </>
-              ) : (
-                <span className="text-muted-foreground">{placeholder}</span>
-              )}
-            </div>
-            <div className="absolute right-2 top-2.5">
-              <ChevronDown className="h-4 w-4 opacity-50" />
-            </div>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-          <Command shouldFilter={false} className="border-none">
-            <div className="flex items-center border-b px-3">
-              {/*<Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />*/}
-              <CommandInput
-                placeholder="Search options..."
-                value={searchValue}
-                onValueChange={setSearchValue}
-                className="h-9 px-3"
-              />
-            </div>
-            <CommandList>
-              <CommandEmpty>No options found.</CommandEmpty>
-              <CommandGroup>
-                <ScrollArea className="h-[200px]">
-                  <CommandItem
-                    onSelect={handleSelectAll}
-                    className="flex items-center gap-2"
-                  >
-                    <div className="flex h-4 w-4 items-center justify-center rounded border border-primary dark:border-primary">
-                      <Check
-                        className={cn(
-                          "h-3 w-3 text-primary dark:text-primary-foreground transition-opacity",
-                          safeOptions.length === safeSelected.length ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                    </div>
-                    <span className="font-medium text-foreground dark:text-primary-foreground">Select All</span>
-                  </CommandItem>
-                  {filteredOptions.map((option) => (
-                    <CommandItem
-                      key={option.value}
-                      onSelect={() => handleSelect(option.value)}
-                      className="flex items-center gap-2"
-                    >
-                      <div className="flex h-4 w-4 items-center justify-center rounded border border-primary dark:border-primary">
-                        <Check
-                          className={cn(
-                            "h-3 w-3 text-primary dark:text-primary-foreground transition-opacity",
-                            safeSelected.includes(option.value) ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                      </div>
-                      <span>{option.label}</span>
-                    </CommandItem>
-                  ))}
-                </ScrollArea>
-              </CommandGroup>
-            </CommandList>
-            <div className="flex items-center justify-between border-t p-2">
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleClear}
-                className="flex items-center"
-                type="button"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOpen(false)}
-                type="button"
-              >
-                Cerrar
-              </Button>
-            </div>
-          </Command>
-        </PopoverContent>
-      </Popover>
-      {helperText && (
-        <p
-          className={cn(
-            "text-sm text-muted-foreground",
-            internalState === "error" && "text-destructive"
+      onClick={() => setOpen(!open)}
+      {...props}
+    >
+      <div className="flex items-center min-h-[20px]">
+      <div className="flex flex-wrap gap-1 items-center flex-1">
+          {displayedTags.map((item) => (
+            <TagFilter
+              key={item}
+              label={options.find(opt => opt.value === item)?.label || item}
+              onRemove={() => onValueChange(item)}
+              {...finalTagStyles}
+            />
+          ))}
+          {maxCount && value.length > maxCount && (
+            <TagFilter
+              label={`+${value.length - maxCount}`}
+              {...finalTagStyles}
+              color="neutral"
+            />
           )}
-        >
-          {helperText}
-        </p>
-      )}
+          {!value.length && placeholder && (
+            <span className="text-muted-foreground text-sm">{placeholder}</span>
+          )}
+        </div>
+        <div className="flex items-center ml-2">
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+});
+
+MultiSelectorTrigger.displayName = 'MultiSelectorTrigger';
+
+const MultiSelectorContent = forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const { open } = useMultiSelect();
+
+  if (!open) return null;
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'absolute left-0 top-full z-50 min-w-[200px] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 mt-2',
+        className
+      )}
+      {...props}
+    />
+  );
+});
+
+MultiSelectorContent.displayName = 'MultiSelectorContent';
+
+const MultiSelectorInput = forwardRef<
+  HTMLInputElement,
+  React.ComponentPropsWithoutRef<typeof CommandInput>
+>(({ className, ...props }, ref) => {
+  const { search, setSearch } = useMultiSelect();
+
+  return (
+    <CommandInput
+      ref={ref}
+      value={search}
+      onValueChange={setSearch}
+      className={cn('border-none focus:ring-0', className)}
+      {...props}
+    />
+  );
+});
+
+MultiSelectorInput.displayName = 'MultiSelectorInput';
+
+const MultiSelectorList = forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof CommandList>
+>(({ className, ...props }, ref) => {
+  const { options, value, onValueChange, search, isAllSelected, selectAll, deselectAll } = useMultiSelect();
+
+  return (
+    <CommandList
+      ref={ref}
+      className={cn(
+        'max-h-[200px] overflow-y-auto overscroll-contain',
+        'scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500',
+        className
+      )}
+      {...props}
+    >
+      <CommandEmpty>No hay resultados.</CommandEmpty>
+      <CommandGroup>
+        <CommandItem
+          onSelect={() => {
+            if (isAllSelected) {
+              deselectAll();
+            } else {
+              selectAll();
+            }
+          }}
+        >
+          <div className="flex items-center">
+            <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
+              {isAllSelected ? (
+                <Check className="h-4 w-4" />
+              ) : null}
+            </div>
+            Seleccionar Todo
+          </div>
+        </CommandItem>
+        {options
+          .filter(option => 
+            option.label.toLowerCase().includes(search.toLowerCase()) ||
+            option.value.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((option) => (
+            <CommandItem
+              key={option.value}
+              onSelect={() => onValueChange(option.value)}
+            >
+              <div className="flex items-center">
+                <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
+                  {value.includes(option.value) ? (
+                    <Check className="h-4 w-4" />
+                  ) : null}
+                </div>
+                {option.label}
+              </div>
+            </CommandItem>
+          ))}
+      </CommandGroup>
+    </CommandList>
+  );
+});
+
+MultiSelectorList.displayName = 'MultiSelectorList';
+
+const MultiSelectorFooter = forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const { setOpen, deselectAll } = useMultiSelect();
+
+  return (
+    <div
+      ref={ref}
+      className={cn('border-t p-2 flex gap-2', className)}
+      {...props}
+    >
+      <Button
+        onClick={() => setOpen(false)}
+        variant="secondary"
+        className="flex-1"
+       
+      >
+        Cerrar
+      </Button>
+      <Button
+        onClick={() => {
+          deselectAll();
+          setOpen(false);
+        }}
+        variant="destructive"
+        size="icon"      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+});
+
+MultiSelectorFooter.displayName = 'MultiSelectorFooter';
+
+export {
+  MultiSelector,
+  MultiSelectorTrigger,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorList,
+  MultiSelectorFooter,
+};
 
