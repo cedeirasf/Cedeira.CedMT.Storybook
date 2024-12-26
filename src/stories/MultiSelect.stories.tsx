@@ -1,12 +1,12 @@
-import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import {
   MultiSelector,
-  MultiSelectorTrigger,
   MultiSelectorContent,
+  MultiSelectorFooter,
   MultiSelectorInput,
   MultiSelectorList,
-  MultiSelectorFooter,
+  MultiSelectorTrigger,
 } from "../components/custom/CustomMultiSelect";
 
 const meta: Meta<typeof MultiSelector> = {
@@ -104,7 +104,7 @@ const MultiSelectWrapper: Story["render"] = (args) => {
           onValuesChange={setValues}
           options={options}
           {...args}
-          
+
           tagStyles={tagStyles}
         >
           <MultiSelectorTrigger />

@@ -1,15 +1,14 @@
-'use client';
-
-import TagFilter from './CustomTagFilter';
+import { Button } from '@/components/ui/button';
 import {
   Command,
-  CommandItem,
   CommandEmpty,
-  CommandList,
   CommandGroup,
   CommandInput,
+  CommandItem,
+  CommandList,
 } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
+import { MultiSelectContextProps, MultiSelectorProps, TagFilterStyleProps } from '@/types/components/custom-multiselect.type';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
 import React, {
   KeyboardEvent,
@@ -19,8 +18,7 @@ import React, {
   useContext,
   useState,
 } from 'react';
-import { Button } from '@/components/ui/button';
-import { MultiSelectContextProps, MultiSelectorProps, TagFilterStyleProps } from '@/types/components/custom-multiselect.type';
+import TagFilter from './CustomTagFilter';
 
 
 
@@ -110,7 +108,7 @@ const MultiSelectorTrigger = forwardRef<
 >(({ className, color, size, rounded, ...props }, ref) => {
   const { value, options, onValueChange, open, setOpen, maxCount, placeholder, tagStyles } = useMultiSelect();
 
-  const displayedTags = maxCount && value.length > maxCount 
+  const displayedTags = maxCount && value.length > maxCount
     ? value.slice(0, maxCount)
     : value;
 
@@ -133,7 +131,7 @@ const MultiSelectorTrigger = forwardRef<
       {...props}
     >
       <div className="flex items-center min-h-[20px]">
-      <div className="flex flex-wrap gap-1 items-center flex-1">
+        <div className="flex flex-wrap gap-1 items-center flex-1">
           {displayedTags.map((item) => (
             <TagFilter
               key={item}
@@ -241,7 +239,7 @@ const MultiSelectorList = forwardRef<
           </div>
         </CommandItem>
         {options
-          .filter(option => 
+          .filter(option =>
             option.label.toLowerCase().includes(search.toLowerCase()) ||
             option.value.toLowerCase().includes(search.toLowerCase())
           )
@@ -283,7 +281,7 @@ const MultiSelectorFooter = forwardRef<
         onClick={() => setOpen(false)}
         variant="secondary"
         className="flex-1"
-       
+
       >
         Cerrar
       </Button>
@@ -303,11 +301,7 @@ const MultiSelectorFooter = forwardRef<
 MultiSelectorFooter.displayName = 'MultiSelectorFooter';
 
 export {
-  MultiSelector,
-  MultiSelectorTrigger,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorList,
-  MultiSelectorFooter,
+  MultiSelector, MultiSelectorContent, MultiSelectorFooter, MultiSelectorInput,
+  MultiSelectorList, MultiSelectorTrigger
 };
 
