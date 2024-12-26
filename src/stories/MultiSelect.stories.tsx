@@ -10,7 +10,7 @@ import {
 } from "../components/custom/CustomMultiSelect";
 
 const meta: Meta<typeof MultiSelector> = {
-  title: "Components/MultiSelect",
+  title: "Components/ui/MultiSelect",
   component: MultiSelector,
   parameters: {
     layout: "centered",
