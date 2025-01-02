@@ -36,6 +36,19 @@ const meta: Meta<typeof SheetContent> = {
       control: 'text',
     },
   },
+  decorators: [
+    (Story, context) => {
+      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
+      }
+
+      return <Story />;
+    },
+  ],
 }
 
 export default meta
@@ -48,18 +61,19 @@ const SheetDemo = (args: React.ComponentProps<typeof SheetContent>) => (
     </SheetTrigger>
     <SheetContent {...args}>
       <SheetHeader>
-        <SheetTitle>Sheet Title</SheetTitle>
+        <SheetTitle>Titulo</SheetTitle>
         <SheetDescription>
-          This is a description of the sheet content.
+              Descripción de la sheet
         </SheetDescription>
       </SheetHeader>
       <div className="py-4">
-        This is the main content of the sheet.
-        You can put any components or text here.
+        <p>
+            Contenido de la sheet
+        </p>
       </div>
       <SheetFooter>
         <SheetClose asChild>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit">Guardar</Button>
         </SheetClose>
       </SheetFooter>
     </SheetContent>
