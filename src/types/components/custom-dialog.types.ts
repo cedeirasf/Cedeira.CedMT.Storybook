@@ -1,6 +1,6 @@
 export interface ICustomDialog {
   isOpen?: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   closeOnClickOutside?: boolean;
   backdropOpacity?: number;
   title?: string | React.ReactNode;
@@ -9,4 +9,5 @@ export interface ICustomDialog {
   footer?: React.ReactNode;
   contentClassName?: string;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
+  disableEscapeKeyDown?: boolean;
 }

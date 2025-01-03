@@ -20,10 +20,11 @@ export const CustomDialog: React.FC<ICustomDialog> = ({
   closeOnClickOutside = true,
   backdropOpacity = 0.2,
   size = "md",
+  disableEscapeKeyDown = false,
   ...props
 }) => {
   const handleOpenChange = (open: boolean) => {
-    if (!open && onClose) {
+    if (!open) {
       onClose();
     }
   };
@@ -50,6 +51,9 @@ export const CustomDialog: React.FC<ICustomDialog> = ({
         )}
         onInteractOutside={(e) => {
           if (!closeOnClickOutside) e.preventDefault();
+        }}
+        onEscapeKeyDown={(e) => {
+          if (disableEscapeKeyDown) e.preventDefault();
         }}
         {...props}
       >
