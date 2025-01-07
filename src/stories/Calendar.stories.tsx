@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
 import { Calendar } from "../components/ui/calendar";
 import { format } from "date-fns";
+import React, { useState } from "react";
 
 const meta: Meta<typeof Calendar> = {
   title: "Components/ui/Calendar",
