@@ -1,25 +1,63 @@
 import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import { AdvancedFilterInput } from '../components/custom/AdvancedFilterInput/AdvancedFilterInput'
+import { AdvancedFilterInput } from '../components/custom/AdvancedFilter/AdvancedFilterInput'
 import { FilterOption } from '../types/components/advanced-input-filter.type'
 import { mockSuggestions } from  '../mocks/filter-data'
 
+
+
 const meta: Meta<typeof AdvancedFilterInput> = {
-  title: 'Components/AdvancedFilterInput',
+  title: 'Components/ui/AdvancedFilterInput',
   component: AdvancedFilterInput,
   parameters: {
     layout: 'padded',
     backgrounds: {
       default: 'light',
+      values: [
+        { name: 'light', value: '#ffffff' },
+        { name: 'dark', value: '#1a202c' },
+      ],
     },
   },
   decorators: [
-    (Story) => (
-      <div className="w-full max-w-3xl rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light"
+
+      if (typeof window !== "undefined") {
+        const root = document.documentElement
+        root.classList.remove("light", "dark")
+        root.classList.add(theme)
+      }
+
+      return (
+        <div className={`w-full max-w-3xl rounded-lg border border-input bg-background  shadow-sm ${theme === 'dark' ? 'dark' : ''}`}>
+          <Story />
+        </div>
+      )
+    },
   ],
+  argTypes: {
+    selectedFilters: { 
+      control: 'object',
+      description: 'Array de filtros seleccionados actualmente'
+    },
+    onAddFilter: { 
+      action: 'onAddFilter',
+      description: 'Función llamada cuando se agrega un nuevo filtro'
+    },
+    onRemoveFilter: { 
+      action: 'onRemoveFilter',
+      description: 'Función llamada cuando se elimina un filtro'
+    },
+    onClearAll: { 
+      action: 'onClearAll',
+      description: 'Función llamada cuando se eliminan todos los filtros'
+    },
+    onSearch: { 
+      action: 'onSearch',
+      description: 'Función asincrónica llamada para realizar búsquedas'
+    },
+  },
 }
 
 export default meta
@@ -48,5 +86,131 @@ const defaultArgs = {
 
 export const Default: Story = {
   args: defaultArgs,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Estado por defecto del componente mostrando múltiples filtros seleccionados.',
+      },
+    },
+  },
 }
+
+export const DarkMode: Story = {
+  args: defaultArgs,
+  parameters: {
+    backgrounds: { default: 'dark' },
+    docs: {
+      description: {
+        story: 'Visualización del componente en modo oscuro.',
+      },
+    },
+  },
+}
+
+export const Empty: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Estado inicial del componente sin filtros seleccionados.',
+      },
+    },
+  },
+}
+
+export const SingleFilter: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [mockFilters[0]],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Componente con un único filtro seleccionado.',
+      },
+    },
+  },
+}
+
+export const LoadingState: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [],
+    onSearch: async () => {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      return []
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demuestra el estado de carga durante la búsqueda de filtros. El indicador de carga se mostrará por 5 segundos.',
+      },
+    },
+  },
+}
+
+export const NoResults: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [],
+    onSearch: async () => {
+      await new Promise(resolve => setTimeout(resolve, 300))
+      return []
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Muestra el estado cuando la búsqueda no encuentra resultados.',
+      },
+    },
+  },
+}
+
+export const ErrorState: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [],
+    onSearch: async () => {
+      await new Promise(resolve => setTimeout(resolve, 300))
+      throw new Error('Error de búsqueda')
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demuestra el manejo de errores durante la búsqueda de filtros.',
+      },
+    },
+  },
+}
+
+export const LongLabelFilter: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [
+      {
+        id: '6',
+        type: 'text',
+        label: 'Este es un filtro con un nombre extremadamente largo que debería truncarse en la interfaz',
+        source: '1',
+        field: '4',
+        operator: '3',
+        value: 'texto largo'
+      }
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Muestra cómo se manejan las etiquetas largas en los filtros.',
+      },
+    },
+  },
+}
+
 

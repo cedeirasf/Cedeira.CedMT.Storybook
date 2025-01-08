@@ -21,6 +21,7 @@ import {
 import CustomTagFilter from '../CustomTagFilter'
 import { DropdownFilterList } from './DropdownFilterList'
 import { FilterForm } from './FilterForm'
+import { Input } from '@/components/ui/input'
 
 const DEBOUNCE_DELAY = 300
 
@@ -48,6 +49,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<FilterOption[]>(initialFilters)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setSelectedFilters(initialFilters)
@@ -56,16 +58,19 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   const handleSearch = useCallback(async () => {
     if (!debouncedQuery) {
       setSuggestions([])
+      setError(null)
       return
     }
 
     setIsLoading(true)
+    setError(null)
     try {
       const results = await onSearch(debouncedQuery)
       setSuggestions(results)
     } catch (error) {
       console.error('Error searching:', error)
       setSuggestions([])
+      setError('Ocurrió un error durante la búsqueda. Por favor, intente nuevamente.')
     } finally {
       setIsLoading(false)
     }
@@ -74,6 +79,38 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   useEffect(() => {
     handleSearch()
   }, [debouncedQuery, handleSearch])
+
+  const formatDateForDisplay = (value: string | number | Date): string => {
+    if (typeof value === 'string' && value.startsWith('today')) {
+      const [, time] = value.split(' ')
+      const now = new Date()
+      return `Hoy ${time || now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`
+    }
+    try {
+      const date = new Date(value)
+      if (isNaN(date.getTime())) return String(value)
+      
+      const today = new Date()
+      if (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      ) {
+        return `Hoy ${date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`
+      }
+      
+      return date.toLocaleString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    } catch (error) {
+      console.error('Error formatting date for display:', error)
+      return String(value)
+    }
+  }
 
   const getFilterDisplayText = (filter: Partial<FilterOption>): string => {
     if (!filter.field || !filter.operator) return '';
@@ -93,37 +130,6 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
     return `${sourceLabel ? `${sourceLabel}: ` : ''}${fieldLabel} ${operatorLabel.toLowerCase()} ${displayValue || ''}`
   }
 
-  const formatDateForDisplay = (value: string | number | Date): string => {
-    if (value === 'today') {
-      const now = new Date()
-      return `Hoy ${now.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}`
-    }
-    try {
-      const date = new Date(value)
-      if (isNaN(date.getTime())) return String(value)
-      
-      const today = new Date()
-      if (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      ) {
-        return `Hoy ${date.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}`
-      }
-      
-      return date.toLocaleString('es', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    } catch (error) {
-      console.error('Error formatting date for display:', error)
-      return String(value)
-    }
-  }
-
   const handleFormSubmit = (data: FilterFormData) => {
     const field = fields.find(f => f.id === data.field)
     let value = data.value
@@ -138,9 +144,9 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
           inputDate.getMonth() === today.getMonth() &&
           inputDate.getDate() === today.getDate()
         ) {
-          value = 'today'
+          value = `today ${inputDate.toTimeString().slice(0, 5)}` // Store as "today HH:MM"
         } else {
-          value = inputDate.toISOString()
+          value = inputDate.toISOString() // Store full ISO string
         }
       } catch (error) {
         console.error('Error processing date value:', error)
@@ -205,9 +211,18 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   const formatDateForInput = (value: string | number | Date | undefined): string => {
     if (!value) return ''
     
-    if (value === 'today') {
-      const now = new Date()
-      return now.toISOString().slice(0, 16)
+    if (typeof value === 'string') {
+      if (value.startsWith('today')) {
+        const [, time = '00:00'] = value.split(' ')
+        const [hours, minutes] = time.split(':')
+        const now = new Date()
+        now.setHours(parseInt(hours, 10))
+        now.setMinutes(parseInt(minutes, 10))
+        return now.toISOString().slice(0, 16)
+      } else if (value.includes('T')) {
+        // It's likely an ISO string, so we can return it as is
+        return value.slice(0, 16)
+      }
     }
     
     try {
@@ -244,79 +259,64 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
 
   return (
     <div className="relative w-full">
-      <div className="flex h-10 items-center rounded-lg border border-gray-200 bg-white shadow-sm">
-        {/* Search input section */}
-        <div className="flex min-w-[180px] flex-1 items-center gap-2 px-3">
+      <div className="relative">
+        <Input
+          ref={inputRef}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && query.trim()) {
+              e.preventDefault()
+              handleCreateTextFilter(query.trim())
+            }
+          }}
+          className="pl-9 pr-[90px]"
+          placeholder="Filtrar por..."
+          size="medium"
+          state="default"
+        />
+        <div className="absolute left-3 top-1/2 -translate-y-1/2">
           {isLoading ? (
-            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-gray-400" />
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           ) : (
-            <Search className="h-4 w-4 shrink-0 text-gray-400" />
+            <Search className="h-4 w-4 text-muted-foreground" />
           )}
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && query.trim()) {
-                e.preventDefault()
-                handleCreateTextFilter(query.trim())
-              }
-            }}
-            className="w-full min-w-[120px] bg-transparent text-sm placeholder:text-gray-400 focus:outline-none"
-            placeholder="Filtrar por..."
-          />
         </div>
-
-        {/* Tags section */}
-        {selectedFilters.length > 0 && (
-          <div className="flex flex-1 items-center gap-2 px-2">
-            <div className="flex items-center gap-2">
-              <CustomTagFilter
-                key={`visible-${selectedFilters[0].id}`}
-                label={selectedFilters[0].label}
-                onClick={() => handleFilterEdit(selectedFilters[0])}
-                onRemove={() => handleRemoveFilter(selectedFilters[0].id)}
-                color="neutral"
-                size="sm"
-                rounded="md"
-                className="shrink-0 bg-gray-200 text-sm hover:bg-gray-300 max-w-[180px] truncate"
-              />
-              {selectedFilters.length > 1 && (
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+          {selectedFilters.length > 0 && (
+            <div className="flex items-center gap-1">
+              {selectedFilters.slice(0, 2).map((filter) => (
                 <CustomTagFilter
-                  key={`visible-${selectedFilters[1].id}`}
-                  label={selectedFilters[1].label}
-                  onClick={() => handleFilterEdit(selectedFilters[1])}
-                  onRemove={() => handleRemoveFilter(selectedFilters[1].id)}
+                  key={`visible-${filter.id}`}
+                  label={filter.label}
+                  onClick={() => handleFilterEdit(filter)}
+                  onRemove={() => handleRemoveFilter(filter.id)}
                   color="neutral"
                   size="sm"
                   rounded="md"
-                  className="shrink-0 bg-gray-200 text-sm hover:bg-gray-300 max-w-[180px] truncate"
+                  className="shrink-0 bg-secondary/80 text-xs hover:bg-secondary max-w-[100px] truncate dark:bg-secondary dark:text-secondary-foreground dark:hover:bg-secondary/80"
                 />
-              )}
+              ))}
             </div>
-          </div>
-        )}
-
-        {/* Filter button section */}
-        <div className="flex h-full shrink-0 items-center border-l border-gray-200 pl-1 pr-2 relative">
+          )}
           <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200"
+                className="h-7 w-7 rounded-full bg-secondary hover:bg-secondary/80 dark:bg-secondary dark:text-secondary-foreground dark:hover:bg-secondary/80"
               >
-                <Filter className="h-4 w-4 text-gray-600" />
-                {selectedFilters.length > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-[10px] font-medium text-white">
-                    {selectedFilters.length}
+                <Filter className="h-4 w-4 text-foreground" />
+                {selectedFilters.length > 2 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                    {selectedFilters.length - 2}
                   </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-[480px] p-0" 
+              className="w-[280px] sm:w-[480px] p-0"
               sideOffset={8}
             >
               <DropdownFilterList
@@ -325,12 +325,12 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
                 onRemove={handleRemoveFilter}
                 variant="grid"
               />
-              <div className="flex justify-end gap-2 border-t border-gray-100 p-2">
+              <div className="flex justify-end gap-2 border-t border-border p-2">
                 <Button
                   size="sm"
                   onClick={handleAddNewFilter}
                   variant="default"
-                  className="h-8 bg-green-500 text-white hover:bg-green-600"
+                  className="h-8 bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <Plus className="mr-2 h-3 w-3" />
                   Agregar
@@ -352,8 +352,14 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
         </div>
       </div>
 
+      {error && (
+        <div className="mt-2 text-sm text-red-500">
+          {error}
+        </div>
+      )}
+
       {suggestions.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-sm">
+        <div className="absolute z-50 mt-1 w-full rounded-md border border-input bg-background shadow-sm dark:border-input-dark dark:bg-card">
           <DropdownFilterList
             filters={suggestions}
             onSelect={handleSuggestionSelect}
@@ -364,7 +370,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
       )}
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent>
+        <SheetContent className="w-[100dvw] sm:w-full sm:max-w-md">
           <SheetHeader>
             <SheetTitle>
               {selectedFilter ? 'Editar filtro' : 'Agregar nuevo filtro'}

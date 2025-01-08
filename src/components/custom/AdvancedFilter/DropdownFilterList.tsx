@@ -5,6 +5,7 @@ import { FilterOption } from '@/types/components/advanced-input-filter.type'
 import { cn } from '@/lib/utils'
 import { X } from 'lucide-react'
 
+
 interface DropdownFilterListProps {
   filters: FilterOption[]
   onSelect?: (filter: FilterOption) => void
@@ -32,7 +33,7 @@ export const DropdownFilterList: React.FC<DropdownFilterListProps> = ({
 
   if (filters.length === 0) {
     return (
-      <div className="p-4 text-sm text-muted-foreground">
+      <div className="p-4 text-sm text-muted-foreground dark:text-muted-foreground">
         No se encontraron resultados
       </div>
     )
@@ -45,7 +46,7 @@ export const DropdownFilterList: React.FC<DropdownFilterListProps> = ({
           {filters.map((filter) => (
             <div
               key={filter.id}
-              className="flex items-center justify-between rounded-md px-2 py-2 text-sm text-gray-900 hover:bg-gray-100"
+              className="flex items-center justify-between rounded-md px-2 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground dark:text-foreground"
             >
               <button
                 className="flex-1 text-left"
@@ -67,7 +68,7 @@ export const DropdownFilterList: React.FC<DropdownFilterListProps> = ({
           {filters.map((filter) => (
             <div
               key={filter.id}
-              className="flex items-center justify-between rounded-full bg-gray-200 px-4 py-2 text-sm text-gray-900 hover:bg-gray-300"
+              className="flex items-center justify-between rounded-full bg-secondary px-4 py-2 text-sm text-secondary-foreground hover:bg-secondary/80 dark:bg-secondary dark:text-secondary-foreground dark:hover:bg-secondary/80"
             >
               <button
                 className="flex-1 truncate text-left"
