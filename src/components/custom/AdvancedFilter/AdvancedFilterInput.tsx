@@ -1,8 +1,7 @@
 import { fields, operators, sources } from '@/mocks/filter-data'
 import { FilterFormData, FilterOption } from '@/types/components/advanced-input-filter.type'
-import { Filter, Loader2, Plus, Search, Trash2 } from 'lucide-react'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import useDebounce from '../../../hooks/use-debounce'
+import { Filter, Plus, Trash2 } from 'lucide-react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Button } from '../../ui/button'
 import {
   DropdownMenu,
@@ -21,9 +20,7 @@ import {
 import CustomTagFilter from '../CustomTagFilter'
 import { DropdownFilterList } from './DropdownFilterList'
 import { FilterForm } from './FilterForm'
-import { Input } from '@/components/ui/input'
-
-const DEBOUNCE_DELAY = 300
+import { InputDebounce } from './InputDebounce'
 
 interface AdvancedFilterInputProps {
   onAddFilter: (filter: FilterOption) => void
@@ -41,7 +38,6 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   selectedFilters: initialFilters = [],
 }) => {
   const [query, setQuery] = useState('')
-  const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY)
   const [suggestions, setSuggestions] = useState<FilterOption[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -51,12 +47,8 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setSelectedFilters(initialFilters)
-  }, [initialFilters])
-
-  const handleSearch = useCallback(async () => {
-    if (!debouncedQuery) {
+  const handleSearch = useCallback(async (searchQuery: string) => {
+    if (!searchQuery) {
       setSuggestions([])
       setError(null)
       return
@@ -65,7 +57,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
     setIsLoading(true)
     setError(null)
     try {
-      const results = await onSearch(debouncedQuery)
+      const results = await onSearch(searchQuery)
       setSuggestions(results)
     } catch (error) {
       console.error('Error searching:', error)
@@ -74,11 +66,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
     } finally {
       setIsLoading(false)
     }
-  }, [debouncedQuery, onSearch])
-
-  useEffect(() => {
-    handleSearch()
-  }, [debouncedQuery, handleSearch])
+  }, [onSearch])
 
   const formatDateForDisplay = (value: string | number | Date): string => {
     if (typeof value === 'string' && value.startsWith('today')) {
@@ -260,7 +248,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
   return (
     <div className="relative w-full">
       <div className="relative">
-        <Input
+        <InputDebounce
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -270,18 +258,11 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
               handleCreateTextFilter(query.trim())
             }
           }}
-          className="pl-9 pr-[90px]"
+          onSearch={handleSearch}
+          isLoading={isLoading}
+          className="pr-[90px]"
           placeholder="Filtrar por..."
-          size="medium"
-          state="default"
         />
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          ) : (
-            <Search className="h-4 w-4 text-muted-foreground" />
-          )}
-        </div>
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {selectedFilters.length > 0 && (
             <div className="flex items-center gap-1">
@@ -359,7 +340,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
       )}
 
       {suggestions.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border border-input bg-background shadow-sm dark:border-input-dark dark:bg-card">
+        <div className="absolute z-50 mt-1 w-full rounded-md bg-background shadow-sm dark:bg-card">
           <DropdownFilterList
             filters={suggestions}
             onSelect={handleSuggestionSelect}
