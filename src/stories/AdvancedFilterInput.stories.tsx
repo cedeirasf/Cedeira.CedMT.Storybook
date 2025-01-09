@@ -49,6 +49,11 @@ const meta: Meta<typeof AdvancedFilterInput> = {
       action: 'onRemoveFilter',
       description: 'Función llamada cuando se elimina un filtro'
     },
+    variantDropdownList: {
+      control: { type: "select" },
+      options: ["grid", "list"],
+      description: 'Define el estilo del dropdown puede ser grid o list.'
+    },
     onClearAll: { 
       action: 'onClearAll',
       description: 'Función llamada cuando se eliminan todos los filtros'
