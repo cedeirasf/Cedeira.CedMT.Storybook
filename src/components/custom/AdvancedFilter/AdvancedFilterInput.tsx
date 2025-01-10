@@ -364,7 +364,7 @@ export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
             />
           </div>
 
-          <SheetFooter>
+          <SheetFooter className="mt-auto border-t px-4 pt-4">
             <SheetClose asChild>
               <Button
                 variant="outline"

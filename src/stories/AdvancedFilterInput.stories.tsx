@@ -2,9 +2,7 @@ import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import { AdvancedFilterInput } from '../components/custom/AdvancedFilter/AdvancedFilterInput'
 import { FilterOption } from '../types/components/advanced-input-filter.type'
-import { mockSuggestions } from  '../mocks/filter-data'
-
-
+import { mockSuggestions } from '../mocks/filter-data'
 
 const meta: Meta<typeof AdvancedFilterInput> = {
   title: 'Components/ui/AdvancedFilterInput',
@@ -30,7 +28,7 @@ const meta: Meta<typeof AdvancedFilterInput> = {
       }
 
       return (
-        <div className={`w-full max-w-3xl rounded-lg border border-input bg-background  shadow-sm ${theme === 'dark' ? 'dark' : ''}`}>
+        <div className={`w-full max-w-3xl rounded-lg border border-input bg-background shadow-sm ${theme === 'dark' ? 'dark' : ''}`}>
           <Story />
         </div>
       )
@@ -49,11 +47,6 @@ const meta: Meta<typeof AdvancedFilterInput> = {
       action: 'onRemoveFilter',
       description: 'Función llamada cuando se elimina un filtro'
     },
-    variantDropdownList: {
-      control: { type: "select" },
-      options: ["grid", "list"],
-      description: 'Define el estilo del dropdown puede ser grid o list.'
-    },
     onClearAll: { 
       action: 'onClearAll',
       description: 'Función llamada cuando se eliminan todos los filtros'
@@ -61,6 +54,11 @@ const meta: Meta<typeof AdvancedFilterInput> = {
     onSearch: { 
       action: 'onSearch',
       description: 'Función asincrónica llamada para realizar búsquedas'
+    },
+    variantDropdownList: {
+      control: { type: "select" },
+      options: ["grid", "list"],
+      description: 'Define el estilo del dropdown puede ser grid o list.'
     },
   },
 }
@@ -100,17 +98,6 @@ export const Default: Story = {
   },
 }
 
-export const DarkMode: Story = {
-  args: defaultArgs,
-  parameters: {
-    backgrounds: { default: 'dark' },
-    docs: {
-      description: {
-        story: 'Visualización del componente en modo oscuro.',
-      },
-    },
-  },
-}
 
 export const Empty: Story = {
   args: {
@@ -218,4 +205,17 @@ export const LongLabelFilter: Story = {
   },
 }
 
+export const ValidationError: Story = {
+  args: {
+    ...defaultArgs,
+    selectedFilters: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demuestra los errores de validación cuando se intenta enviar un formulario vacío. Para ver los errores, haga clic en "Agregar" y luego en "Crear Filtro" sin completar ningún campo.',
+      },
+    },
+  },
+}
 
