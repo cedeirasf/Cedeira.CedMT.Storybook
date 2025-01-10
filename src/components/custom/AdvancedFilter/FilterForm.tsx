@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import {
   Select,
   SelectContent,
@@ -6,10 +5,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { fields, operators, sources } from '@/mocks/filter-data'
+import { FilterFormData, FilterOption } from '@/types/components/advanced-input-filter.type'
+import React, { useEffect, useState } from 'react'
 import { Input } from '../../ui/input'
 import { Label } from '../../ui/label'
-import { sources, fields, operators } from '@/mocks/filter-data'
-import { FilterFormData, FilterOption } from '@/types/components/advanced-input-filter.type'
 
 
 interface FilterFormProps {
@@ -30,14 +30,14 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
   function formatInitialValue(data?: FilterOption): string {
     if (!data || data.value === undefined) return ''
-    
+
     if (data.type === 'date') {
       // Preserve the 'today' special value
       if (data.value === 'today') {
         const now = new Date()
         return now.toISOString().slice(0, 16)
       }
-      
+
       try {
         const date = new Date(data.value)
         return isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 16)
@@ -46,7 +46,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
         return ''
       }
     }
-    
+
     return data.value.toString()
   }
 
@@ -117,9 +117,9 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   }
 
   return (
-    <form 
-      id="filter-form" 
-      className="space-y-4" 
+    <form
+      id="filter-form"
+      className="space-y-4"
       onSubmit={handleSubmit}
     >
       <div className="space-y-2">
@@ -190,6 +190,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
           placeholder={selectedField?.type === 'date' ? 'Seleccionar fecha y hora' : 'Ingrese un valor'}
           disabled={isValueDisabled}
         />
+
       </div>
     </form>
   )
