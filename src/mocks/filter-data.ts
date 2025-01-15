@@ -1,4 +1,4 @@
-import {  Field, FilterOption } from  '../types/components/advanced-input-filter.type'
+import {  Field, FilterOption } from  '../types/components/custom-advanced-input-filter.type'
 
 export const sources = [
   { id: '1', label: 'Coelsa' },

@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { fields, operators, sources } from '@/mocks/filter-data'
-import { Field, FilterFormData, filterFormSchema, FilterOption } from '@/types/components/advanced-input-filter.type'
+import { Field, FilterFormData, filterFormSchema, FilterOption } from '@/types/components/custom-advanced-input-filter.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'

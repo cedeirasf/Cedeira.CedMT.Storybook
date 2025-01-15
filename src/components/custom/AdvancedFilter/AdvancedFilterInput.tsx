@@ -1,5 +1,5 @@
 import { fields, operators, sources } from '@/mocks/filter-data'
-import { FilterFormData, FilterOption } from '@/types/components/advanced-input-filter.type'
+import { FilterFormData, FilterOption } from '@/types/components/custom-advanced-input-filter.type'
 import { Filter, Plus, Trash2 } from 'lucide-react'
 import React, { useCallback, useRef, useState } from 'react'
 import { Button } from '../../ui/button'

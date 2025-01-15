@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '../../ui/button'
 import { ScrollArea } from '../../ui/scroll-area'
-import { FilterOption } from '@/types/components/advanced-input-filter.type'
+import { FilterOption } from '@/types/components/custom-advanced-input-filter.type'
 import { cn } from '@/lib/utils'
 import { X } from 'lucide-react'
 
