@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../ui/tooltip";
-import { Content } from '@radix-ui/react-tooltip'
 import { cn } from "@/lib/utils";
 
 const variantStyles = {
@@ -11,27 +10,44 @@ const variantStyles = {
   info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200",
 };
 
-export interface CustomTooltipProps extends React.ComponentPropsWithoutRef<typeof Content> {
+export interface CustomTooltipProps {
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  delayDuration?: number
+  disableHoverableContent?: boolean
   children?: React.ReactNode; 
+  open?: boolean
   trigger?: React.ReactNode;
-  avoidCollisions?: boolean;
+  align?: "start" | "center" | "end"
+  side?: "top" | "right" | "bottom" | "left"
   variant?: "success" | "error" | "warning" | "info";
 }
 
 export const CustomTooltip: React.FC = ({
   children,
-  avoidCollisions = true,
   trigger,
   variant,
-  ...props
+  onOpenChange,
+  align,
+  side,
+  defaultOpen,
+  delayDuration,
+  disableHoverableContent,
+  open,
 }: CustomTooltipProps) => {
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip 
+        open={open}
+        onOpenChange={onOpenChange}
+        defaultOpen={defaultOpen}
+        delayDuration={delayDuration}
+        disableHoverableContent={disableHoverableContent}
+      >
         {trigger && <TooltipTrigger>{trigger}</TooltipTrigger>}
         <TooltipContent
-          {...props}
-          avoidCollisions={avoidCollisions}
+          side={side}
+          align={align}
           className={cn(
             variantStyles[variant as keyof typeof variantStyles]
           )}
