@@ -1,6 +1,6 @@
 import type { ICustomCalendarRange } from "../../types/components/custom-calendar-range.types";
 import { Calendar } from "@/components/ui/calendar";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 export const CustomCalendarRange: React.FC<ICustomCalendarRange> = ({
   selected,
@@ -23,7 +23,7 @@ export const CustomCalendarRange: React.FC<ICustomCalendarRange> = ({
       fromDate={fromDate}
       toDate={toDate}
       numberOfMonths={numberOfMonths}
-      className={clsx("rounded-md border shadow", className)}
+      className={cn("rounded-md border shadow", className)}
       {...props}
     />
   );
