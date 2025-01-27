@@ -16,7 +16,7 @@ export const CustomSelect = ({
 }: ICustomSelect) => {
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full min-w-[240px]">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

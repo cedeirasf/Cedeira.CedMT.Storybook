@@ -1,227 +1,350 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { fields, operators, sources } from '@/mocks/filter-data'
-import { Field, FilterFormData, filterFormSchema, FilterOption } from '@/types/components/custom-advanced-input-filter.type'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { CalendarIcon } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { CustomCalendar } from '../../custom/CustomCalendar'
-import { Button } from '../../ui/button'
-import { Input } from '../../ui/input'
-import { Label } from '../../ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover'
+import { CustomCalendar } from "@/components/custom/CustomCalendar"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import { FilterFormData, filterFormSchema, type Filter, type FilterFormProps } from "@/types/components/custom-advanced-input-filter.type"
+import { SelectOption } from "@/types/components/custom-select.types"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { format, isValid, parseISO } from "date-fns"
+import { es } from "date-fns/locale"
+import { CalendarIcon } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react"
+import { Controller, useForm } from "react-hook-form"
+import { CustomSelect } from "../CustomSelect"
 
-interface FilterFormProps {
-  initialData?: FilterOption;
-  onSubmit: (data: FilterFormData) => void;
-  formId?: string;
-}
-
-export const FilterForm: React.FC<FilterFormProps> = ({
-  initialData,
-  onSubmit,
-  formId = 'filter-form'
-}) => {
+export function FilterForm({ initialFilter, onSubmit, filterScheme, sources }: FilterFormProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
+  const previousFieldRef = useRef<string>("")
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FilterFormData>({
+  const isGenericFilter = initialFilter?.source === "*" && initialFilter?.field === "*"
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FilterFormData>({
     resolver: zodResolver(filterFormSchema),
     defaultValues: {
-      source: initialData?.source || '',
-      field: initialData?.field || '',
-      operator: initialData?.operator || '',
-      value: formatInitialValue(initialData) || '',
-    }
+      source: initialFilter?.source || "",
+      field: initialFilter?.field || "",
+      operator: initialFilter?.operator || "",
+      value: initialFilter?.value?.toString() || "",
+    },
   })
 
-  const watchedField = watch('field')
-  const selectedField = fields.find(f => f.id === watchedField)
+  const watchedSource = watch("source")
+  const watchedField = watch("field")
 
-  function formatInitialValue(data?: FilterOption): string {
-    if (!data || data.value === undefined) return ''
+  const selectedSource = useMemo(() => sources.find((s) => s.source === watchedSource), [sources, watchedSource])
 
-    if (data.type === 'date') {
-      if (typeof data.value === 'string' && data.value.startsWith('today')) {
-        const [, time] = data.value.split(' ')
-        const now = new Date()
-        now.setHours(parseInt(time.split(':')[0], 10))
-        now.setMinutes(parseInt(time.split(':')[1], 10))
-        return now.toISOString().slice(0, 16)
-      }
+  const selectedField = useMemo(() => selectedSource?.fields[watchedField], [selectedSource, watchedField])
 
-      try {
-        const date = new Date(data.value)
-        return isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 16)
-      } catch (error) {
-        console.error('Error formatting date:', error)
-        return ''
-      }
+  const selectedDataType = useMemo(
+    () => (selectedField ? filterScheme.data_types[selectedField.data_type] : null),
+    [selectedField, filterScheme],
+  )
+
+  // Reset value when field changes to prevent type mismatches
+  useEffect(() => {
+    if (watchedField !== previousFieldRef.current) {
+      setValue("value", "")
+      setValue("operator", "")
+      previousFieldRef.current = watchedField
     }
+  }, [watchedField, setValue])
 
-    return data.value.toString()
-  }
+  const sourceOptions = useMemo(
+    () =>
+      sources.map(
+        (source): SelectOption => ({
+          value: source.source,
+          label: source.display,
+        }),
+      ),
+    [sources],
+  )
+
+  const fieldOptions = useMemo(
+    () =>
+      selectedSource
+        ? Object.entries(selectedSource.fields).map(
+            ([key, field]): SelectOption => ({
+              value: key,
+              label: field.display,
+            }),
+          )
+        : [],
+    [selectedSource],
+  )
+
+  const operatorOptions = useMemo(
+    () =>
+      selectedDataType
+        ? Object.entries(selectedDataType.filtering_operators).map(
+            ([key, operator]): SelectOption => ({
+              value: key,
+              label: operator.display,
+            }),
+          )
+        : [],
+    [selectedDataType],
+  )
+
+  const valueOptions = useMemo(
+    () =>
+      selectedDataType?.options
+        ? Object.entries(selectedDataType.options).map(
+            ([value, label]): SelectOption => ({
+              value,
+              label: label.toString(),
+            }),
+          )
+        : [],
+    [selectedDataType],
+  )
 
   useEffect(() => {
-    if (initialData) {
-      setValue('source', initialData.source || '')
-      setValue('field', initialData.field || '')
-      setValue('operator', initialData.operator || '')
-      setValue('value', formatInitialValue(initialData))
+    if (!initialFilter) return
+
+    if (initialFilter.source === "*" && initialFilter.field === "*") {
+      setValue("source", initialFilter.source)
+      setValue("field", initialFilter.field)
+      setValue("operator", initialFilter.operator)
+      setValue("value", initialFilter.value?.toString() || "")
+      return
     }
-  }, [initialData, setValue])
 
-  const availableOperators = selectedField
-    ? operators.filter(op => selectedField.operators.includes(op.id))
-    : operators
+    startTransition(() => {
+      const source = sources.find((s) => s.source === initialFilter.source)
+      const field = source?.fields[initialFilter.field]
+      const dataType = field ? filterScheme.data_types[field.data_type] : null
 
-  const handleChange = (field: keyof FilterFormData, value: string) => {
-    setValue(field, value)
-    if (field === 'field') {
-      setValue('operator', '')
-      setValue('value', '')
+      setValue("source", initialFilter.source)
+      setValue("field", initialFilter.field)
+      setValue("operator", initialFilter.operator)
+
+      if (dataType?.primitive === "date" && initialFilter.value) {
+        try {
+          const date = parseISO(initialFilter.value.toString())
+          if (isValid(date)) {
+            setValue("value", date.toISOString())
+          } else {
+            setValue("value", "")
+          }
+        } catch (error) {
+          console.error("Error parsing date:", error)
+          setValue("value", "")
+        }
+      } else {
+        setValue("value", initialFilter.value?.toString() || "")
+      }
+    })
+  }, [initialFilter, setValue, sources, filterScheme])
+
+  const handleFormSubmit = useCallback(
+    (data: FilterFormData) => {
+      if (!data.source || !data.field || !data.operator || data.value === undefined) {
+        return
+      }
+
+      const filter: Filter = {
+        source: data.source,
+        field: data.field,
+        operator: data.operator,
+        value: data.value.toString(),
+      }
+
+      startTransition(() => {
+        onSubmit(filter)
+      })
+    },
+    [onSubmit],
+  )
+
+  const renderValueInput = useCallback(() => {
+    if (watchedSource === "*" && watchedField === "*") {
+      return (
+        <Controller
+          name="value"
+          control={control}
+          render={({ field }) => <Input {...field} type="text" placeholder="Ingrese un valor" />}
+        />
+      )
     }
-  }
 
-  const isValueDisabled = watch('operator') === '5' || watch('operator') === '6'
+    if (!selectedDataType) return null
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      const formattedDate = date.toISOString().slice(0, 16)
-      setValue('value', formattedDate)
-      setIsCalendarOpen(false)
+    if (selectedDataType.primitive === "date") {
+      return (
+        <Controller
+          name="value"
+          control={control}
+          render={({ field }) => (
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
+                  disabled={isPending}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {field.value && isValid(parseISO(field.value.toString())) ? (
+                    format(parseISO(field.value.toString()), "PPP", { locale: es })
+                  ) : (
+                    <span>Seleccionar fecha</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CustomCalendar
+                
+                  selected={field.value && isValid(parseISO(field.value.toString())) ? parseISO(field.value.toString()) : undefined}
+                  onSelect={(date) => {
+                    field.onChange(date ? date.toISOString() : "")
+                    setIsCalendarOpen(false)
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+        />
+      )
     }
-  }
 
-  const getInputType = (field: Field | undefined) => {
-    if (!field) return 'text'
-    switch (field.type) {
-      case 'date':
-        return 'date'
-      case 'number':
-        return 'number'
-      default:
-        return 'text'
+    if (selectedDataType.options) {
+      return (
+        <Controller
+          name="value"
+          control={control}
+          render={({ field }) => (
+            <CustomSelect
+              options={valueOptions}
+              placeholder="Seleccionar valor"
+              value={field.value?.toString() || ""}
+              onValueChange={field.onChange}
+              disabled={isPending}
+            />
+          )}
+        />
+      )
     }
-  }
+
+    if (selectedDataType.primitive === "number") {
+      return (
+        <Controller
+          name="value"
+          control={control}
+          render={({ field }) => (
+            <Input
+              type="number"
+              {...field}
+              onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : "")}
+              placeholder="Ingrese un número"
+              disabled={isPending}
+            />
+          )}
+        />
+      )
+    }
+
+    return (
+      <Controller
+        name="value"
+        control={control}
+        render={({ field }) => <Input {...field} type="text" placeholder="Ingrese un valor" disabled={isPending} />}
+      />
+    )
+  }, [watchedSource, watchedField, selectedDataType, control, isCalendarOpen, valueOptions, isPending])
 
   return (
-    <form
-      id={formId}
-      className="space-y-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="space-y-2">
-        <Label htmlFor="source">Origen</Label>
-        <Select
-          onValueChange={(value) => handleChange('source', value)}
-          defaultValue={watch('source')}
-        >
-          <SelectTrigger id="source">
-            <SelectValue placeholder="Seleccionar origen" />
-          </SelectTrigger>
-          <SelectContent>
-            {sources.map((source) => (
-              <SelectItem key={source.id} value={source.id}>
-                <span className="truncate">{source.label}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.source && <p className="text-sm text-red-500">{errors.source.message}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="field">Campo</Label>
-        <Select
-          onValueChange={(value) => handleChange('field', value)}
-          defaultValue={watch('field')}
-        >
-          <SelectTrigger id="field">
-            <SelectValue placeholder="Seleccionar campo" />
-          </SelectTrigger>
-          <SelectContent>
-            {fields.map((field) => (
-              <SelectItem key={field.id} value={field.id}>
-                <span className="truncate">{field.label}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.field && <p className="text-sm text-red-500">{errors.field.message}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="operator">Operador</Label>
-        <Select
-          onValueChange={(value) => handleChange('operator', value)}
-          defaultValue={watch('operator')}
-          disabled={!watch('field')}
-        >
-          <SelectTrigger id="operator">
-            <SelectValue placeholder="Seleccionar operador" />
-          </SelectTrigger>
-          <SelectContent>
-            {availableOperators.map((operator) => (
-              <SelectItem key={operator.id} value={operator.id}>
-                <span className="truncate">{operator.label}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.operator && <p className="text-sm text-red-500">{errors.operator.message}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="value">Valor</Label>
-        {selectedField && selectedField.type === 'date' ? (
-          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className={`w-full justify-between text-left font-normal ${!watch('value') && "text-muted-foreground"
-                  }`}
-              >
-                {(() => {
-                  const value = watch('value');
-                  if (value && typeof value === 'string') {
-                    return format(new Date(value), "dd/MM/yyyy", { locale: es });
-                  }
-                  return <span>Seleccionar fecha</span>;
-                })()}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <CustomCalendar
-                selected={(() => {
-                  const value = watch('value');
-                  return value && typeof value === 'string' ? new Date(value) : undefined;
-                })()}
-                onSelect={handleDateSelect}
-                initialFocus
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+      {!isGenericFilter && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="source" className="text-sm font-medium">
+              Fuente
+            </Label>
+            <div className="w-full">
+              <Controller
+                name="source"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    options={sourceOptions}
+                    placeholder="Seleccionar fuente"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={isPending}
+                  />
+                )}
               />
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <Input
-            id="value"
-            type={getInputType(selectedField)}
-            {...register('value')}
-            placeholder={selectedField?.type === 'date' ? 'Seleccionar fecha' : 'Ingrese un valor'}
-            disabled={isValueDisabled}
-          />
-        )}
-        {errors.value && <p className="text-sm text-red-500">{errors.value.message}</p>}
+            </div>
+            {errors.source && <p className="text-sm text-destructive">{errors.source.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="field" className="text-sm font-medium">
+              Campo
+            </Label>
+            <div className="w-full">
+              <Controller
+                name="field"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    options={fieldOptions}
+                    placeholder="Seleccionar campo"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!watchedSource || isPending}
+                  />
+                )}
+              />
+            </div>
+            {errors.field && <p className="text-sm text-destructive">{errors.field.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="operator" className="text-sm font-medium">
+              Operador
+            </Label>
+            <div className="w-full">
+              <Controller
+                name="operator"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    options={operatorOptions}
+                    placeholder="Seleccionar operador"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!watchedField || isPending}
+                  />
+                )}
+              />
+            </div>
+            {errors.operator && <p className="text-sm text-destructive">{errors.operator.message}</p>}
+          </div>
+        </>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="value" className="text-sm font-medium">
+          {isGenericFilter ? "Buscar por" : "Valor"}
+        </Label>
+        <div className="w-full">{renderValueInput()}</div>
+        {errors.value && <p className="text-sm text-destructive">{errors.value.message}</p>}
       </div>
+
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {initialFilter ? "Actualizar filtro" : "Crear filtro"}
+      </Button>
     </form>
   )
 }

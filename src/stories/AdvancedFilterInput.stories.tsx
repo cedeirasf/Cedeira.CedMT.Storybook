@@ -1,64 +1,69 @@
-import React from 'react'
-import { Meta, StoryObj } from '@storybook/react'
-import { AdvancedFilterInput } from '../components/custom/AdvancedFilter/AdvancedFilterInput'
-import { FilterOption } from '../types/components/advanced-input-filter.type'
-import { mockSuggestions } from '../mocks/filter-data'
+import type { Meta, StoryObj } from "@storybook/react"
+import { AdvancedFilterInput } from "../components/custom/AdvancedFilter/AdvancedFilterInput"
+import { mockChannelViewFilterSchemeResponse } from "../mocks/filter-data"
+import { useState } from "react"
+import * as React from "react"
 
+/**
+ * Configuración de la historia para el componente AdvancedFilterInput
+ * @type Meta
+ */
 const meta: Meta<typeof AdvancedFilterInput> = {
-  title: 'Components/ui/AdvancedFilterInput',
+  /** Ubicación en el árbol de historias de Storybook */
+  title: "Components/ui/AdvancedFilterInput",
+  /** Componente que se está documentando */
   component: AdvancedFilterInput,
+  /** Configuración del layout para la visualización */
   parameters: {
-    layout: 'padded',
-    backgrounds: {
-      default: 'light',
-      values: [
-        { name: 'light', value: '#ffffff' },
-        { name: 'dark', value: '#1a202c' },
-      ],
-    },
+    layout: "centered",
   },
+  /** Decoradores para envolver las historias */
   decorators: [
-    (Story, context) => {
-      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light"
-
-      if (typeof window !== "undefined") {
-        const root = document.documentElement
-        root.classList.remove("light", "dark")
-        root.classList.add(theme)
-      }
-
-      return (
-        <div className={`w-full max-w-3xl rounded-lg border border-input bg-background shadow-sm ${theme === 'dark' ? 'dark' : ''}`}>
-          <Story />
-        </div>
-      )
-    },
+    (Story) => (
+      <div className="w-[600px] p-4">
+        <Story />
+      </div>
+    ),
   ],
+  /** Documentación de los argumentos del componente */
+  args: {
+    /** Array de filtros seleccionados actualmente */
+    selectedFilters: mockChannelViewFilterSchemeResponse.filters,
+    /** Función que se ejecuta cuando cambian los filtros */
+    onFiltersChange: (filters) => console.log("Filtros actualizados:", filters),
+    /** Función asíncrona para realizar búsquedas */
+    onSearch: async (query) => {
+      console.log("Buscando:", query)
+      return mockChannelViewFilterSchemeResponse
+    },
+    /** Esquema que define los tipos de datos y operadores */
+    filterScheme: mockChannelViewFilterSchemeResponse.scheme,
+    /** Fuentes de datos disponibles */
+    sources: mockChannelViewFilterSchemeResponse.sources,
+  },
+  /** Documentación de los argumentos */
   argTypes: {
-    selectedFilters: { 
-      control: 'object',
-      description: 'Array de filtros seleccionados actualmente'
+    selectedFilters: {
+      description: "Array de filtros seleccionados actualmente",
+      control: "object",
     },
-    onAddFilter: { 
-      action: 'onAddFilter',
-      description: 'Función llamada cuando se agrega un nuevo filtro'
+    onFiltersChange: {
+      description: "Función que se ejecuta cuando cambian los filtros",
     },
-    onRemoveFilter: { 
-      action: 'onRemoveFilter',
-      description: 'Función llamada cuando se elimina un filtro'
+    onSearch: {
+      description: "Función asíncrona para realizar búsquedas",
     },
-    onClearAll: { 
-      action: 'onClearAll',
-      description: 'Función llamada cuando se eliminan todos los filtros'
+    filterScheme: {
+      description: "Esquema que define los tipos de datos y operadores",
+      control: "object",
     },
-    onSearch: { 
-      action: 'onSearch',
-      description: 'Función asincrónica llamada para realizar búsquedas'
+    sources: {
+      description: "Fuentes de datos disponibles",
+      control: "object",
     },
-    variantDropdownList: {
-      control: { type: "select" },
-      options: ["grid", "list"],
-      description: 'Define el estilo del dropdown puede ser grid o list.'
+    className: {
+      description: "Clase CSS opcional para personalizar el contenedor",
+      control: "text",
     },
   },
 }
@@ -66,156 +71,185 @@ const meta: Meta<typeof AdvancedFilterInput> = {
 export default meta
 type Story = StoryObj<typeof AdvancedFilterInput>
 
-const mockFilters: FilterOption[] = [
-  { id: '1', type: 'number', label: 'Importe mayor a 23', source: '1', field: '3', operator: '1', value: '23' },
-  { id: '2', type: 'select', label: 'TipoMov igual a \'C\'', source: '1', field: '1', operator: '1', value: 'C' },
-  { id: '3', type: 'text', label: 'CBU empieza con "123"', source: '1', field: '4', operator: '3', value: '123' },
-  { id: '4', type: 'date', label: 'Fecha desde Hoy 12:00pm', source: '1', field: '2', operator: '7', value: 'today' },
-  { id: '5', type: 'date', label: 'Fecha en Coelsa hasta Hoy 12:30pm', source: '1', field: '2', operator: '7', value: 'today' },
-]
+/**
+ * Historia predeterminada que muestra el componente con datos de ejemplo
+ */
+export const Predeterminado: Story = {
+  render: function Renderizar() {
+    // Asegurar que los filtros iniciales tengan el formato de fecha correcto
+    const [filtrosSeleccionados, setFiltrosSeleccionados] = useState(() =>
+      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters),
+    )
 
-const defaultArgs = {
-  selectedFilters: mockFilters,
-  onAddFilter: (filter: FilterOption) => console.log('Filtro añadido:', filter),
-  onRemoveFilter: (filterId: string) => console.log('Filtro eliminado:', filterId),
-  onClearAll: () => console.log('Todos los filtros eliminados'),
-  onSearch: async (query: string) => {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    return mockSuggestions.filter(suggestion =>
-      suggestion.label.toLowerCase().includes(query.toLowerCase())
+    const manejarBusqueda = async (consulta: string) => {
+      console.log("Buscando con la consulta:", consulta)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      return {
+        ...mockChannelViewFilterSchemeResponse,
+        filters: filtrosSeleccionados,
+      }
+    }
+
+    const manejarCambioFiltros = (nuevosFiltros) => {
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
+    }
+
+    return (
+      <AdvancedFilterInput
+        selectedFilters={filtrosSeleccionados}
+        onFiltersChange={manejarCambioFiltros}
+        onSearch={manejarBusqueda}
+        filterScheme={mockChannelViewFilterSchemeResponse.scheme}
+        sources={mockChannelViewFilterSchemeResponse.sources}
+      />
     )
   },
 }
 
-export const Default: Story = {
-  args: defaultArgs,
-  parameters: {
-    docs: {
-      description: {
-        story: 'Estado por defecto del componente mostrando múltiples filtros seleccionados.',
-      },
-    },
-  },
-}
+/**
+ * Historia que muestra el componente sin filtros iniciales
+ */
+export const Vacio: Story = {
+  render: function Renderizar() {
+    const [filtrosSeleccionados, setFiltrosSeleccionados] = useState([])
 
-
-export const Empty: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [],
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Estado inicial del componente sin filtros seleccionados.',
-      },
-    },
-  },
-}
-
-export const SingleFilter: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [mockFilters[0]],
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Componente con un único filtro seleccionado.',
-      },
-    },
-  },
-}
-
-export const LoadingState: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [],
-    onSearch: async () => {
-      await new Promise(resolve => setTimeout(resolve, 5000))
-      return []
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demuestra el estado de carga durante la búsqueda de filtros. El indicador de carga se mostrará por 5 segundos.',
-      },
-    },
-  },
-}
-
-export const NoResults: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [],
-    onSearch: async () => {
-      await new Promise(resolve => setTimeout(resolve, 300))
-      return []
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Muestra el estado cuando la búsqueda no encuentra resultados.',
-      },
-    },
-  },
-}
-
-export const ErrorState: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [],
-    onSearch: async () => {
-      await new Promise(resolve => setTimeout(resolve, 300))
-      throw new Error('Error de búsqueda')
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demuestra el manejo de errores durante la búsqueda de filtros.',
-      },
-    },
-  },
-}
-
-export const LongLabelFilter: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [
-      {
-        id: '6',
-        type: 'text',
-        label: 'Este es un filtro con un nombre extremadamente largo que debería truncarse en la interfaz',
-        source: '1',
-        field: '4',
-        operator: '3',
-        value: 'texto largo'
+    const manejarBusqueda = async (consulta: string) => {
+      console.log("Buscando con la consulta:", consulta)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      return {
+        ...mockChannelViewFilterSchemeResponse,
+        filters: filtrosSeleccionados,
       }
-    ],
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Muestra cómo se manejan las etiquetas largas en los filtros.',
-      },
-    },
+    }
+
+    const manejarCambioFiltros = (nuevosFiltros) => {
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
+    }
+
+    return (
+      <AdvancedFilterInput
+        selectedFilters={filtrosSeleccionados}
+        onFiltersChange={manejarCambioFiltros}
+        onSearch={manejarBusqueda}
+        filterScheme={mockChannelViewFilterSchemeResponse.scheme}
+        sources={mockChannelViewFilterSchemeResponse.sources}
+      />
+    )
   },
 }
 
-export const ValidationError: Story = {
-  args: {
-    ...defaultArgs,
-    selectedFilters: [],
+/**
+ * Historia que muestra el componente con una clase CSS personalizada
+ */
+export const ConClasePersonalizada: Story = {
+  render: function Renderizar() {
+    const [filtrosSeleccionados, setFiltrosSeleccionados] = useState(() =>
+      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters),
+    )
+
+    const manejarBusqueda = async (consulta: string) => {
+      console.log("Buscando con la consulta:", consulta)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      return {
+        ...mockChannelViewFilterSchemeResponse,
+        filters: filtrosSeleccionados,
+      }
+    }
+
+    const manejarCambioFiltros = (nuevosFiltros) => {
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
+    }
+
+    return (
+      <AdvancedFilterInput
+        selectedFilters={filtrosSeleccionados}
+        onFiltersChange={manejarCambioFiltros}
+        onSearch={manejarBusqueda}
+        filterScheme={mockChannelViewFilterSchemeResponse.scheme}
+        sources={mockChannelViewFilterSchemeResponse.sources}
+        className="border-2 border-primary p-4 rounded-xl"
+      />
+    )
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demuestra los errores de validación cuando se intenta enviar un formulario vacío. Para ver los errores, haga clic en "Agregar" y luego en "Crear Filtro" sin completar ningún campo.',
-      },
-    },
+}
+
+/**
+ * Historia que muestra el componente con una lista extendida de fuentes
+ */
+export const ConListaFuentesLarga: Story = {
+  render: function Renderizar() {
+    const [filtrosSeleccionados, setFiltrosSeleccionados] = useState(() =>
+      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters),
+    )
+
+    // Crear lista extendida de fuentes
+    const fuentesExtendidas = [
+      ...mockChannelViewFilterSchemeResponse.sources,
+      ...Array.from({ length: 5 }, (_, i) => ({
+        source: `FuenteExtra${i + 1}`,
+        display: `Fuente Extra ${i + 1}`,
+        fields: {
+          "[campo1]": {
+            display: "Campo 1",
+            data_type: "string",
+            filteringTips: [
+              {
+                tip: `Consejo para Fuente Extra ${i + 1}`,
+                filtering_operator: "eq",
+              },
+            ],
+          },
+        },
+      })),
+    ]
+
+    const manejarBusqueda = async (consulta: string) => {
+      console.log("Buscando con la consulta:", consulta)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      return {
+        ...mockChannelViewFilterSchemeResponse,
+        sources: fuentesExtendidas,
+        filters: filtrosSeleccionados,
+      }
+    }
+
+    const manejarCambioFiltros = (nuevosFiltros) => {
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
+    }
+
+    return (
+      <AdvancedFilterInput
+        selectedFilters={filtrosSeleccionados}
+        onFiltersChange={manejarCambioFiltros}
+        onSearch={manejarBusqueda}
+        filterScheme={mockChannelViewFilterSchemeResponse.scheme}
+        sources={fuentesExtendidas}
+      />
+    )
   },
+}
+
+/**
+ * Función auxiliar para asegurar que las fechas estén correctamente formateadas
+ * @param filtros - Array de filtros a procesar
+ * @returns Array de filtros con fechas en formato ISO
+ */
+const asegurarFechasValidas = (filtros) => {
+  return filtros.map((filtro) => {
+    const fuente = mockChannelViewFilterSchemeResponse.sources.find((s) => s.source === filtro.source)
+    if (!fuente) return filtro
+
+    const campo = fuente.fields[filtro.field]
+    if (!campo) return filtro
+
+    const tipoDato = mockChannelViewFilterSchemeResponse.scheme.data_types[campo.data_type]
+    if (!tipoDato || tipoDato.primitive !== "date") return filtro
+
+    // Asegurar que los valores de fecha sean cadenas ISO válidas
+    return {
+      ...filtro,
+      value: new Date(filtro.value).toISOString(),
+    }
+  })
 }
 

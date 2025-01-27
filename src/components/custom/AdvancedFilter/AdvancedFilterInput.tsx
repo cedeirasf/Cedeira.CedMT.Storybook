@@ -1,385 +1,363 @@
-import { fields, operators, sources } from '@/mocks/filter-data'
-import { FilterFormData, FilterOption } from '@/types/components/custom-advanced-input-filter.type'
-import { Filter, Plus, Trash2 } from 'lucide-react'
-import React, { useCallback, useRef, useState } from 'react'
-import { Button } from '../../ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '../../ui/dropdown-menu'
-import CustomTagFilter from '../CustomTagFilter'
-import { DropdownFilterList } from './DropdownFilterList'
-import { FilterForm } from './FilterForm'
-import { InputDebounce } from './InputDebounce'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/custom/CustomSheet"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
+import type { AdvancedFilterInputProps, Filter } from "@/types/components/custom-advanced-input-filter.type"
+import { FilterIcon, Plus, Trash2 } from "lucide-react"
+import { useCallback, useEffect, useState, useTransition } from "react"
+import TagFilter from "../CustomTagFilter"
+import { DropdownFilterList } from "./DropdownFilterList"
+import { FilterForm } from "./FilterForm"
+import { InputDebounce } from "./InputDebounce"
+import { isValid, parseISO } from "date-fns"
 
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '../CustomSheet'
 
-interface AdvancedFilterInputProps {
-  onAddFilter: (filter: FilterOption) => void
-  onRemoveFilter: (filterId: string) => void
-  onClearAll: () => void
-  onSearch: (query: string) => Promise<FilterOption[]>
-  variantDropdownList?: "list" | "grid"
-  selectedFilters?: FilterOption[]
-}
-
-export const AdvancedFilterInput: React.FC<AdvancedFilterInputProps> = ({
-  onAddFilter,
-  onRemoveFilter,
-  onClearAll,
+export function AdvancedFilterInput({
+  selectedFilters,
+  onFiltersChange,
   onSearch,
-  variantDropdownList = "grid",
-  selectedFilters: initialFilters = [],
-}) => {
-  const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<FilterOption[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  filterScheme,
+  sources,
+  className,
+}: AdvancedFilterInputProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [selectedFilter, setSelectedFilter] = useState<FilterOption | undefined>(undefined)
+  const [selectedFilter, setSelectedFilter] = useState<Partial<Filter> | null>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [selectedFilters, setSelectedFilters] = useState<FilterOption[]>(initialFilters)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [localFilters, setLocalFilters] = useState<Filter[]>(selectedFilters)
+  const [localSources, setLocalSources] = useState(sources)
+  const [localFilterScheme, setLocalFilterScheme] = useState(filterScheme)
+  const [searchQuery, setSearchQuery] = useState("")
 
-  const handleSearch = useCallback(async (searchQuery: string) => {
-    if (!searchQuery) {
-      setSuggestions([])
-      setError(null)
-      return
-    }
+  const [isPending, startTransition] = useTransition()
 
-    setIsLoading(true)
-    setError(null)
-    try {
-      const results = await onSearch(searchQuery)
-      setSuggestions(results)
-    } catch (error) {
-      console.error('Error searching:', error)
-      setSuggestions([])
-      setError('Ocurrió un error durante la búsqueda. Por favor, intente nuevamente.')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [onSearch])
+  useEffect(() => {
+    setLocalFilters(selectedFilters)
+  }, [selectedFilters])
 
-  const formatDateForDisplay = (value: string | number | Date): string => {
-    if (typeof value === 'string' && value.startsWith('today')) {
-      const [, time] = value.split(' ')
-      const now = new Date()
-      return `Hoy ${time || now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`
-    }
-    try {
-      const date = new Date(value)
-      if (isNaN(date.getTime())) return String(value)
+  useEffect(() => {
+    setLocalFilterScheme(filterScheme)
+  }, [filterScheme])
 
-      const today = new Date()
-      if (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      ) {
-        return `Hoy ${date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`
-      }
+  useEffect(() => {
+    setLocalSources(sources)
+  }, [sources])
 
-      return date.toLocaleString('es-AR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    } catch (error) {
-      console.error('Error formatting date for display:', error)
-      return String(value)
-    }
-  }
-
-  const getFilterDisplayText = (filter: Partial<FilterOption>): string => {
-    if (!filter.field || !filter.operator) return '';
-
-    const fieldLabel = fields.find(f => f.id === filter.field)?.label || ''
-    const operatorLabel = operators.find(o => o.id === filter.operator)?.label || ''
-    const sourceLabel = filter.source ? sources.find(s => s.id === filter.source)?.label || '' : ''
-
-    if (filter.operator === '5') return `${fieldLabel} está vacío`
-    if (filter.operator === '6') return `${fieldLabel} no está vacío`
-
-    let displayValue = filter.value
-    if (filter.type === 'date' && filter.value) {
-      displayValue = formatDateForDisplay(filter.value)
-    }
-
-    return `${sourceLabel ? `${sourceLabel}: ` : ''}${fieldLabel} ${operatorLabel.toLowerCase()} ${displayValue || ''}`
-  }
-
-  const handleFormSubmit = (data: FilterFormData) => {
-    const field = fields.find(f => f.id === data.field)
-    let value = data.value
-
-    if (field?.type === 'date' && value) {
-      try {
-        const inputDate = new Date(value)
-        const today = new Date()
-
-        if (
-          inputDate.getFullYear() === today.getFullYear() &&
-          inputDate.getMonth() === today.getMonth() &&
-          inputDate.getDate() === today.getDate()
-        ) {
-          value = `today ${inputDate.toTimeString().slice(0, 5)}` // Store as "today HH:MM"
-        } else {
-          value = inputDate.toISOString() // Store full ISO string
+  const handleSearch = useCallback(
+    async (query: string) => {
+      setSearchQuery(query)
+      startTransition(async () => {
+        try {
+          const results = await onSearch(query)
+          setLocalSources(results.sources)
+          setLocalFilterScheme(results.scheme)
+        } catch (error) {
+          console.error("Error during search:", error)
         }
-      } catch (error) {
-        console.error('Error processing date value:', error)
+      })
+    },
+    [onSearch],
+  )
+
+  const getFieldDataType = useCallback(
+    (filter: Filter): string | null => {
+      if (filter.source === "*" && filter.field === "*") return "string"
+
+      const source = sources.find((s) => s.source === filter.source)
+      if (!source) return null
+
+      const field = source.fields[filter.field]
+      if (!field) return null
+
+      return field.data_type
+    },
+    [sources],
+  )
+
+  const normalizeFilterValue = useCallback(
+    (value: string | number, filter: Filter): string => {
+      const dataType = getFieldDataType(filter)
+      if (!dataType) return value.toString().toLowerCase().trim()
+
+      const typeConfig = filterScheme.data_types[dataType]
+      if (!typeConfig) return value.toString().toLowerCase().trim()
+
+      // Normalización específica por tipo de dato
+      switch (typeConfig.primitive) {
+        case "date":
+          try {
+            const date = parseISO(value.toString())
+            return isValid(date) ? date.toISOString() : value.toString().toLowerCase().trim()
+          } catch {
+            return value.toString().toLowerCase().trim()
+          }
+        case "number":
+          return Number(value).toString()
+        case "string":
+          // Para tipos combo, normalizar usando las opciones si están disponibles
+          if (typeConfig.options && typeof value === "string") {
+            return (typeConfig.options[value] || value).toString().toLowerCase().trim()
+          }
+          return value.toString().toLowerCase().trim()
+        default:
+          return value.toString().toLowerCase().trim()
       }
-    }
+    },
+    [filterScheme, getFieldDataType],
+  )
 
-    const newFilter: FilterOption = {
-      id: selectedFilter?.id || `new-${Date.now()}`,
-      type: field?.type || 'text',
-      label: getFilterDisplayText({
-        ...data,
-        type: field?.type || 'text',
-        value,
-      }),
-      ...data,
-      value,
-    }
+  const isFilterDuplicate = useCallback(
+    (newFilter: Filter, existingFilters: Filter[]): boolean => {
+      return existingFilters.some((f) => {
+        // Para filtros genéricos, comparar case-insensitive
+        if (f.source === "*" && f.field === "*" && newFilter.source === "*" && newFilter.field === "*") {
+          return normalizeFilterValue(f.value, f) === normalizeFilterValue(newFilter.value, newFilter)
+        }
 
-    setSelectedFilters(prev => {
-      const existingFilterIndex = prev.findIndex(f => f.id === newFilter.id)
-      if (existingFilterIndex !== -1) {
-        return prev.map((f, index) => index === existingFilterIndex ? newFilter : f)
+        // Para otros filtros, comparar todos los campos
+        if (f.source === newFilter.source && f.field === newFilter.field && f.operator === newFilter.operator) {
+          return normalizeFilterValue(f.value, f) === normalizeFilterValue(newFilter.value, newFilter)
+        }
+
+        return false
+      })
+    },
+    [normalizeFilterValue],
+  )
+
+  const handleFilterSelect = useCallback(
+    (filter: Partial<Filter>) => {
+      if (filter.value !== undefined) {
+        // Si el filtro ya tiene un valor, verificamos que no sea duplicado
+        const newFilter = filter as Filter
+        startTransition(() => {
+          if (!isFilterDuplicate(newFilter, localFilters)) {
+            const updatedFilters = [...localFilters, newFilter]
+            setLocalFilters(updatedFilters)
+            onFiltersChange(updatedFilters)
+          }
+        })
       } else {
-        return [...prev, newFilter]
+        // Si el filtro no tiene valor, abrimos el formulario para completarlo
+        setSelectedFilter(filter)
+        setIsSheetOpen(true)
       }
-    })
-    onAddFilter(newFilter)
-    setIsSheetOpen(false)
-    setSelectedFilter(undefined)
-    setQuery('')
-    setIsDropdownOpen(false)
-  }
+    },
+    [localFilters, onFiltersChange, isFilterDuplicate],
+  )
 
-  const handleSuggestionSelect = (filter: FilterOption) => {
+  const handleAddNewFilter = useCallback(() => {
+    setSelectedFilter(null)
+    setIsSheetOpen(true)
+    setIsDropdownOpen(false)
+  }, [])
+
+  const handleFilterSubmit = useCallback(
+    (filter: Filter) => {
+      startTransition(() => {
+        // Verificar si el filtro es un duplicado antes de agregarlo o actualizarlo
+        if (!isFilterDuplicate(filter, localFilters)) {
+          let updatedFilters: Filter[]
+
+          if (selectedFilter && selectedFilter.source && selectedFilter.field) {
+            // Editando un filtro existente
+            updatedFilters = localFilters.map((f) => {
+              if (
+                f.source === selectedFilter.source &&
+                f.field === selectedFilter.field &&
+                f.operator === selectedFilter.operator &&
+                normalizeFilterValue(f.value, f) ===
+                  normalizeFilterValue(selectedFilter.value || "", {
+                    ...selectedFilter,
+                    value: selectedFilter.value || "",
+                  } as Filter)
+              ) {
+                return filter
+              }
+              return f
+            })
+
+            // Si no se encontró el filtro para actualizar, agregarlo como nuevo
+            if (!updatedFilters.some((f) => f === filter)) {
+              updatedFilters.push(filter)
+            }
+          } else {
+            // Agregando un nuevo filtro
+            updatedFilters = [...localFilters, filter]
+          }
+
+          setLocalFilters(updatedFilters)
+          onFiltersChange(updatedFilters)
+        }
+
+        setIsSheetOpen(false)
+        setSelectedFilter(null)
+      })
+    },
+    [localFilters, onFiltersChange, selectedFilter, isFilterDuplicate, normalizeFilterValue],
+  )
+
+  const handleFilterEdit = useCallback((filter: Filter) => {
     setSelectedFilter(filter)
     setIsSheetOpen(true)
-    setSuggestions([])
-  }
+  }, [])
 
-  const handleAddNewFilter = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setSelectedFilter(undefined)
-    setIsSheetOpen(true)
-    setIsDropdownOpen(false)
-  }
+  const handleRemoveFilter = useCallback(
+    (filterToRemove: Filter) => {
+      startTransition(() => {
+        const updatedFilters = localFilters.filter((filter) => {
+          // Para filtros genéricos, comparar case-insensitive
+          if (
+            filter.source === "*" &&
+            filter.field === "*" &&
+            filterToRemove.source === "*" &&
+            filterToRemove.field === "*"
+          ) {
+            return (
+              normalizeFilterValue(filter.value, filter) !== normalizeFilterValue(filterToRemove.value, filterToRemove)
+            )
+          }
 
-  const handleFilterEdit = (filter: FilterOption) => {
-    const editingFilter = selectedFilters.find(f => f.id === filter.id)
-    if (editingFilter) {
-      setSelectedFilter({
-        ...editingFilter,
-        value: editingFilter.type === 'date'
-          ? formatDateForInput(editingFilter.value)
-          : editingFilter.value?.toString() || '',
+          // Para otros filtros, comparar todos los campos
+          return (
+            filter.source !== filterToRemove.source ||
+            filter.field !== filterToRemove.field ||
+            filter.operator !== filterToRemove.operator ||
+            normalizeFilterValue(filter.value, filter) !== normalizeFilterValue(filterToRemove.value, filterToRemove)
+          )
+        })
+        setLocalFilters(updatedFilters)
+        onFiltersChange(updatedFilters)
       })
-      setIsSheetOpen(true)
-      setIsDropdownOpen(false)
-    }
-  }
+    },
+    [localFilters, onFiltersChange, normalizeFilterValue],
+  )
 
-  const formatDateForInput = (value: string | number | Date | undefined): string => {
-    if (!value) return ''
+  const handleClearAll = useCallback(() => {
+    startTransition(() => {
+      setLocalFilters([])
+      onFiltersChange([])
+    })
+  }, [onFiltersChange])
 
-    if (typeof value === 'string') {
-      if (value.startsWith('today')) {
-        const [, time = '00:00'] = value.split(' ')
-        const [hours, minutes] = time.split(':')
-        const now = new Date()
-        now.setHours(parseInt(hours, 10))
-        now.setMinutes(parseInt(minutes, 10))
-        return now.toISOString().slice(0, 16)
-      } else if (value.includes('T')) {
-        // It's likely an ISO string, so we can return it as is
-        return value.slice(0, 16)
+  const getFilterDisplayText = useCallback(
+    (filter: Filter): string => {
+      if (filter.source === "*" && filter.field === "*") {
+        return `Contiene: ${filter.value || ""}`
       }
-    }
 
-    try {
-      const date = new Date(value)
-      return isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 16)
-    } catch (error) {
-      console.error('Error formatting date for input:', error)
-      return ''
-    }
-  }
+      const source = localSources.find((s) => s.source === filter.source)
+      if (!source) return `${filter.source}: ${filter.value || ""}`
 
-  const handleRemoveFilter = (filterId: string) => {
-    setSelectedFilters(prev => prev.filter(filter => filter.id !== filterId))
-    onRemoveFilter(filterId)
-  }
+      const field = source.fields[filter.field]
+      if (!field) return `${source.display}: ${filter.field} - ${filter.value || ""}`
 
-  const handleClearAll = () => {
-    setSelectedFilters([])
-    onClearAll()
-    setIsDropdownOpen(false)
-  }
+      const dataType = localFilterScheme.data_types[field.data_type]
+      if (!dataType) return `${source.display}: ${field.display} - ${filter.value || ""}`
 
-  const handleCreateTextFilter = (text: string) => {
-    const newFilter: FilterOption = {
-      id: `text-${Date.now()}`,
-      label: text,
-      type: 'text',
-      value: text
-    }
-    setSelectedFilters(prev => [...prev, newFilter])
-    onAddFilter(newFilter)
-    setQuery('')
-  }
+      const operator = dataType.filtering_operators[filter.operator]
+      if (!operator) return `${source.display}: ${field.display} ${filter.operator} ${filter.value || ""}`
+
+      let valueDisplay = filter.value || ""
+      if (dataType.options && typeof filter.value === "string" && dataType.options[filter.value]) {
+        valueDisplay = dataType.options[filter.value]
+      }
+
+      return `${source.display}: ${field.display} ${operator.display} ${valueDisplay}`
+    },
+    [localFilterScheme, localSources],
+  )
 
   return (
-    <div className="relative w-full">
+    <div className={cn("w-full space-y-2", className)}>
       <div className="relative">
         <InputDebounce
-          ref={inputRef}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && query.trim()) {
-              e.preventDefault()
-              handleCreateTextFilter(query.trim())
-            }
-          }}
+          value={searchQuery}
           onSearch={handleSearch}
-          isLoading={isLoading}
-          className="pr-[90px]"
-          placeholder="Filtrar por..."
+          onSelect={handleFilterSelect}
+          placeholder="Buscar filtros..."
+          className="pl-10 pr-[90px]"
+          filterScheme={localFilterScheme}
+          sources={localSources}
+          isLoading={isPending}
+          selectedFilters={localFilters}
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
-          {selectedFilters.length > 0 && (
-            <div className="lg:flex md:flex hidden items-center gap-1">
-              {selectedFilters.slice(0, 2).map((filter) => (
-                <CustomTagFilter
-                  key={`visible-${filter.id}`}
-                  label={filter.label}
+          {localFilters.length > 0 && (
+            <div className="flex items-center gap-1">
+              {localFilters.slice(0, 2).map((filter, index) => (
+                <TagFilter
+                  key={`filter-${filter.source}-${filter.field}-${filter.value}-${index}`}
+                  label={getFilterDisplayText(filter)}
                   onClick={() => handleFilterEdit(filter)}
-                  onRemove={() => handleRemoveFilter(filter.id)}
+                  onRemove={() => handleRemoveFilter(filter)}
                   color="neutral"
                   size="sm"
                   rounded="md"
-                  className="shrink-0 bg-secondary/80 text-xs hover:bg-secondary max-w-[100px] truncate dark:bg-secondary dark:text-secondary-foreground dark:hover:bg-secondary/80"
+                  className="shrink-0 bg-secondary/80 text-xs hover:bg-secondary max-w-[100px]"
+                  truncate
                 />
               ))}
             </div>
           )}
           <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 rounded-full bg-secondary hover:bg-secondary/80 dark:bg-secondary dark:text-secondary-foreground dark:hover:bg-secondary/80"
-              >
-                <Filter className="h-4 w-4 text-foreground" />
-                {selectedFilters.length > 2 && (
+              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full bg-secondary hover:bg-secondary/80">
+                <FilterIcon className="h-4 w-4" />
+                {localFilters.length > 2 && (
                   <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                    {selectedFilters.length - 2}
+                    {localFilters.length - 2}
                   </span>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[280px] sm:w-[480px] p-0"
-              sideOffset={8}
-            >
-              <DropdownFilterList
-                filters={selectedFilters}
-                onSelect={handleFilterEdit}
-                onRemove={handleRemoveFilter}
-                variant={variantDropdownList}
-              />
-              <div className="flex justify-end gap-2 border-t border-border p-2">
-                <Button
-                  size="sm"
-                  onClick={handleAddNewFilter}
-                  variant="default"
-                  className="h-8 bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  <Plus className="mr-2 h-3 w-3" />
-                  Agregar
-                </Button>
-                {selectedFilters.length > 0 && (
-                  <Button
-                    size="sm"
-                    onClick={handleClearAll}
-                    variant="destructive"
-                    className="h-8"
-                  >
-                    <Trash2 className="mr-2 h-3 w-3" />
-                    Limpiar
+            <DropdownMenuContent align="end" className="w-[280px] sm:w-[480px] p-0" sideOffset={8}>
+              <div className="flex flex-col h-[300px]">
+                <ScrollArea className="flex-1">
+                  <DropdownFilterList
+                    filters={localFilters}
+                    onSelect={handleFilterEdit}
+                    onRemove={handleRemoveFilter}
+                    variant="grid"
+                    filterScheme={localFilterScheme}
+                    sources={localSources}
+                  />
+                </ScrollArea>
+                <div className="flex justify-end gap-2 border-t p-2 bg-popover">
+                  <Button size="sm" onClick={handleAddNewFilter} variant="default" className="h-8">
+                    <Plus className="mr-2 h-3 w-3" />
+                    Agregar
                   </Button>
-                )}
+                  {localFilters.length > 0 && (
+                    <Button size="sm" onClick={handleClearAll} variant="destructive" className="h-8">
+                      <Trash2 className="mr-2 h-3 w-3" />
+                      Limpiar
+                    </Button>
+                  )}
+                </div>
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
-      {error && (
-        <div className="mt-2 text-sm text-red-500">
-          {error}
-        </div>
-      )}
-
-      {suggestions.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-md bg-background shadow-sm dark:bg-card">
-          <DropdownFilterList
-            filters={suggestions}
-            onSelect={handleSuggestionSelect}
-            className="max-h-[240px]"
-            variant="list"
-          />
-        </div>
-      )}
-
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="w-[100dvw] sm:w-full sm:max-w-md">
+        <SheetContent className="w-full sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>
-              {selectedFilter ? 'Editar filtro' : 'Agregar nuevo filtro'}
-            </SheetTitle>
+            <SheetTitle>{selectedFilter ? "Editar filtro" : "Nuevo filtro"}</SheetTitle>
             <SheetDescription>
-              Agregar filtros para refinar tus resultados.
+              {selectedFilter ? "Modifica los valores del filtro" : "Configura un nuevo filtro"}
             </SheetDescription>
           </SheetHeader>
-
           <div className="py-4">
             <FilterForm
-              key={`filter-form-${selectedFilter?.id || 'new'}`}
-              initialData={selectedFilter}
-              onSubmit={handleFormSubmit}
+              key={selectedFilter ? `edit-${JSON.stringify(selectedFilter)}` : "new"}
+              initialFilter={selectedFilter as Filter | null}
+              onSubmit={handleFilterSubmit}
+              filterScheme={localFilterScheme}
+              sources={localSources}
             />
           </div>
-
-          <SheetFooter className="mt-auto border-t px-4 pt-4">
-            <SheetClose asChild>
-              <Button
-                variant="outline"
-                onClick={() => setIsDropdownOpen(false)}
-              >
-                Cancelar
-              </Button>
-            </SheetClose>
-            <Button
-              type="submit"
-              form="filter-form"
-            >
-              {selectedFilter ? 'Actualizar' : 'Crear Filtro'}
-            </Button>
-          </SheetFooter>
         </SheetContent>
       </Sheet>
     </div>

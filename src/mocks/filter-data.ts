@@ -1,111 +1,242 @@
-import {  Field, FilterOption } from  '../types/components/custom-advanced-input-filter.type'
+import type { ChannelViewFilterSchemeResponse, FilterScheme, Source } from "../types/components/custom-advanced-input-filter.type"
 
-export const sources = [
-  { id: '1', label: 'Coelsa' },
-  { id: '2', label: 'CoelsaId' },
+export const mockFilterScheme: FilterScheme = {
+  data_types: {
+    "combo-tipo-mov": {
+      primitive: "string",
+      filtering_operators: {
+        eq: {
+          expression: "==",
+          display: "es igual a",
+        },
+        ne: {
+          expression: "!=",
+          display: "es diferente de",
+        },
+      },
+      options: {
+        trxin: "TRXIN",
+        casho: "CASHO - Efectivo",
+        debinqr: "DEBINQR - Bonos",
+        pepe: "PEPE <sin definir>",
+      },
+    },
+    cbu: {
+      primitive: "string",
+      filtering_operators: {
+        eq: {
+          expression: "==",
+          display: "es igual a",
+        },
+        ne: {
+          expression: "!=",
+          display: "es diferente de",
+        },
+      },
+    },
+    string: {
+      primitive: "string",
+      filtering_operators: {
+        ne: { expression: "!=", display: "es diferente de" },
+        gt: { expression: ">", display: "es mayor que" },
+        lt: { expression: "<", display: "es menor que" },
+        gte: { expression: ">=", display: "es mayor o igual que" },
+        lte: { expression: "<=", display: "es menor o igual que" },
+        in: { expression: "in", display: "esta incluido en" },
+        nin: { expression: "nin", display: "no esta incluido en" },
+        between: { expression: "between", display: "esta entre" },
+        not_between: { expression: "not between", display: "no esta entre" },
+        like: { expression: "like", display: "contiene" },
+        not_like: { expression: "not like", display: "no contiene" },
+        is_empty: { expression: "is empty", display: "está vacío" },
+        starts_with: { expression: "starts with", display: "empieza con" },
+        ends_with: { expression: "ends with", display: "termina con" },
+        is_not_empty: { expression: "is not empty", display: "no está vacío" },
+        is_null: { expression: "is null", display: "es nulo" },
+        is_not_null: { expression: "is not null", display: "no es nulo" },
+      },
+    },
+    number: {
+      primitive: "number",
+      filtering_operators: {
+        eq: { expression: "==", display: "es igual a" },
+        ne: { expression: "!=", display: "es diferente de" },
+        gt: { expression: ">", display: "es mayor que" },
+        lt: { expression: "<", display: "es menor que" },
+        gte: { expression: ">=", display: "es mayor o igual que" },
+        lte: { expression: "<=", display: "es menor o igual que" },
+        in: { expression: "in", display: "esta incluido en" },
+        nin: { expression: "nin", display: "no esta incluido en" },
+        is_empty: { expression: "is empty", display: "está vacío" },
+        is_not_empty: { expression: "is not empty", display: "no está vacío" },
+      },
+    },
+    "number-nullable": {
+      primitive: "number",
+      filtering_operators: {
+        eq: { expression: "==", display: "es igual a" },
+        ne: { expression: "!=", display: "es diferente de" },
+        gt: { expression: ">", display: "es mayor que" },
+        lt: { expression: "<", display: "es menor que" },
+        gte: { expression: ">=", display: "es mayor o igual que" },
+        lte: { expression: "<=", display: "es menor o igual que" },
+        in: { expression: "in", display: "esta incluido en" },
+        nin: { expression: "nin", display: "no esta incluido en" },
+        is_empty: { expression: "is empty", display: "está vacío" },
+        is_not_empty: { expression: "is not empty", display: "no está vacío" },
+        is_null: { expression: "is null", display: "es nulo" },
+        is_not_null: { expression: "is not null", display: "no es nulo" },
+      },
+    },
+    "fecha-sin-rango": { // Ver el scheme por que faltaria ver como seria el date tanto para un filtro cargado como para la creacion de uno nuevo
+      primitive: "date",
+      filtering_operators: {
+        eq: { expression: "==", display: "es igual a" },
+        ne: { expression: "!=", display: "es diferente de" },
+        gt: { expression: ">", display: "es mayor que" },
+        lt: { expression: "<", display: "es menor que" },
+        gte: { expression: ">=", display: "es mayor o igual que" },
+        lte: { expression: "<=", display: "es menor o igual que" },
+        between: { expression: "between", display: "esta entre" },
+        not_between: { expression: "not between", display: "no esta entre" },
+        is_null: { expression: "is null", display: "es nulo" },
+        is_not_null: { expression: "is not null", display: "no es nulo" },
+      },
+    },
+  },
+
+}
+
+export const mockSources: Source[] = [
+  {
+    source: "ContaDebinARSCoelsa",
+    display: "Coelsa",
+    fields: {
+      "[column_key_1]": {
+        display: "Importe",
+        data_type: "number-nullable",
+        filteringTips: [
+          {
+            tip: "Importe en Coelsa es mayor a",
+            filtering_operator: "gt",
+          },
+          {
+            tip: "Importe en Coelsa es menor a",
+            filtering_operator: "lt",
+          },
+        ],
+      },
+      "[cvu2]": {
+        display: "CVU 2",
+        data_type: "cbu",
+        filteringTips: [
+          {
+            tip: "CVU 2 es igual a",
+            filtering_operator: "eq",
+          },
+          {
+            tip: "CVU 2 es distinto a",
+            filtering_operator: "ne",
+          },
+        ],
+      },
+      "[tipomov]": {
+        display: "Tipo Movimiento",
+        data_type: "combo-tipo-mov",
+        filteringTips: [
+          {
+            tip: "Tipo Movimiento en Coelsa es igual a TRXIN",
+            filtering_operator: "eq",
+          },
+          {
+            tip: "Tipo Movimiento en Coelsa es distinto a DEBINQR - Bonos",
+            filtering_operator: "ne",
+          },
+        ],
+      },
+    },
+  },
+  {
+    source: "ContaDebinARSGalicia",
+    display: "Payment",
+    fields: {
+      "[column_key_1]": {
+        display: "Importe",
+        data_type: "number-nullable",
+        filteringTips: [
+          {
+            tip: "Importe en Payment es mayor a",
+            filtering_operator: "gt",
+          },
+          {
+            tip: "Importe en Payment es menor a",
+            filtering_operator: "lt",
+          },
+        ],
+      },
+      "[tipomov]": {
+        display: "Tipo Movimiento",
+        data_type: "combo-tipo-mov",
+        filteringTips: [
+          {
+            tip: "Tipo Movimiento en Payment es igual a TRXIN",
+            filtering_operator: "eq",
+          },
+          {
+            tip: "Tipo Movimiento en Payment es distinto a DEBINQR - Bonos",
+            filtering_operator: "ne",
+          },
+        ],
+      },
+      // Ejemplo para mostrar calendario field de primitivo date
+      "[fecha-sin-rango]": {
+        display: "Fecha",
+        data_type: "fecha-sin-rango",
+        filteringTips: [
+          {
+            tip: "Fecha en Payment es mayor a",
+            filtering_operator: "gt",
+          },
+          {
+            tip: "Fecha en Payment es menor a",
+            filtering_operator: "lt",
+          },
+        ],
+      },
+    },
+  },
 ]
 
-export const fields: Field[] = [
-  { 
-    id: '1', 
-    label: 'Tipo Movimiento',
-    type: 'select',
-    operators: ['1', '2'] // Es, No es
-  },
-  { 
-    id: '2', 
-    label: 'Fecha',
-    type: 'date',
-    operators: ['1', '2', '7', '8'] // Es, No es, Desde, Hasta
-  },
-  { 
-    id: '3', 
-    label: 'Importe',
-    type: 'number',
-    operators: ['1', '2', '7', '8'] // Es, No es, Mayor a, Menor a
-  },
-  { 
-    id: '4', 
-    label: 'CBU',
-    type: 'text',
-    operators: ['1', '2', '3', '4', '5', '6'] // Todos menos rangos
-  },
-]
 
-export const operators = [
-  { id: '1', label: 'Es' },
-  { id: '2', label: 'No es' },
-  { id: '3', label: 'Contiene' },
-  { id: '4', label: 'No contiene' },
-  { id: '5', label: 'Está vacío' },
-  { id: '6', label: 'No está vacío' },
-  { id: '7', label: 'Desde' },
-  { id: '8', label: 'Hasta' },
-]
-
-// Initial filters that will be shown as tags
-export const initialFilters: FilterOption[] = [
-  { 
-    id: '1',
-    type: 'date',
-    label: 'Fecha desde Hoy 12:00pm',
-    source: '1',
-    field: '2',
-    operator: '7',
-    value: 'today'
-  },
-  { 
-    id: '2',
-    type: 'number',
-    label: 'Importe mayor a 1000',
-    source: '1',
-    field: '3',
-    operator: '7',
-    value: 1000
-  },
-  { 
-    id: '3',
-    type: 'text',
-    label: 'CBU contiene "123"',
-    source: '1',
-    field: '4',
-    operator: '3',
-    value: '123'
-  }
-]
-
-export const mockSuggestions: FilterOption[] = [
-  { 
-    id: '1', 
-    type: 'date', 
-    label: 'Fecha igual a...',
-    source: '1',
-    field: '2',
-    operator: '1',
-  },
-  { 
-    id: '2', 
-    type: 'date', 
-    label: 'Fecha desde...',
-    source: '1',
-    field: '2',
-    operator: '7',
-  },
-  { 
-    id: '3', 
-    type: 'number', 
-    label: 'Importe mayor a...',
-    source: '1',
-    field: '3',
-    operator: '7',
-  },
-  { 
-    id: '4', 
-    type: 'text', 
-    label: 'CBU contiene...',
-    source: '1',
-    field: '4',
-    operator: '3',
-  },
-]
+export const mockChannelViewFilterSchemeResponse: ChannelViewFilterSchemeResponse = {
+  filters: [
+    {
+      source: "ContaDebinARSCoelsa",
+      field: "[tipomov]",
+      operator: "eq",
+      value: "trxin",
+    },
+    {
+      source: "ContaDebinARSGalicia",
+      field: "[column_key_1]",
+      operator: "gt",
+      value: "12.75",
+    },
+    {
+      source: "*",
+      field: "*",
+      operator: "contains",
+      value: "pepe",
+    },
+    //Caso que venga un filtro con un campo de tipo date
+    {
+      source: "ContaDebinARSGalicia",
+      field: "[fecha-sin-rango]",
+      operator: "gt",
+      value: "2022-01-01", // Formato fecha hora y minuto YYYY-MM-DDTHH:MM:SS agregar la hora despues de la fecha
+    },
+  ],
+  scheme: mockFilterScheme,
+  sources: mockSources
+}
 
