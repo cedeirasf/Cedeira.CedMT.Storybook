@@ -4,13 +4,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import type { AdvancedFilterInputProps, Filter } from "@/types/components/custom-advanced-input-filter.type"
+import { isValid, parseISO } from "date-fns"
 import { FilterIcon, Plus, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useState, useTransition } from "react"
 import TagFilter from "../CustomTagFilter"
 import { DropdownFilterList } from "./DropdownFilterList"
 import { FilterForm } from "./FilterForm"
 import { InputDebounce } from "./InputDebounce"
-import { isValid, parseISO } from "date-fns"
 
 
 export function AdvancedFilterInput({
@@ -167,10 +167,10 @@ export function AdvancedFilterInput({
                 f.field === selectedFilter.field &&
                 f.operator === selectedFilter.operator &&
                 normalizeFilterValue(f.value, f) ===
-                  normalizeFilterValue(selectedFilter.value || "", {
-                    ...selectedFilter,
-                    value: selectedFilter.value || "",
-                  } as Filter)
+                normalizeFilterValue(selectedFilter.value || "", {
+                  ...selectedFilter,
+                  value: selectedFilter.value || "",
+                } as Filter)
               ) {
                 return filter
               }
