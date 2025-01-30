@@ -6,16 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import {
-  type Time,
-  type TimeFormat,
-  formatTime,
-  parseTimeInput,
-  incrementTimeValue,
-  decrementTimeValue,
-  clampTime,
-  isTimeInRange,
-} from "@/lib/utils"
+import { Time, TimeFormat } from "@/types/components/custom-times.types"
+import { clampTime, decrementTimeValue, formatTime, incrementTimeValue, isTimeInRange, parseTimeInput } from "@/lib/time-utilts"
+
 
 interface TimePickerProps {
   value?: Time

@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { formatTime, parseTimeRange, parseTimeString } from "@/lib/time-utilts"
 import { cn } from "@/lib/utils"
-import type { DropdownFilterListProps, Filter } from "@/types/components/custom-advanced-input-filter.type"
+import type {
+  DropdownFilterListProps,
+  Filter
+} from "@/types/components/custom-advanced-input-filter.type"
 import { X } from "lucide-react"
 import * as React from "react"
 
@@ -18,27 +22,65 @@ export function DropdownFilterList({
   const getFilterDisplayText = React.useCallback(
     (filter: Filter): string => {
       if (filter.source === "*" && filter.field === "*") {
-        return `Contiene: ${filter.value}`
+        return `Contiene: ${filter.value || ""}`
       }
 
       const source = sources.find((s) => s.source === filter.source)
-      if (!source) return filter.value.toString()
+      if (!source) return filter.value?.toString() || ""
 
       const field = source.fields[filter.field]
-      if (!field) return `${source.display}: ${filter.value}`
+      if (!field) return `${source.display}: ${filter.value || ""}`
 
       const dataType = filterScheme.data_types[field.data_type]
-      if (!dataType) return `${source.display}: ${field.display} - ${filter.value}`
+      if (!dataType) return `${source.display}: ${field.display} - ${filter.value || ""}`
 
       const operator = dataType.filtering_operators[filter.operator]
-      if (!operator) return `${source.display}: ${field.display} ${filter.operator} ${filter.value}`
+      if (!operator) return `${source.display}: ${field.display} ${filter.operator} ${filter.value || ""}`
 
-      let valueDisplay = filter.value
-      if (dataType.options && typeof filter.value === "string") {
-        valueDisplay = dataType.options[filter.value] || filter.value
+      let valueDisplay = ""
+
+      try {
+        if (operator.range && typeof filter.value === "string" && filter.value) {
+          if (dataType.scope === "time") {
+            const { from, to } = parseTimeRange(filter.value)
+            if (from && to) {
+              valueDisplay = `${formatTime(from, "24h")} y ${formatTime(to, "24h")}`
+            } else {
+              valueDisplay = filter.value
+            }
+          } else {
+            try {
+              const rangeValue = JSON.parse(filter.value)
+              if (rangeValue && typeof rangeValue === "object") {
+                const { from, to } = rangeValue
+                valueDisplay = `${from || ""} y ${to || ""}`
+              } else {
+                valueDisplay = filter.value
+              }
+            } catch {
+              valueDisplay = filter.value
+            }
+          }
+        } else if (dataType.scope === "time" && typeof filter.value === "string" && filter.value) {
+          const time = parseTimeString(filter.value)
+          valueDisplay = time ? formatTime(time, "24h") : filter.value
+        } else if (dataType.options && typeof filter.value === "string" && dataType.options[filter.value]) {
+          valueDisplay = dataType.options[filter.value]
+        } else {
+          valueDisplay = filter.value?.toString() || ""
+        }
+      } catch (error) {
+        console.error("Error parsing value:", error)
+        valueDisplay = filter.value?.toString() || ""
       }
 
-      return `${source.display}: ${field.display} ${operator.display} ${valueDisplay}`
+      if (operator.range) {
+        return `${source.display}: ${field.display} está entre ${valueDisplay}`
+          .replace(/está entre(\S)/g, "está entre $1")
+          .replace(/(\S)$/g, " $1")
+      }
+
+      return `${source.display}: ${field.display} ${operator.display} ${valueDisplay}`.replace(/(\S)$/g, " $1")
     },
     [filterScheme, sources],
   )

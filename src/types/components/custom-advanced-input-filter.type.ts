@@ -1,51 +1,70 @@
-import { z } from 'zod'
+import { filterFormSchema } from "@/components/schemas/advanced-filter.schema"
+import { z } from "zod"
+import { Time } from "./custom-times.types"
 
-export interface Filter {
-  source: string // Nombre de la fuente de datos o "*"
-  field: string // Campo de la fuente de datos o "*"
-  operator: string // Operador de filtrado (e.g., "eq", "gt", "contains")
-  value: string  // Valor del filtro
+
+export interface RangeValue {
+  from: string
+  to: string
 }
 
+export interface Filter {
+  source: string
+  field: string
+  operator: string
+  value: string  // Puede ser un string, un número o un objeto RangeValue (from, to) pero siempre se guarda como string
+}
+
+export type TimeValue = Time | null | undefined
+
 export interface FilteringOperator {
-  expression: string // Representación del operador
-  display: string // Texto para mostrar en la UI
+  expression: string
+  display: string
+  range?: boolean
 }
 
 export interface DataType {
-  primitive: string // Tipo de dato (e.g., "string", "number")
-  filtering_operators: Record<string, FilteringOperator> // Operadores disponibles
-  options?: Record<string, string> // Opciones para selects, si las hay
+  primitive: string
+  scope: string
+  filtering_operators: Record<string, FilteringOperator>
+  options?: Record<string, string>
 }
 
 export interface Field {
-  display: string // Nombre del campo para mostrar
-  data_type: string // Tipo de dato asociado
+  display: string
+  data_type: string
   filteringTips?: Array<{
-    tip: string // Sugerencia para el filtro
-    filtering_operator: string // Operador asociado
+    tip: string
+    filtering_operator: string
   }>
 }
 
 export interface Source {
-  source: string // Nombre de la fuente
-  display: string // Nombre para mostrar
-  fields: Record<string, Field> // Campos disponibles
+  source: string
+  display: string
+  fields: Record<string, Field>
 }
 
 export interface FilterScheme {
-  data_types: Record<string, DataType> // Tipos de datos
+  data_types: Record<string, DataType>
 }
 
 export interface ChannelViewFilterSchemeResponse {
   filters: Filter[]
   scheme: FilterScheme
   sources: Source[]
+
+
 }
 
+export type FilterFormData = z.infer<typeof filterFormSchema>
 
-
-/* Components Interfaces  */
+export interface FilterFormProps {
+  initialFilter: Filter | null
+  onSubmit: (filter: Filter) => void
+  filterScheme: FilterScheme
+  sources: Source[]
+}
 
 export interface Suggestion {
   source: string
@@ -56,7 +75,7 @@ export interface Suggestion {
   operatorDisplay: string
   tip: string
   dataType: string
-  defaultValue: string | undefined
+  defaultValue: string
 }
 
 export interface InputDebounceProps {
@@ -69,25 +88,14 @@ export interface InputDebounceProps {
   size?: "small" | "medium" | "large"
   isLoading?: boolean
   value?: string
-  selectedFilters?: Filter[] // Añadimos esta prop para verificar duplicados
+  selectedFilters?: Filter[]
 }
 
-export const filterFormSchema = z.object({
-  source: z.string().min(1, "Seleccione una fuente"),
-  field: z.string().min(1, "Seleccione un campo"),
-  operator: z.string().min(1, "Seleccione un operador"),
-  value: z.union([z.string(), z.number()]).optional(),
-})
-
-export type FilterFormData = z.infer<typeof filterFormSchema>
-
-export interface FilterFormProps {
-  initialFilter: Filter | null
-  onSubmit: (filter: Filter) => void
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
+export interface DefaultValues {
+  TIME_DEFAULT: string
+  DATE_FORMAT: string
+  EMPTY_VALUE: string
 }
-
 export interface DropdownFilterListProps {
   filters: Filter[]
   onSelect?: (filter: Filter) => void
@@ -106,3 +114,4 @@ export interface AdvancedFilterInputProps {
   sources: ChannelViewFilterSchemeResponse["sources"]
   className?: string
 }
+
