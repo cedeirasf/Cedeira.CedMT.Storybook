@@ -17,13 +17,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 
+import { filterFormSchema } from "@/components/schemas/advanced-filter.schema"
+import { getDataType, parseRangeValue } from "@/lib/filters-utils"
 import { SelectOption } from "@/types/components/custom-select.types"
 import { useEffect, useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { CustomSelect } from "../CustomSelect"
 import { TimePicker } from "../CustomTimePicker"
-import { getDataType, parseRangeValue } from "@/lib/filters-utils"
-import { filterFormSchema } from "@/components/schemas/advanced-filter.schema"
 
 const FilterForm = ({ initialFilter, onSubmit, filterScheme, sources }: FilterFormProps) => {
   const isGenericFilter = initialFilter?.source === "*" && initialFilter?.field === "*"

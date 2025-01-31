@@ -1,4 +1,4 @@
-import * as React from "react"
+
 import { Database, Tag, Hash, Calendar, Clock, CreditCard, DollarSign, FileText } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
@@ -11,6 +11,7 @@ import type {
 import { cn } from "@/lib/utils"
 import { formatTime, parseTimeRange, parseTimeString } from "@/lib/time-utilts"
 import { CustomTooltip } from "../CustomTooltip"
+import { memo, useCallback } from "react"
 
 interface IconMapping {
   [key: string]: LucideIcon
@@ -52,7 +53,7 @@ const DEFAULT_ICON_MAPPING: IconMapping = {
   texto: FileText,
 }
 
-const TooltipContent = React.memo(
+const TooltipContent = memo(
   ({
     source,
     field,
@@ -118,7 +119,7 @@ export function FilterTagTooltip({
   tooltipContentClassName,
   sectionClassNames,
 }: FilterTagTooltipProps) {
-  const getFilterDisplayText = React.useCallback(() => {
+  const getFilterDisplayText = useCallback(() => {
     if (filter.source === "*" && filter.field === "*") {
       return {
         source: "Global",
