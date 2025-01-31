@@ -28,7 +28,7 @@ const meta: Meta<typeof AdvancedFilterInput> = {
         root.classList.add(theme);
       }
 
-      return   <div className="w-[600px] p-4"><Story /></div>
+      return   <div className="md:w-[600px] p-4"><Story /></div>
     },
   ],
   /** Documentación de los argumentos del componente */

@@ -12,7 +12,7 @@ export const mockFilters: Filter[] = [
     source: "ContaDebinARSCoelsa",
     field: "[tipomov]",
     operator: "eq",
-    value: "value1",
+    value: "trxin",
   },
   {
     source: "ContaDebinARSGalicia",
@@ -28,15 +28,21 @@ export const mockFilters: Filter[] = [
   },
   {
     source: "ContaDebinARSCoelsa",
-    field: "[horario-movimiento]",
-    operator: "between",
-    value: "{\"from\": \"12:00:00\", \"to\": \"13:00:00\"}",
-  },
-  {
-    source: "ContaDebinARSCoelsa",
     field: "[fecha-movimiento]",
     operator: "between",
     value: "{\"from\":\"01-01-2025\",\"to\":\"15-01-2025\"}"
+  },
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[horario-movimiento]",
+    operator: "eq",
+    value: "13:00:00"
+  },
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[horario-movimiento]",
+    operator: "between",
+    value: "{\"from\": \"12:00:00\", \"to\": \"13:00:00\"}",
   },
   {
     source: "*",

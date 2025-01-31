@@ -187,7 +187,7 @@ export function TimePicker({
           <Button
             variant="outline"
             className={cn(
-              "w-[200px] justify-start text-left font-normal border-input-dark dark:border-input bg-background dark:bg-background",
+              "w-min-[200px] w-full justify-start text-left font-normal border-input-dark dark:border-input bg-background dark:bg-background",
               isInvalid && "border-destructive",
               !time && "text-muted-foreground",
               className,

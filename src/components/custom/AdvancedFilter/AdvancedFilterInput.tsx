@@ -11,6 +11,7 @@ import TagFilter from "../CustomTagFilter"
 import { DropdownFilterList } from "./DropdownFilterList"
 
 import { FilterForm } from "./FilterForm"
+import { FilterTagTooltip } from "./FilterTagTooltip"
 import { InputDebounce } from "./InputDebounce"
 
 
@@ -251,20 +252,20 @@ export function AdvancedFilterInput({
       if (!source) return `${filter.source}: ${filter.value || ""}`
 
       const field = source.fields[filter.field]
-      if (!field) return `${source.display}: ${filter.field} - ${filter.value || ""}`
+      if (!field) return `${filter.field} - ${filter.value || ""}`
 
       const dataType = localFilterScheme.data_types[field.data_type]
-      if (!dataType) return `${source.display}: ${field.display} - ${filter.value || ""}`
+      if (!dataType) return `${field.display} - ${filter.value || ""}`
 
       const operator = dataType.filtering_operators[filter.operator]
-      if (!operator) return `${source.display}: ${field.display} ${filter.operator} ${filter.value || ""}`
+      if (!operator) return `${field.display} ${filter.operator} ${filter.value || ""}`
 
       let valueDisplay = filter.value || ""
       if (dataType.options && typeof filter.value === "string" && dataType.options[filter.value]) {
         valueDisplay = dataType.options[filter.value]
       }
 
-      return `${source.display}: ${field.display} ${operator.display} ${valueDisplay}`
+      return `${field.display} ${operator.display} ${valueDisplay}`
     },
     [localFilterScheme, localSources],
   )
@@ -285,19 +286,28 @@ export function AdvancedFilterInput({
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {localFilters.length > 0 && (
-            <div className="flex items-center gap-1">
+            <div className="items-center gap-1 hidden md:flex lg:flex">
               {localFilters.slice(0, 2).map((filter, index) => (
-                <TagFilter
+                <FilterTagTooltip
                   key={`filter-${filter.source}-${filter.field}-${filter.value}-${index}`}
-                  label={getFilterDisplayText(filter)}
-                  onClick={() => handleFilterEdit(filter)}
-                  onRemove={() => handleRemoveFilter(filter)}
-                  color="neutral"
-                  size="sm"
-                  rounded="md"
-                  className="shrink-0 bg-secondary/80 text-xs hover:bg-secondary max-w-[100px]"
-                  truncate
-                />
+                  filter={filter}
+                  filterScheme={localFilterScheme}
+                  sources={localSources}
+                  side="bottom"
+                >
+                  <div className="cursor-pointer">
+                    <TagFilter
+                      label={getFilterDisplayText(filter)}
+                      onClick={() => handleFilterEdit(filter)}
+                      onRemove={() => handleRemoveFilter(filter)}
+                      color="neutral"
+                      size="sm"
+                      rounded="md"
+                      className="shrink-0 bg-secondary/80 text-xs hover:bg-secondary max-w-[100px]"
+                      truncate
+                    />
+                  </div>
+                </FilterTagTooltip>
               ))}
             </div>
           )}
