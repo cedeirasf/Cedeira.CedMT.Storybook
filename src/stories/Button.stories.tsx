@@ -80,11 +80,12 @@ const createStory = (
     children: label,
     onClick: action(`${variant} clicked`),
     disabled: false,
-    className: "", // Soporte para personalización de estilos
+    className: "",
   },
   decorators: [
     (Story, context) => {
-      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+      const theme =
+        context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
 
       if (typeof window !== "undefined") {
         const root = document.documentElement;
@@ -98,7 +99,11 @@ const createStory = (
 });
 
 // Historias generales para todas las variantes
-export const Default = createStory("default", "default", "Botón Predeterminado");
+export const Default = createStory(
+  "default",
+  "default",
+  "Botón Predeterminado"
+);
 export const Secondary = createStory(
   "secondary",
   "default",
