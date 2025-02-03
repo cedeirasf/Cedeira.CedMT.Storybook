@@ -1,23 +1,56 @@
-
 import { Input } from "@/components/ui/input"
-import { getBaseTip } from "@/lib/filters-utils"
 import { cn } from "@/lib/utils"
 import type {
-  DefaultValues,
+  ChannelViewFilterSchemeResponse,
   Filter,
-  InputDebounceProps,
-  Suggestion,
+  FilterScheme,
 } from "@/types/components/custom-advanced-input-filter.type"
 import { addDays, format } from "date-fns"
 import { Loader2, Search } from "lucide-react"
+import * as React from "react"
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from "react"
 
+interface Suggestion {
+  source: string
+  sourceDisplay: string
+  field: string
+  fieldDisplay: string
+  operator: string
+  operatorDisplay: string
+  tip: string
+  dataType: string
+  defaultValue: string
+}
+
+interface InputDebounceProps {
+  onSearch: (query: string) => void
+  onSelect: (filter: Partial<Filter>) => void
+  placeholder?: string
+  className?: string
+  filterScheme: FilterScheme
+  sources: ChannelViewFilterSchemeResponse["sources"]
+  size?: "small" | "medium" | "large"
+  isLoading?: boolean
+  value?: string
+  selectedFilters?: Filter[]
+}
+
+interface DefaultValues {
+  TIME_DEFAULT: string
+  DATE_FORMAT: string
+  EMPTY_VALUE: string
+}
 
 const DEFAULT_VALUES: DefaultValues = {
   TIME_DEFAULT: "00:00:00",
   DATE_FORMAT: "dd-MM-yyyy",
   EMPTY_VALUE: "",
 } as const
+
+const getBaseTip = (tipText: string, operatorDisplay: string) => {
+  const index = tipText.toLowerCase().indexOf(operatorDisplay.toLowerCase())
+  return index !== -1 ? tipText.slice(0, index).trim() : tipText.trim()
+}
 
 function InputDebounce({
   onSearch,
@@ -273,7 +306,7 @@ function InputDebounce({
     [showSuggestions, suggestions, selectedIndex, query, handleSelect, onSelect, isFilterDuplicate],
   )
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!(event.target as Element).closest(".suggestions-container")) {
         setShowSuggestions(false)
