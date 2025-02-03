@@ -19,11 +19,17 @@ const meta: Meta<typeof AdvancedFilterInput> = {
   },
   /** Decoradores para envolver las historias */
   decorators: [
-    (Story) => (
-      <div className="w-[600px] p-4">
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
+      }
+
+      return   <div className="md:w-[600px] p-4"><Story /></div>
+    },
   ],
   /** Documentación de los argumentos del componente */
   args: {
@@ -66,6 +72,7 @@ const meta: Meta<typeof AdvancedFilterInput> = {
       control: "text",
     },
   },
+  
 }
 
 export default meta

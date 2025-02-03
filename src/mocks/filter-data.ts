@@ -1,18 +1,65 @@
-import type { ChannelViewFilterSchemeResponse, FilterScheme, Source } from "../types/components/custom-advanced-input-filter.type"
+import type {
+  ChannelViewFilterSchemeResponse,
+  Filter,
+  FilterScheme,
+  Source,
+} from "../types/components/custom-advanced-input-filter.type";
 
+// Filtros
+export const mockFilters: Filter[] = [
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[tipomov]",
+    operator: "eq",
+    value: "trxin",
+  },
+  {
+    source: "ContaDebinARSGalicia",
+    field: "[importe]",
+    operator: "gt",
+    value: "12.75",
+  },
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[fecha-movimiento]",
+    operator: "eq",
+    value: "31-01-2025",
+  },
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[fecha-movimiento]",
+    operator: "between",
+    value: "{\"from\":\"01-01-2025\",\"to\":\"15-01-2025\"}"
+  },
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[horario-movimiento]",
+    operator: "eq",
+    value: "13:00:00"
+  },
+  {
+    source: "ContaDebinARSCoelsa",
+    field: "[horario-movimiento]",
+    operator: "between",
+    value: "{\"from\": \"12:00:00\", \"to\": \"13:00:00\"}",
+  },
+  {
+    source: "*",
+    field: "*",
+    operator: "contains",
+    value: "pepe",
+  },
+];
+
+// Esquema
 export const mockFilterScheme: FilterScheme = {
   data_types: {
     "combo-tipo-mov": {
       primitive: "string",
+      scope: "option",
       filtering_operators: {
-        eq: {
-          expression: "==",
-          display: "es igual a",
-        },
-        ne: {
-          expression: "!=",
-          display: "es diferente de",
-        },
+        eq: { expression: "==", display: "es igual a" },
+        ne: { expression: "!=", display: "es diferente de" },
       },
       options: {
         trxin: "TRXIN",
@@ -21,43 +68,23 @@ export const mockFilterScheme: FilterScheme = {
         pepe: "PEPE <sin definir>",
       },
     },
-    cbu: {
+    texto: {
       primitive: "string",
+      scope: "text",
       filtering_operators: {
-        eq: {
-          expression: "==",
-          display: "es igual a",
-        },
-        ne: {
-          expression: "!=",
-          display: "es diferente de",
-        },
-      },
-    },
-    string: {
-      primitive: "string",
-      filtering_operators: {
+        eq: { expression: "==", display: "es igual a" },
         ne: { expression: "!=", display: "es diferente de" },
-        gt: { expression: ">", display: "es mayor que" },
-        lt: { expression: "<", display: "es menor que" },
-        gte: { expression: ">=", display: "es mayor o igual que" },
-        lte: { expression: "<=", display: "es menor o igual que" },
-        in: { expression: "in", display: "esta incluido en" },
-        nin: { expression: "nin", display: "no esta incluido en" },
-        between: { expression: "between", display: "esta entre" },
-        not_between: { expression: "not between", display: "no esta entre" },
         like: { expression: "like", display: "contiene" },
         not_like: { expression: "not like", display: "no contiene" },
-        is_empty: { expression: "is empty", display: "está vacío" },
         starts_with: { expression: "starts with", display: "empieza con" },
         ends_with: { expression: "ends with", display: "termina con" },
+        is_empty: { expression: "is empty", display: "está vacío" },
         is_not_empty: { expression: "is not empty", display: "no está vacío" },
-        is_null: { expression: "is null", display: "es nulo" },
-        is_not_null: { expression: "is not null", display: "no es nulo" },
       },
     },
     number: {
       primitive: "number",
+      scope: "number",
       filtering_operators: {
         eq: { expression: "==", display: "es igual a" },
         ne: { expression: "!=", display: "es diferente de" },
@@ -65,14 +92,13 @@ export const mockFilterScheme: FilterScheme = {
         lt: { expression: "<", display: "es menor que" },
         gte: { expression: ">=", display: "es mayor o igual que" },
         lte: { expression: "<=", display: "es menor o igual que" },
-        in: { expression: "in", display: "esta incluido en" },
-        nin: { expression: "nin", display: "no esta incluido en" },
-        is_empty: { expression: "is empty", display: "está vacío" },
-        is_not_empty: { expression: "is not empty", display: "no está vacío" },
+        between: { expression: "between", display: "está entre", range: true },
+        not_between: { expression: "not between", display: "no está entre", range: true },
       },
     },
     "number-nullable": {
       primitive: "number",
+      scope: "number",
       filtering_operators: {
         eq: { expression: "==", display: "es igual a" },
         ne: { expression: "!=", display: "es diferente de" },
@@ -80,16 +106,15 @@ export const mockFilterScheme: FilterScheme = {
         lt: { expression: "<", display: "es menor que" },
         gte: { expression: ">=", display: "es mayor o igual que" },
         lte: { expression: "<=", display: "es menor o igual que" },
-        in: { expression: "in", display: "esta incluido en" },
-        nin: { expression: "nin", display: "no esta incluido en" },
-        is_empty: { expression: "is empty", display: "está vacío" },
-        is_not_empty: { expression: "is not empty", display: "no está vacío" },
         is_null: { expression: "is null", display: "es nulo" },
         is_not_null: { expression: "is not null", display: "no es nulo" },
+        between: { expression: "between", display: "está entre", range: true },
+        not_between: { expression: "not between", display: "no está entre", range: true },
       },
     },
-    "fecha-sin-rango": { // Ver el scheme por que faltaria ver como seria el date tanto para un filtro cargado como para la creacion de uno nuevo
-      primitive: "date",
+    fecha: {
+      primitive: "string",
+      scope: "date",
       filtering_operators: {
         eq: { expression: "==", display: "es igual a" },
         ne: { expression: "!=", display: "es diferente de" },
@@ -97,146 +122,110 @@ export const mockFilterScheme: FilterScheme = {
         lt: { expression: "<", display: "es menor que" },
         gte: { expression: ">=", display: "es mayor o igual que" },
         lte: { expression: "<=", display: "es menor o igual que" },
-        between: { expression: "between", display: "esta entre" },
-        not_between: { expression: "not between", display: "no esta entre" },
-        is_null: { expression: "is null", display: "es nulo" },
-        is_not_null: { expression: "is not null", display: "no es nulo" },
+        between: { expression: "between", display: "está entre", range: true },
+        not_between: { expression: "not between", display: "no está entre", range: true },
+      },
+    },
+    horario: {
+      primitive: "string",
+      scope: "time",
+      filtering_operators: {
+        eq: { expression: "==", display: "es igual a" },
+        ne: { expression: "!=", display: "es diferente de" },
+        gt: { expression: ">", display: "es mayor que" },
+        lt: { expression: "<", display: "es menor que" },
+        gte: { expression: ">=", display: "es mayor o igual que" },
+        lte: { expression: "<=", display: "es menor o igual que" },
+        between: { expression: "between", display: "está entre", range: true },
+        not_between: { expression: "not between", display: "no está entre", range: true },
+      },
+    },
+    cbu: {
+      primitive: "string",
+      scope: "text",
+      filtering_operators: {
+        eq: { expression: "==", display: "es igual a" },
+        ne: { expression: "!=", display: "es diferente de" },
       },
     },
   },
+};
 
-}
-
+// Fuentes
 export const mockSources: Source[] = [
   {
     source: "ContaDebinARSCoelsa",
     display: "Coelsa",
     fields: {
-      "[column_key_1]": {
+      "[tipomov]": {
+        display: "Tipo Movimiento",
+        data_type: "combo-tipo-mov",
+        filteringTips: [
+          { tip: "Tipo Movimiento en Coelsa es igual a TRXIN", filtering_operator: "eq" },
+        ],
+      },
+      "[fecha-movimiento]": {
+        display: "Fecha de movimiento",
+        data_type: "fecha",
+        filteringTips: [
+          { tip: "Fecha de movimiento en Coelsa es igual a", filtering_operator: "eq" },
+        ],
+      },
+      "[horario-movimiento]": {
+        display: "Hora de movimiento",
+        data_type: "horario",
+        filteringTips: [
+          { tip: "Hora de movimiento en Coelsa está entre", filtering_operator: "between" },
+        ],
+      },
+      "[importe]": {
         display: "Importe",
         data_type: "number-nullable",
         filteringTips: [
-          {
-            tip: "Importe en Coelsa es mayor a",
-            filtering_operator: "gt",
-          },
-          {
-            tip: "Importe en Coelsa es menor a",
-            filtering_operator: "lt",
-          },
+          { tip: "Importe en Coelsa es mayor a", filtering_operator: "gt" },
         ],
       },
       "[cvu2]": {
         display: "CVU 2",
         data_type: "cbu",
         filteringTips: [
-          {
-            tip: "CVU 2 es igual a",
-            filtering_operator: "eq",
-          },
-          {
-            tip: "CVU 2 es distinto a",
-            filtering_operator: "ne",
-          },
-        ],
-      },
-      "[tipomov]": {
-        display: "Tipo Movimiento",
-        data_type: "combo-tipo-mov",
-        filteringTips: [
-          {
-            tip: "Tipo Movimiento en Coelsa es igual a TRXIN",
-            filtering_operator: "eq",
-          },
-          {
-            tip: "Tipo Movimiento en Coelsa es distinto a DEBINQR - Bonos",
-            filtering_operator: "ne",
-          },
+          { tip: "CVU 2 es igual a", filtering_operator: "eq" },
         ],
       },
     },
   },
   {
     source: "ContaDebinARSGalicia",
-    display: "Payment",
+    display: "Galicia",
     fields: {
-      "[column_key_1]": {
+      "[importe]": {
         display: "Importe",
-        data_type: "number-nullable",
+        data_type: "number",
         filteringTips: [
-          {
-            tip: "Importe en Payment es mayor a",
-            filtering_operator: "gt",
-          },
-          {
-            tip: "Importe en Payment es menor a",
-            filtering_operator: "lt",
-          },
+          { tip: "Importe en Galicia es mayor a", filtering_operator: "gt" },
         ],
       },
-      "[tipomov]": {
-        display: "Tipo Movimiento",
-        data_type: "combo-tipo-mov",
+      "[fecha-movimiento]": {
+        display: "Fecha de movimiento",
+        data_type: "fecha",
         filteringTips: [
-          {
-            tip: "Tipo Movimiento en Payment es igual a TRXIN",
-            filtering_operator: "eq",
-          },
-          {
-            tip: "Tipo Movimiento en Payment es distinto a DEBINQR - Bonos",
-            filtering_operator: "ne",
-          },
+          { tip: "Fecha de movimiento en Galicia está entre", filtering_operator: "between" },
         ],
       },
-      // Ejemplo para mostrar calendario field de primitivo date
-      "[fecha-sin-rango]": {
-        display: "Fecha",
-        data_type: "fecha-sin-rango",
+      "[titular]": {
+        display: "Titular",
+        data_type: "texto",
         filteringTips: [
-          {
-            tip: "Fecha en Payment es mayor a",
-            filtering_operator: "gt",
-          },
-          {
-            tip: "Fecha en Payment es menor a",
-            filtering_operator: "lt",
-          },
+          { tip: "Titular contiene", filtering_operator: "like" },
         ],
       },
     },
   },
-]
+];
 
-
+// Respuesta combinada
 export const mockChannelViewFilterSchemeResponse: ChannelViewFilterSchemeResponse = {
-  filters: [
-    {
-      source: "ContaDebinARSCoelsa",
-      field: "[tipomov]",
-      operator: "eq",
-      value: "trxin",
-    },
-    {
-      source: "ContaDebinARSGalicia",
-      field: "[column_key_1]",
-      operator: "gt",
-      value: "12.75",
-    },
-    {
-      source: "*",
-      field: "*",
-      operator: "contains",
-      value: "pepe",
-    },
-    //Caso que venga un filtro con un campo de tipo date
-    {
-      source: "ContaDebinARSGalicia",
-      field: "[fecha-sin-rango]",
-      operator: "gt",
-      value: "2022-01-01", // Formato fecha hora y minuto YYYY-MM-DDTHH:MM:SS agregar la hora despues de la fecha
-    },
-  ],
+  filters: mockFilters,
   scheme: mockFilterScheme,
-  sources: mockSources
-}
-
+  sources: mockSources,
+};

@@ -6,16 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import {
-  type Time,
-  type TimeFormat,
-  formatTime,
-  parseTimeInput,
-  incrementTimeValue,
-  decrementTimeValue,
-  clampTime,
-  isTimeInRange,
-} from "@/lib/utils"
+import { Time, TimeFormat } from "@/types/components/custom-times.types"
+import { clampTime, decrementTimeValue, formatTime, incrementTimeValue, isTimeInRange, parseTimeInput } from "@/lib/time-utilts"
+
 
 interface TimePickerProps {
   value?: Time
@@ -194,7 +187,7 @@ export function TimePicker({
           <Button
             variant="outline"
             className={cn(
-              "w-[200px] justify-start text-left font-normal border-input-dark dark:border-input bg-background dark:bg-background",
+              "w-min-[200px] w-full justify-start text-left font-normal border-input-dark dark:border-input bg-background dark:bg-background",
               isInvalid && "border-destructive",
               !time && "text-muted-foreground",
               className,
