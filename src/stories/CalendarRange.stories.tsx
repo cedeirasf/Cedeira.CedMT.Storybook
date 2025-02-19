@@ -74,9 +74,9 @@ const createStory = (
             selected={range}
           />
           {range && (
-            <p className="text-sm">{`Selected: ${format(range.from, "PPP")} ${
-              range.to ? `- ${format(range.to, "PPP")}` : ""
-            }`}</p>
+            <p className="text-sm">{`Selected: ${
+              range.from ? format(range.from, "PPP") : ""
+            } ${range.to ? `- ${format(range.to, "PPP")}` : ""}`}</p>
           )}
         </div>
       );
@@ -97,26 +97,36 @@ const createStory = (
 });
 
 export const Default = createStory({
-  selected: new Date(),
+  selected: {
+    from: new Date(),
+  },
 });
 
 export const WithDateRange = createStory({
-  selected: new Date(),
+  selected: {
+    from: new Date(),
+  },
   fromDate: new Date(2025, 1, 2),
   toDate: new Date(2025, 2, 2),
 });
 
 export const Disabled = createStory({
-  selected: new Date(),
+  selected: {
+    from: new Date(),
+  },
   disabled: true,
 });
 
 export const WithCustomStyles = createStory({
-  selected: new Date(),
+  selected: {
+    from: new Date(),
+  },
   className: "rounded-xl border-2 border-primary p-4",
 });
 
 export const DisplayOneMonth = createStory({
-  selected: new Date(),
+  selected: {
+    from: new Date(),
+  },
   numberOfMonths: 1,
 });

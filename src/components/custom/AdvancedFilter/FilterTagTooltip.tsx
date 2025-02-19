@@ -1,34 +1,32 @@
-import * as React from "react"
-import { Database, Tag } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
-
+import type { LucideIcon } from "lucide-react";
+import { Database, Tag } from "lucide-react";
+import * as React from "react";
 import type {
   Filter,
   FilterScheme,
   ChannelViewFilterSchemeResponse,
-} from "@/types/components/custom-advanced-input-filter.type"
-import { cn } from "@/lib/utils"
-import { useFilterTagTooltip } from "@/hooks/use-filter-tag-tooltip"
-import { CustomTooltip } from "../CustomTooltip"
-
+} from "@/types/components/custom-advanced-input-filter.type";
+import { cn } from "@/lib/utils";
+import { useFilterTagTooltip } from "@/hooks/use-filter-tag-tooltip";
+import { CustomTooltip } from "../CustomTooltip";
 
 interface FilterTagTooltipProps {
-  filter: Filter
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
-  children: React.ReactNode
-  side?: "top" | "right" | "bottom" | "left"
-  align?: "start" | "center" | "end"
-  iconMapping?: Record<string, LucideIcon>
-  defaultIcon?: LucideIcon
-  sourceIcon?: LucideIcon
-  fieldIcon?: LucideIcon
-  tooltipContentClassName?: string
+  filter: Filter;
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
+  children: React.ReactNode;
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
+  iconMapping?: Record<string, LucideIcon>;
+  defaultIcon?: LucideIcon;
+  sourceIcon?: LucideIcon;
+  fieldIcon?: LucideIcon;
+  tooltipContentClassName?: string;
   sectionClassNames?: {
-    source?: string
-    field?: string
-    value?: string
-  }
+    source?: string;
+    field?: string;
+    value?: string;
+  };
 }
 
 export const FilterTagTooltip: React.FC<FilterTagTooltipProps> = ({
@@ -45,7 +43,12 @@ export const FilterTagTooltip: React.FC<FilterTagTooltipProps> = ({
   tooltipContentClassName,
   sectionClassNames,
 }) => {
-  const { displayData, getValueIcon } = useFilterTagTooltip(filter, filterScheme, sources, iconMapping)
+  const { displayData, getValueIcon } = useFilterTagTooltip(
+    filter,
+    filterScheme,
+    sources,
+    iconMapping
+  );
 
   return (
     <CustomTooltip
@@ -66,24 +69,24 @@ export const FilterTagTooltip: React.FC<FilterTagTooltipProps> = ({
         sectionClassNames={sectionClassNames}
       />
     </CustomTooltip>
-  )
-}
+  );
+};
 
 interface TooltipContentProps {
-  source: string
-  field: string
-  value: string
-  dataType: string
-  getValueIcon: (dataType: string) => LucideIcon
-  defaultIcon?: LucideIcon
-  sourceIcon?: LucideIcon
-  fieldIcon?: LucideIcon
-  tooltipContentClassName?: string
+  source: string;
+  field: string;
+  value: string;
+  dataType: string;
+  getValueIcon: (dataType: string) => LucideIcon;
+  defaultIcon?: LucideIcon;
+  sourceIcon?: LucideIcon;
+  fieldIcon?: LucideIcon;
+  tooltipContentClassName?: string;
   sectionClassNames?: {
-    source?: string
-    field?: string
-    value?: string
-  }
+    source?: string;
+    field?: string;
+    value?: string;
+  };
 }
 
 const TooltipContent = React.memo(function TooltipContent({
@@ -98,7 +101,7 @@ const TooltipContent = React.memo(function TooltipContent({
   tooltipContentClassName = "",
   sectionClassNames = {},
 }: TooltipContentProps) {
-  const ValueIcon = getValueIcon(dataType) || defaultIcon
+  const ValueIcon = getValueIcon(dataType) || defaultIcon;
 
   return (
     <div className={cn("max-w-[280px] space-y-2 p-1", tooltipContentClassName)}>
@@ -115,8 +118,7 @@ const TooltipContent = React.memo(function TooltipContent({
         <div className="text-sm">{value}</div>
       </div>
     </div>
-  )
-})
+  );
+});
 
-export default FilterTagTooltip
-
+export default FilterTagTooltip;

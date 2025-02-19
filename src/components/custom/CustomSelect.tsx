@@ -1,4 +1,5 @@
 import type { ICustomSelect } from "../../types/components/custom-select.types";
+import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -7,13 +8,13 @@ import {
   SelectValue,
 } from "../ui/select";
 
-export const CustomSelect = ({
+export const CustomSelect: React.FC<ICustomSelect> = ({
   options,
   placeholder,
   disabled = false,
   value,
   onValueChange,
-}: ICustomSelect) => {
+}) => {
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
       <SelectTrigger className="w-full min-w-[240px]">

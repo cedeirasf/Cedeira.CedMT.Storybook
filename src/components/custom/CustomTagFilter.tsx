@@ -13,10 +13,8 @@ const badgeVariants = cva(
           "text-gray-800 bg-gray-100 border-gray-300 hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600 ",
         green:
           "text-green-600 bg-green-100 border-green-200 hover:bg-green-200 dark:text-green-300 dark:bg-green-800 dark:border-green-700 dark:hover:bg-green-700",
-        blue:
-          "text-blue-600 bg-blue-100 border-blue-200 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-800 dark:border-blue-700 dark:hover:bg-blue-700",
-        red:
-          "text-red-600 bg-red-100 border-red-200 hover:bg-red-200 dark:text-red-300 dark:bg-red-800 dark:border-red-700 dark:hover:bg-red-700",
+        blue: "text-blue-600 bg-blue-100 border-blue-200 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-800 dark:border-blue-700 dark:hover:bg-blue-700",
+        red: "text-red-600 bg-red-100 border-red-200 hover:bg-red-200 dark:text-red-300 dark:bg-red-800 dark:border-red-700 dark:hover:bg-red-700",
         orange:
           "text-orange-600 bg-orange-100 border-orange-200 hover:bg-orange-200 dark:text-orange-300 dark:bg-orange-800 dark:border-orange-700 dark:hover:bg-orange-700",
         yellow:
@@ -94,7 +92,6 @@ const TagFilter: React.FC<TagFilterProps> = ({
       >
         <span className="truncate">{label}</span>
       </Button>
-
 
       {/* Botón de eliminar */}
       {onRemove && (

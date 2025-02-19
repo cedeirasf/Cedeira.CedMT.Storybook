@@ -1,18 +1,33 @@
-import { memo } from "react"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/custom/CustomSheet"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
-import type { AdvancedFilterInputProps, ChannelViewFilterSchemeResponse, Filter, FilterScheme } from "@/types/components/custom-advanced-input-filter.type"
-import { FilterIcon, Plus, Trash2 } from "lucide-react"
-import TagFilter from "../CustomTagFilter"
-import { DropdownFilterList } from "./DropdownFilterList"
+import React, { memo } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/custom/CustomSheet";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import type {
+  AdvancedFilterInputProps,
+  ChannelViewFilterSchemeResponse,
+  Filter,
+  FilterScheme,
+} from "@/types/components/custom-advanced-input-filter.type";
+import { FilterIcon, Plus, Trash2 } from "lucide-react";
+import TagFilter from "../CustomTagFilter";
+import { DropdownFilterList } from "./DropdownFilterList";
 
-import { useAdvancedFilter } from "@/hooks/use-advanced-filter"
-import { FilterForm } from "./FilterForm"
-import { FilterTagTooltip } from "./FilterTagTooltip"
-import { InputDebounce } from "./InputDebounce"
+import { useAdvancedFilter } from "@/hooks/use-advanced-filter";
+import { FilterForm } from "./FilterForm";
+import { FilterTagTooltip } from "./FilterTagTooltip";
+import { InputDebounce } from "./InputDebounce";
 
 export function AdvancedFilterInput({
   selectedFilters,
@@ -47,7 +62,7 @@ export function AdvancedFilterInput({
     onSearch,
     filterScheme,
     sources,
-  })
+  });
 
   return (
     <div className={cn("w-full space-y-2", className)}>
@@ -86,20 +101,20 @@ export function AdvancedFilterInput({
         sources={localSources}
       />
     </div>
-  )
+  );
 }
 
 interface FilterActionsProps {
-  filters: Filter[]
-  onEdit: (filter: Filter) => void
-  onRemove: (filter: Filter) => void
-  getFilterDisplayText: (filter: Filter) => string
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
-  isDropdownOpen: boolean
-  setIsDropdownOpen: (open: boolean) => void
-  onAddNew: () => void
-  onClearAll: () => void
+  filters: Filter[];
+  onEdit: (filter: Filter) => void;
+  onRemove: (filter: Filter) => void;
+  getFilterDisplayText: (filter: Filter) => string;
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
+  isDropdownOpen: boolean;
+  setIsDropdownOpen: (open: boolean) => void;
+  onAddNew: () => void;
+  onClearAll: () => void;
 }
 
 const FilterActions = memo(function FilterActions({
@@ -136,16 +151,16 @@ const FilterActions = memo(function FilterActions({
         onClearAll={onClearAll}
       />
     </div>
-  )
-})
+  );
+});
 
 interface FilterTagsProps {
-  filters: Filter[]
-  onEdit: (filter: Filter) => void
-  onRemove: (filter: Filter) => void
-  getFilterDisplayText: (filter: Filter) => string
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
+  filters: Filter[];
+  onEdit: (filter: Filter) => void;
+  onRemove: (filter: Filter) => void;
+  getFilterDisplayText: (filter: Filter) => string;
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
 }
 
 const FilterTags = memo(function FilterTags({
@@ -181,19 +196,19 @@ const FilterTags = memo(function FilterTags({
         </FilterTagTooltip>
       ))}
     </div>
-  )
-})
+  );
+});
 
 interface FilterDropdownProps {
-  filters: Filter[]
-  onEdit: (filter: Filter) => void
-  onRemove: (filter: Filter) => void
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
-  isOpen: boolean
-  onOpenChange: (open: boolean) => void
-  onAddNew: () => void
-  onClearAll: () => void
+  filters: Filter[];
+  onEdit: (filter: Filter) => void;
+  onRemove: (filter: Filter) => void;
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  onAddNew: () => void;
+  onClearAll: () => void;
 }
 
 const FilterDropdown = memo(function FilterDropdown({
@@ -210,7 +225,11 @@ const FilterDropdown = memo(function FilterDropdown({
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full bg-secondary hover:bg-secondary/80">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 rounded-full bg-secondary hover:bg-secondary/80"
+        >
           <FilterIcon className="h-4 w-4" />
           {filters.length > 2 && (
             <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
@@ -219,7 +238,11 @@ const FilterDropdown = memo(function FilterDropdown({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[280px] sm:w-[480px] p-0" sideOffset={8}>
+      <DropdownMenuContent
+        align="end"
+        className="w-[280px] sm:w-[480px] p-0"
+        sideOffset={8}
+      >
         <div className="flex flex-col h-[300px]">
           <ScrollArea className="flex-1">
             <DropdownFilterList
@@ -232,12 +255,22 @@ const FilterDropdown = memo(function FilterDropdown({
             />
           </ScrollArea>
           <div className="flex justify-end gap-2 border-t p-2 bg-popover">
-            <Button size="sm" onClick={onAddNew} variant="default" className="h-8">
+            <Button
+              size="sm"
+              onClick={onAddNew}
+              variant="default"
+              className="h-8"
+            >
               <Plus className="mr-2 h-3 w-3" />
               Agregar
             </Button>
             {filters.length > 0 && (
-              <Button size="sm" onClick={onClearAll} variant="destructive" className="h-8">
+              <Button
+                size="sm"
+                onClick={onClearAll}
+                variant="destructive"
+                className="h-8"
+              >
                 <Trash2 className="mr-2 h-3 w-3" />
                 Limpiar
               </Button>
@@ -246,16 +279,16 @@ const FilterDropdown = memo(function FilterDropdown({
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-})
+  );
+});
 
 interface FilterFormSheetProps {
-  isOpen: boolean
-  onOpenChange: (open: boolean) => void
-  selectedFilter: Partial<Filter> | null
-  onSubmit: (filter: Filter) => void
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  selectedFilter: Partial<Filter> | null;
+  onSubmit: (filter: Filter) => void;
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
 }
 
 const FilterFormSheet = memo(function FilterFormSheet({
@@ -270,14 +303,20 @@ const FilterFormSheet = memo(function FilterFormSheet({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>{selectedFilter ? "Editar filtro" : "Nuevo filtro"}</SheetTitle>
+          <SheetTitle>
+            {selectedFilter ? "Editar filtro" : "Nuevo filtro"}
+          </SheetTitle>
           <SheetDescription>
-            {selectedFilter ? "Modifica los valores del filtro" : "Configura un nuevo filtro"}
+            {selectedFilter
+              ? "Modifica los valores del filtro"
+              : "Configura un nuevo filtro"}
           </SheetDescription>
         </SheetHeader>
         <div className="py-4">
           <FilterForm
-            key={selectedFilter ? `edit-${JSON.stringify(selectedFilter)}` : "new"}
+            key={
+              selectedFilter ? `edit-${JSON.stringify(selectedFilter)}` : "new"
+            }
             initialFilter={selectedFilter as Filter | null}
             onSubmit={onSubmit}
             filterScheme={filterScheme}
@@ -286,6 +325,5 @@ const FilterFormSheet = memo(function FilterFormSheet({
         </div>
       </SheetContent>
     </Sheet>
-  )
-})
-
+  );
+});

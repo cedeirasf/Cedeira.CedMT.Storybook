@@ -1,25 +1,23 @@
-import * as React from "react"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import * as React from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   ChannelViewFilterSchemeResponse,
   Filter,
   FilterScheme,
-} from "@/types/components/custom-advanced-input-filter.type"
-import { cn } from "@/lib/utils"
-
-import { FilterTagTooltip } from "./FilterTagTooltip"
-import { useDropdownFilterList } from "@/hooks/use-dropdown-filter-list"
-import TagFilter from "../CustomTagFilter"
-
+} from "@/types/components/custom-advanced-input-filter.type";
+import { cn } from "@/lib/utils";
+import { FilterTagTooltip } from "./FilterTagTooltip";
+import { useDropdownFilterList } from "@/hooks/use-dropdown-filter-list";
+import TagFilter from "../CustomTagFilter";
 
 interface DropdownFilterListProps {
-  filters: Filter[]
-  onSelect?: (filter: Filter) => void
-  onRemove?: (filter: Filter) => void
-  variant?: "grid" | "list"
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
-  className?: string
+  filters: Filter[];
+  onSelect?: (filter: Filter) => void;
+  onRemove?: (filter: Filter) => void;
+  variant?: "grid" | "list";
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
+  className?: string;
 }
 
 export function DropdownFilterList({
@@ -31,14 +29,21 @@ export function DropdownFilterList({
   sources,
   className,
 }: DropdownFilterListProps) {
-  const { getFilterDisplayText } = useDropdownFilterList(filterScheme, sources)
+  const { getFilterDisplayText } = useDropdownFilterList(filterScheme, sources);
 
   if (filters.length === 0) {
-    return <div className="p-4 text-sm text-muted-foreground">No hay filtros para mostrar</div>
+    return (
+      <div className="p-4 text-sm text-muted-foreground">
+        No hay filtros para mostrar
+      </div>
+    );
   }
 
   return (
-    <ScrollArea className={cn("max-h-[320px] w-full", className)} scrollHideDelay={0}>
+    <ScrollArea
+      className={cn("max-h-[320px] w-full", className)}
+      scrollHideDelay={0}
+    >
       {variant === "list" ? (
         <ListView
           filters={filters}
@@ -58,21 +63,21 @@ export function DropdownFilterList({
         />
       )}
     </ScrollArea>
-  )
+  );
 }
 
 interface ListViewProps {
-  filters: Filter[]
-  onSelect?: (filter: Filter) => void
+  filters: Filter[];
+  onSelect?: (filter: Filter) => void;
   getFilterDisplayText: (filter: Filter) => {
-    label: string
-    source: string
-    field: string
-    value: string
-    dataType: string
-  }
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
+    label: string;
+    source: string;
+    field: string;
+    value: string;
+    dataType: string;
+  };
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
 }
 
 const ListView = React.memo(function ListView({
@@ -85,7 +90,7 @@ const ListView = React.memo(function ListView({
   return (
     <div className="p-1 pr-4">
       {filters.map((filter, index) => {
-        const { label } = getFilterDisplayText(filter)
+        const { label } = getFilterDisplayText(filter);
         return (
           <FilterTagTooltip
             key={`filter-${filter.source}-${filter.field}-${filter.value}-${index}`}
@@ -100,25 +105,25 @@ const ListView = React.memo(function ListView({
               {label}
             </div>
           </FilterTagTooltip>
-        )
+        );
       })}
     </div>
-  )
-})
+  );
+});
 
 interface GridViewProps {
-  filters: Filter[]
-  onSelect?: (filter: Filter) => void
-  onRemove?: (filter: Filter) => void
+  filters: Filter[];
+  onSelect?: (filter: Filter) => void;
+  onRemove?: (filter: Filter) => void;
   getFilterDisplayText: (filter: Filter) => {
-    label: string
-    source: string
-    field: string
-    value: string
-    dataType: string
-  }
-  filterScheme: FilterScheme
-  sources: ChannelViewFilterSchemeResponse["sources"]
+    label: string;
+    source: string;
+    field: string;
+    value: string;
+    dataType: string;
+  };
+  filterScheme: FilterScheme;
+  sources: ChannelViewFilterSchemeResponse["sources"];
 }
 
 const GridView = React.memo(function GridView({
@@ -153,6 +158,5 @@ const GridView = React.memo(function GridView({
         </FilterTagTooltip>
       ))}
     </div>
-  )
-})
-
+  );
+});

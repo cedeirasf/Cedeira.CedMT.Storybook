@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import clsx from "clsx";
+import React from "react";
 
 export const CustomDialog: React.FC<ICustomDialog> = ({
   isOpen = false,
