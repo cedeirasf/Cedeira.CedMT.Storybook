@@ -1,7 +1,7 @@
 {
   "name": "@cedeirasf/cedmt-storybook",
   "private": false,
-  "version": "v1.17.1",
+  "version": "v1.17.2",
   "description": "Librería de componentes para la aplicación Matching Tool.",
   "repository": {
     "type": "git",
