@@ -3,6 +3,9 @@
   "private": false,
   "version": "v1.16.0",
   "description": "Librería de componentes para la aplicación Matching Tool.",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
