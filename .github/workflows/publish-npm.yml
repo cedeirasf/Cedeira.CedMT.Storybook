@@ -72,4 +72,4 @@ jobs:
 
       # Publish npm package into private github registry
       - name: Publish npm package
-        run: pnpm publish --registry https://npm.pkg.github.com
+        run: pnpm publish --provenance
