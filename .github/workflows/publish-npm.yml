@@ -35,7 +35,7 @@ jobs:
         run: |
           #!/bin/sh
 
-          echo "@cedeira:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "@cedeirasf:registry=https://npm.pkg.github.com/" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc
 
       # setup pnpm

@@ -1,8 +1,12 @@
 {
-  "name": "@cedeira/cedmt-storybook",
+  "name": "@cedeirasf/cedmt-storybook",
   "private": false,
-  "version": "v1.17.1",
+  "version": "v1.17.2",
   "description": "Librería de componentes para la aplicación Matching Tool.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cedeirasf/Cedeira.CedMT.Storybook.git"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
