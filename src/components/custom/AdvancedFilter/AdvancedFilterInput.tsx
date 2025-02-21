@@ -9,7 +9,7 @@ import { FilterIcon, Plus, Trash2 } from "lucide-react"
 import TagFilter from "../CustomTagFilter"
 import { DropdownFilterList } from "./DropdownFilterList"
 
-import { useAdvancedFilter } from "@/hooks/use-advanced-filter"
+import { useAdvancedFilter } from "@/hooks/components/use-advanced-filter"
 import { FilterForm } from "./FilterForm"
 import { FilterTagTooltip } from "./FilterTagTooltip"
 import { InputDebounce } from "./InputDebounce"
