@@ -1,5 +1,5 @@
 {
-  "name": "@cedeira/cedmt-storybook",
+  "name": "@cedeirasf/cedmt-storybook",
   "private": false,
   "version": "v1.17.1",
   "description": "Librería de componentes para la aplicación Matching Tool.",
