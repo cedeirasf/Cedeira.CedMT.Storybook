@@ -1,0 +1,22 @@
+changelog:
+  categories:
+    - title: '🥳 Breaking Changes'
+      labels:
+        - BREAKING CHANGE
+    - title: '🔥 New Features and Enhancements'
+      labels:
+        - enhancement
+        - feature
+    - title: '🐛 Fixes'
+      labels:
+        - bug
+    - title: '📖 Changes to Documentation'
+      labels:
+        - documentation
+    - title: '🛠️ Changes in Dependencies'
+      labels:
+        - dependencies
+        - build
+    - title: 'Other Changes'
+      labels:
+        - "*"

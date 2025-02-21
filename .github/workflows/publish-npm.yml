@@ -1,0 +1,75 @@
+name: Publish npm
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Publish
+    if: github.event.release.draft == false
+    runs-on: ubuntu-latest
+    permissions: write-all
+    defaults:
+      run:
+        shell: bash
+    env:
+      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        id: checkout
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.release.target_commitish }}
+      
+      # Verify package name and version
+      - name: Verify package name and version
+        run: |
+          #!/bin/sh
+
+          echo "Package name: $(jq -r '.name' package.json)"
+          echo "Package version: $(jq -r '.version' package.json)"
+
+      # add registry
+      - name: Authenticate with GitHub Packages
+        run: |
+          #!/bin/sh
+
+          echo "@cedeira:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc
+
+      # setup pnpm
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 20
+          run_install: false
+
+      # setup node
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Cache pnpm dependencies
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      # Generate npm package
+      - name: Generate npm package
+        run: pnpm pack
+
+      # Publish npm package into private github registry
+      - name: Publish npm package
+        run: pnpm publish --registry https://npm.pkg.github.com
