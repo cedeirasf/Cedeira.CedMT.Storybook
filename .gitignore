@@ -30,3 +30,4 @@ chromatic-build-*.xml
 chromatic-diagnostics.json
 
 *storybook.log
+*.tgz
