@@ -1,5 +1,5 @@
 {
-  "name": "mcht-ui",
+  "name": "@cedeira/cedmt-storybook",
   "private": false,
   "version": "v1.16.0",
   "description": "Librería de componentes para la aplicación Matching Tool.",
@@ -93,5 +93,5 @@
   "author": {
     "name": "Cedeira"
   },
-  "license": "MIT"
+  "license": "Private"
 }
