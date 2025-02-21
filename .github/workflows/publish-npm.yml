@@ -26,7 +26,7 @@ jobs:
       - name: Verify package name and version
         run: |
           #!/bin/sh
-          
+
           echo "Package name: $(jq -r '.name' package.json)"
           echo "Package version: $(jq -r '.version' package.json)"
 
@@ -42,14 +42,14 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: latest
+          version: 20
           run_install: false
 
       # setup node
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'latest'
+          node-version: 20
 
       # Cache pnpm dependencies
       - name: Cache pnpm store
