@@ -31,3 +31,4 @@ chromatic-diagnostics.json
 
 *storybook.log
 *.tgz
+*.tmp
