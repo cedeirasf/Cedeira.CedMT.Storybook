@@ -4,103 +4,90 @@
 
 @layer base {
   :root {
+    --background: 204, 26.32%, 96.27%;
 
+    --foreground: 208.24, 7.3%, 45.69%;
 
-    /* Fondo general */
-    --background: 0 0% 100%; /* Blanco puro */
-    --foreground: 222.2 84% 4.9%; /* Texto principal oscuro */
+    --card: 0, 0%, 100%;
 
-    /* Componentes */
-    --card: 0 0% 98%; /* Fondo de tarjetas ligeramente gris */
-    --card-foreground: 222.2 84% 4.9%; /* Texto en tarjetas */
-    --popover: 0 0% 98%; /* Fondos desplegables */
-    --popover-foreground: 222.2 84% 4.9%; /* Texto desplegables */
+    --card-foreground: 216.43, 16.28%, 66.27%;
 
-    /* Colores principales */
-    --primary: 221.2 83.2% 53.3%; /* Azul fuerte */
-    --primary-foreground: 0 0% 100%; /* Texto blanco sobre azul */
-    --secondary: 210 40% 96.1%; /* Gris muy claro */
-    --secondary-foreground: 222.2 47.4% 11.2%; /* Texto gris oscuro */
+    --popover: 0, 0%, 100%;
 
-    /* Colores neutrales */
-    --muted: 214.3 31.8% 91.4%; /* Fondo gris claro */
-    --muted-foreground: 215.4 16.3% 46.9%; /* Texto gris medio */
+    --popover-foreground: 216.43, 16.28%, 66.27%;
 
-    /* Énfasis */
-    --accent: 210 40% 96.1%; /* Azul claro para detalles */
-    --accent-foreground: 222.2 47.4% 11.2%; /* Texto gris oscuro sobre azul claro */
+    --primary: 184.12, 98.08%, 40.78%;
 
-    /* Estados destructivos */
-    --destructive: 0 84.2% 60.2%; /* Rojo brillante */
-    --destructive-foreground: 0 0% 100%; /* Texto blanco sobre rojo */
+    --primary-foreground: 0, 0%, 100%;
 
-    /* Bordes y separadores */
-    --border: 214.3 31.8% 91.4%; /* Bordes gris claro */
-    --input: 0 0% 100%; /* Fondo de campos de texto blanco */
-    --input-dark: 220 13% 91%; 
+    --secondary: 210, 9.09%, 91.37%;
 
-    /* Elementos interactivos */
-    --ring: 221.2 83.2% 53.3%; /* Azul fuerte para estados de foco */
-    --radius: 0.75rem; /* Radio de bordes */
+    --secondary-foreground: 210 20% 70%;
 
-    /* Gráficos y visualizaciones */
-    --chart-1: 12 76% 61%; /* Rojo para gráficos */
-    --chart-2: 173 58% 39%; /* Verde brillante */
-    --chart-3: 197 37% 24%; /* Azul oscuro */
-    --chart-4: 43 74% 66%; /* Amarillo claro */
-    --chart-5: 27 87% 67%; /* Naranja */
+    --muted: 210, 9.09%, 91.37%;
+
+    --muted-foreground: 240, 9.52%, 32.94%;
+
+    --accent: 184, 98%, 41%, 0.1;
+
+    --accent-foreground: 184.12, 98.08%, 40.78%;
+
+    --destructive: 0 62.8% 30.6%;
+
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210, 9.09%, 91.37%;
+
+    --secondary-foreground: 210 20% 70%;
+
+    --input: 210, 9.09%, 91.37%;
+
+    --ring: 184, 98%, 41%, 0.1;
   }
-
   .dark {
-    --input-dark: 220 13% 91%;
-    /* Fondo general */
-    --background: 222.2 84% 4.9%; /* Fondo principal oscuro */
-    --foreground: 210 40% 98%; /* Texto claro sobre fondo oscuro */
+    --background: 231.43, 12.73%, 10.78%;
 
-    /* Componentes */
-    --card: 217.2 32.6% 17.5%; /* Fondo de tarjetas */
-    --card-foreground: 210 40% 98%; /* Texto en tarjetas */
-    --popover: 217.2 32.6% 17.5%; /* Fondo desplegables */
-    --popover-foreground: 210 40% 98%; /* Texto desplegables */
+    --foreground: 210 12% 58%;
 
-    /* Colores principales */
-    --primary: 217.2 91.2% 59.8%; /* Azul claro */
-    --primary-foreground: 210 40% 98%; /* Texto claro sobre fondo azul */
-    --secondary: 217.2 40% 35%; /* Gris azulado oscuro */
-    --secondary-foreground: 210 40% 98%; /* Texto sobre fondo secundario */
+    --card: 233.33, 13.04%, 13.53%;
 
-    /* Colores neutrales */
-    --muted: 217.2 32.6% 20%; /* Fondo neutro */
-    --muted-foreground: 215 20.2% 75%; /* Texto neutro */
+    --card-foreground: 210 12% 58%;
 
-    /* Énfasis */
-    --accent: 224.3 76.3% 48%; /* Azul vívido para detalles */
-    --accent-foreground: 210 40% 98%; /* Texto sobre fondo de énfasis */
+    --popover: 233.33, 13.04%, 13.53%;
 
-    /* Estados destructivos */
-    --destructive: 0 62.8% 40%; /* Rojo oscuro */
-    --destructive-foreground: 210 40% 98%; /* Texto claro sobre rojo */
+    --popover-foreground: 210 12% 58%;
 
-    /* Bordes y separadores */
-    --border: 217.2 32.6% 20%; /* Líneas y bordes oscuros */
-    --input: 217.2 32.6% 20%; /* Fondo de campos de texto */
+    --primary: 184.12, 98.08%, 40.78%;
 
-    /* Elementos interactivos */
-    --ring: 217.2 91.2% 59.8%; /* Azul claro para estados de foco */
-    --radius: 0.75rem; /* Radio de bordes */
+    --primary-foreground: 0, 0%, 100%;
 
-    /* Gráficos y visualizaciones */
-    --chart-1: 220 70% 50%; /* Azul para gráficos */
-    --chart-2: 160 60% 45%; /* Verde oscuro */
-    --chart-3: 30 80% 55%; /* Amarillo/naranja */
-    --chart-4: 280 65% 60%; /* Púrpura */
-    --chart-5: 340 75% 55%; /* Rosa */
+    --secondary: 240 3.7% 15.9%;
+
+    --secondary-foreground: 210 20% 70%;
+
+    --muted: 240 3.7% 15.9%;
+
+    --muted-foreground: 210 20% 70%;
+
+    --accent: 184, 98%, 41%, 0.1;
+
+    --accent-foreground: 184.12, 98.08%, 40.78%;
+
+    --destructive: 0 62.8% 30.6%;
+
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+
+    --input: 240 3.7% 15.9%;
+
+    --ring: 184, 98%, 41%, 0.1;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;

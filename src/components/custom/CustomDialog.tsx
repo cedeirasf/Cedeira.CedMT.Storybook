@@ -1,6 +1,6 @@
 import type { ICustomDialog } from "@/types/components/custom-dialog.types";
 import {
-  Dialog,
+  Dialog as DialogShadcn,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,7 +10,7 @@ import {
 import clsx from "clsx";
 import React from "react";
 
-export const CustomDialog: React.FC<ICustomDialog> = ({
+const Dialog: React.FC<ICustomDialog> = ({
   isOpen = false,
   onClose,
   title,
@@ -43,7 +43,7 @@ export const CustomDialog: React.FC<ICustomDialog> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <DialogShadcn open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className={clsx(
           "fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto",
@@ -78,6 +78,17 @@ export const CustomDialog: React.FC<ICustomDialog> = ({
           style={backdropStyle}
         />
       )}
-    </Dialog>
+    </DialogShadcn>
   );
+};
+
+export {
+  type ICustomDialog,
+  Dialog,
+  DialogShadcn,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 };
