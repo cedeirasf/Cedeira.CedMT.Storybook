@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import {
   Sheet,
   SheetContent,
@@ -21,13 +21,12 @@ import type {
   FilterScheme,
 } from "@/types/components/custom-advanced-input-filter.type";
 import { FilterIcon, Plus, Trash2 } from "lucide-react";
-import TagFilter from "../CustomTagFilter";
 import { DropdownFilterList } from "./DropdownFilterList";
-
-import { useAdvancedFilter } from "@/hooks/use-advanced-filter";
-import { FilterForm } from "./FilterForm";
-import { FilterTagTooltip } from "./FilterTagTooltip";
+import { useAdvancedFilter } from "@/hooks/components/use-advanced-filter";
 import { InputDebounce } from "./InputDebounce";
+import TagFilter from "../CustomTagFilter";
+import FilterForm from "./FilterForm";
+import FilterTagTooltip from "./FilterTagTooltip";
 
 export function AdvancedFilterInput({
   selectedFilters,

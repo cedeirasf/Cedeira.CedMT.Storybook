@@ -7,7 +7,7 @@ import type {
 } from "@/types/components/custom-advanced-input-filter.type";
 import { cn } from "@/lib/utils";
 import { FilterTagTooltip } from "./FilterTagTooltip";
-import { useDropdownFilterList } from "@/hooks/use-dropdown-filter-list";
+import { useDropdownFilterList } from "@/hooks/components/use-dropdown-filter-list";
 import TagFilter from "../CustomTagFilter";
 
 interface DropdownFilterListProps {

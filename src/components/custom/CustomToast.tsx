@@ -1,6 +1,6 @@
 import { ToastViewport } from "@radix-ui/react-toast";
 import * as React from "react";
-import { useToast } from "../../hooks/use-toast";
+import { useToast } from "../../hooks/ui/use-toast";
 import { cn } from "../../lib/utils";
 import {
   Toast,
