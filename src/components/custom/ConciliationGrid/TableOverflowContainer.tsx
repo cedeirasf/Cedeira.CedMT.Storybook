@@ -1,15 +1,18 @@
- 
-import { useCBSTContext } from "@/context/ui/CBSTContext"
-import { JSX } from "react"
+import { useCBSTContext } from "@/context/ui/CBSTContext";
+import React, { JSX } from "react";
 
 interface Props {
-  Toolbar: JSX.Element
-  Table: JSX.Element
-  Pagination: JSX.Element | null
+  Toolbar: JSX.Element;
+  Table: JSX.Element;
+  Pagination: JSX.Element | null;
 }
 
-export const TableOverflowContainer = ({ Toolbar, Table, Pagination }: Props) => {
-  const { footerRef, toolbarRef } = useCBSTContext()
+export const TableOverflowContainer = ({
+  Toolbar,
+  Table,
+  Pagination,
+}: Props) => {
+  const { footerRef, toolbarRef } = useCBSTContext();
 
   return (
     <div className="flex flex-col h-full">
@@ -21,6 +24,5 @@ export const TableOverflowContainer = ({ Toolbar, Table, Pagination }: Props) =>
         {Pagination && Pagination}
       </div>
     </div>
-  )
-}
-
+  );
+};

@@ -1,9 +1,9 @@
-import type React from "react"
-import { cn } from "@/lib/utils"
-import type { SchemeColumn } from "@/types/components/custom-table-conciliation-type"
+import React from "react";
+import { cn } from "@/lib/utils";
+import type { SchemeColumn } from "@/types/components/custom-table-conciliation-type";
 
 interface TableHeaderProps {
-  scheme: Record<string, SchemeColumn>
+  scheme: Record<string, SchemeColumn>;
 }
 
 export const TableHeader: React.FC<TableHeaderProps> = ({ scheme }) => {
@@ -22,6 +22,5 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ scheme }) => {
           ))}
       </tr>
     </thead>
-  )
-}
-
+  );
+};

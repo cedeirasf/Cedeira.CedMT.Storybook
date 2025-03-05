@@ -1,11 +1,10 @@
-import type React from "react"
-
-import { cn } from "@/lib/utils"
-import { SchemeColumn } from "@/types/components/custom-table-conciliation-type"
+import React from "react";
+import { cn } from "@/lib/utils";
+import { SchemeColumn } from "@/types/components/custom-table-conciliation-type";
 
 interface EmptyRowsProps {
-  count: number
-  scheme: { [key: string]: SchemeColumn }
+  count: number;
+  scheme: { [key: string]: SchemeColumn };
 }
 
 export const EmptyRows: React.FC<EmptyRowsProps> = ({ count, scheme }) => (
@@ -25,13 +24,12 @@ export const EmptyRows: React.FC<EmptyRowsProps> = ({ count, scheme }) => (
                     "align-middle",
                     "first:w-[200px]",
                     "w-[150px]",
-                    "px-4",
+                    "px-4"
                   )}
                 />
-              ),
+              )
           )}
         </tr>
       ))}
   </>
-)
-
+);

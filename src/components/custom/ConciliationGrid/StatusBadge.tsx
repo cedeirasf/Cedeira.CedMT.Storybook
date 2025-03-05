@@ -1,5 +1,5 @@
 import { type BadgeProps, Badge } from "@/components/ui/badge";
-import type React from "react";
+import React from "react";
 import { RotateCcw, X, Check, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 import { memo, useMemo } from "react";
 import type { SchemeColumn } from "@/types/components/custom-table-conciliation-type";
 import { cn } from "@/lib/utils";
