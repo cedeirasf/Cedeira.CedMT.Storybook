@@ -27,6 +27,7 @@ import { InputDebounce } from "./InputDebounce";
 import TagFilter from "../CustomTagFilter";
 import FilterForm from "./FilterForm";
 import FilterTagTooltip from "./FilterTagTooltip";
+import React from "react";
 
 export function AdvancedFilterInput({
   selectedFilters,

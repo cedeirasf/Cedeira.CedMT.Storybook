@@ -4,6 +4,7 @@
   "version": "v1.14.0",
   "description": "Librería de componentes para la aplicación Matching Tool.",
   "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "sideEffects": false,
   "files": [

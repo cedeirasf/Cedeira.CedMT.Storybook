@@ -7,8 +7,7 @@ import type {
 } from "@/types/components/custom-advanced-input-filter.type";
 import { addDays, format } from "date-fns";
 import { Loader2, Search } from "lucide-react";
-import * as React from "react";
-import {
+import React, {
   useCallback,
   useDeferredValue,
   useEffect,
