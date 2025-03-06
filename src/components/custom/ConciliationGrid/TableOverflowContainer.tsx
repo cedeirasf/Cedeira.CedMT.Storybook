@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import React, { JSX } from "react";
 
 interface Props {
   Toolbar: JSX.Element;
