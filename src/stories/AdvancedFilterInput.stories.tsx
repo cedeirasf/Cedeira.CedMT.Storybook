@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { AdvancedFilterInput } from "../components/custom/AdvancedFilter/AdvancedFilterInput"
-import { mockChannelViewFilterSchemeResponse } from "../mocks/filter-data"
-import { useState } from "react"
-import * as React from "react"
+import type { Meta, StoryObj } from "@storybook/react";
+import { AdvancedFilterInput } from "../components/custom/AdvancedFilter/AdvancedFilterInput";
+import { mockChannelViewFilterSchemeResponse } from "../mocks/filter-data";
+import { useState } from "react";
+import * as React from "react";
 
 /**
  * Configuración de la historia para el componente AdvancedFilterInput
@@ -20,7 +20,8 @@ const meta: Meta<typeof AdvancedFilterInput> = {
   /** Decoradores para envolver las historias */
   decorators: [
     (Story, context) => {
-      const theme = context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+      const theme =
+        context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
 
       if (typeof window !== "undefined") {
         const root = document.documentElement;
@@ -28,7 +29,11 @@ const meta: Meta<typeof AdvancedFilterInput> = {
         root.classList.add(theme);
       }
 
-      return   <div className="md:w-[600px] p-4"><Story /></div>
+      return (
+        <div className="md:w-[600px] p-4">
+          <Story />
+        </div>
+      );
     },
   ],
   /** Documentación de los argumentos del componente */
@@ -39,8 +44,8 @@ const meta: Meta<typeof AdvancedFilterInput> = {
     onFiltersChange: (filters) => console.log("Filtros actualizados:", filters),
     /** Función asíncrona para realizar búsquedas */
     onSearch: async (query) => {
-      console.log("Buscando:", query)
-      return mockChannelViewFilterSchemeResponse
+      console.log("Buscando:", query);
+      return mockChannelViewFilterSchemeResponse;
     },
     /** Esquema que define los tipos de datos y operadores */
     filterScheme: mockChannelViewFilterSchemeResponse.scheme,
@@ -72,11 +77,10 @@ const meta: Meta<typeof AdvancedFilterInput> = {
       control: "text",
     },
   },
-  
-}
+};
 
-export default meta
-type Story = StoryObj<typeof AdvancedFilterInput>
+export default meta;
+type Story = StoryObj<typeof AdvancedFilterInput>;
 
 /**
  * Historia predeterminada que muestra el componente con datos de ejemplo
@@ -85,21 +89,21 @@ export const Predeterminado: Story = {
   render: function Renderizar() {
     // Asegurar que los filtros iniciales tengan el formato de fecha correcto
     const [filtrosSeleccionados, setFiltrosSeleccionados] = useState(() =>
-      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters),
-    )
+      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters)
+    );
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta)
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      console.log("Buscando con la consulta:", consulta);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
         filters: filtrosSeleccionados,
-      }
-    }
+      };
+    };
 
     const manejarCambioFiltros = (nuevosFiltros) => {
-      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
-    }
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros));
+    };
 
     return (
       <AdvancedFilterInput
@@ -109,29 +113,29 @@ export const Predeterminado: Story = {
         filterScheme={mockChannelViewFilterSchemeResponse.scheme}
         sources={mockChannelViewFilterSchemeResponse.sources}
       />
-    )
+    );
   },
-}
+};
 
 /**
  * Historia que muestra el componente sin filtros iniciales
  */
 export const Vacio: Story = {
   render: function Renderizar() {
-    const [filtrosSeleccionados, setFiltrosSeleccionados] = useState([])
+    const [filtrosSeleccionados, setFiltrosSeleccionados] = useState([]);
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta)
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      console.log("Buscando con la consulta:", consulta);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
         filters: filtrosSeleccionados,
-      }
-    }
+      };
+    };
 
     const manejarCambioFiltros = (nuevosFiltros) => {
-      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
-    }
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros));
+    };
 
     return (
       <AdvancedFilterInput
@@ -141,9 +145,9 @@ export const Vacio: Story = {
         filterScheme={mockChannelViewFilterSchemeResponse.scheme}
         sources={mockChannelViewFilterSchemeResponse.sources}
       />
-    )
+    );
   },
-}
+};
 
 /**
  * Historia que muestra el componente con una clase CSS personalizada
@@ -151,21 +155,21 @@ export const Vacio: Story = {
 export const ConClasePersonalizada: Story = {
   render: function Renderizar() {
     const [filtrosSeleccionados, setFiltrosSeleccionados] = useState(() =>
-      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters),
-    )
+      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters)
+    );
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta)
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      console.log("Buscando con la consulta:", consulta);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
         filters: filtrosSeleccionados,
-      }
-    }
+      };
+    };
 
     const manejarCambioFiltros = (nuevosFiltros) => {
-      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
-    }
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros));
+    };
 
     return (
       <AdvancedFilterInput
@@ -176,9 +180,9 @@ export const ConClasePersonalizada: Story = {
         sources={mockChannelViewFilterSchemeResponse.sources}
         className="border-2 border-primary p-4 rounded-xl"
       />
-    )
+    );
   },
-}
+};
 
 /**
  * Historia que muestra el componente con una lista extendida de fuentes
@@ -186,8 +190,8 @@ export const ConClasePersonalizada: Story = {
 export const ConListaFuentesLarga: Story = {
   render: function Renderizar() {
     const [filtrosSeleccionados, setFiltrosSeleccionados] = useState(() =>
-      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters),
-    )
+      asegurarFechasValidas(mockChannelViewFilterSchemeResponse.filters)
+    );
 
     // Crear lista extendida de fuentes
     const fuentesExtendidas = [
@@ -208,21 +212,21 @@ export const ConListaFuentesLarga: Story = {
           },
         },
       })),
-    ]
+    ];
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta)
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      console.log("Buscando con la consulta:", consulta);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
         sources: fuentesExtendidas,
         filters: filtrosSeleccionados,
-      }
-    }
+      };
+    };
 
     const manejarCambioFiltros = (nuevosFiltros) => {
-      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros))
-    }
+      setFiltrosSeleccionados(asegurarFechasValidas(nuevosFiltros));
+    };
 
     return (
       <AdvancedFilterInput
@@ -232,9 +236,9 @@ export const ConListaFuentesLarga: Story = {
         filterScheme={mockChannelViewFilterSchemeResponse.scheme}
         sources={fuentesExtendidas}
       />
-    )
+    );
   },
-}
+};
 
 /**
  * Función auxiliar para asegurar que las fechas estén correctamente formateadas
@@ -243,20 +247,22 @@ export const ConListaFuentesLarga: Story = {
  */
 const asegurarFechasValidas = (filtros) => {
   return filtros.map((filtro) => {
-    const fuente = mockChannelViewFilterSchemeResponse.sources.find((s) => s.source === filtro.source)
-    if (!fuente) return filtro
+    const fuente = mockChannelViewFilterSchemeResponse.sources.find(
+      (s) => s.source === filtro.source
+    );
+    if (!fuente) return filtro;
 
-    const campo = fuente.fields[filtro.field]
-    if (!campo) return filtro
+    const campo = fuente.fields[filtro.field];
+    if (!campo) return filtro;
 
-    const tipoDato = mockChannelViewFilterSchemeResponse.scheme.data_types[campo.data_type]
-    if (!tipoDato || tipoDato.primitive !== "date") return filtro
+    const tipoDato =
+      mockChannelViewFilterSchemeResponse.scheme.data_types[campo.data_type];
+    if (!tipoDato || tipoDato.primitive !== "date") return filtro;
 
     // Asegurar que los valores de fecha sean cadenas ISO válidas
     return {
       ...filtro,
       value: new Date(filtro.value).toISOString(),
-    }
-  })
-}
-
+    };
+  });
+};

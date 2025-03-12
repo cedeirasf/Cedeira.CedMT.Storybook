@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -6,10 +6,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { cn } from '@/lib/utils';
-import { MultiSelectContextProps, MultiSelectorProps, TagFilterStyleProps } from '@/types/components/custom-multiselect.type';
-import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import {
+  MultiSelectContextProps,
+  MultiSelectorProps,
+  TagFilterStyleProps,
+} from "@/types/components/custom-multiselect.type";
+import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
 import React, {
   KeyboardEvent,
   createContext,
@@ -17,22 +21,20 @@ import React, {
   useCallback,
   useContext,
   useState,
-} from 'react';
-import TagFilter from './CustomTagFilter';
-
-
+} from "react";
+import TagFilter from "./CustomTagFilter";
 
 const MultiSelectContext = createContext<MultiSelectContextProps | null>(null);
 
 const useMultiSelect = () => {
   const context = useContext(MultiSelectContext);
   if (!context) {
-    throw new Error('useMultiSelect must be used within MultiSelectProvider');
+    throw new Error("useMultiSelect must be used within MultiSelectProvider");
   }
   return context;
 };
 
-const MultiSelector = ({
+const MultiSelector: React.FC<MultiSelectorProps> = ({
   values: value,
   onValuesChange: onValueChange,
   options,
@@ -44,10 +46,10 @@ const MultiSelector = ({
   ...props
 }: MultiSelectorProps) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const selectAll = useCallback(() => {
-    onValueChange(options.map(option => option.value));
+    onValueChange(options.map((option) => option.value));
   }, [options, onValueChange]);
 
   const deselectAll = useCallback(() => {
@@ -67,7 +69,7 @@ const MultiSelector = ({
   const isAllSelected = value.length === options.length;
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setOpen(false);
     }
   };
@@ -87,44 +89,54 @@ const MultiSelector = ({
         isAllSelected,
         maxCount,
         placeholder,
-        tagStyles
+        tagStyles,
       }}
     >
       <div className="relative w-full" onKeyDown={handleKeyDown} {...props}>
-        <Command className={cn('w-full', className)}>
-          {children}
-        </Command>
+        <Command className={cn("w-full", className)}>{children}</Command>
       </div>
     </MultiSelectContext.Provider>
   );
 };
 
 // Omitir 'color' de HTMLAttributes para evitar el conflicto
-type MultiSelectorTriggerProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'color'> & TagFilterStyleProps;
+type MultiSelectorTriggerProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "color"
+> &
+  TagFilterStyleProps;
 
 const MultiSelectorTrigger = forwardRef<
   HTMLDivElement,
   MultiSelectorTriggerProps
 >(({ className, color, size, rounded, ...props }, ref) => {
-  const { value, options, onValueChange, open, setOpen, maxCount, placeholder, tagStyles } = useMultiSelect();
+  const {
+    value,
+    options,
+    onValueChange,
+    open,
+    setOpen,
+    maxCount,
+    placeholder,
+    tagStyles,
+  } = useMultiSelect();
 
-  const displayedTags = maxCount && value.length > maxCount
-    ? value.slice(0, maxCount)
-    : value;
+  const displayedTags =
+    maxCount && value.length > maxCount ? value.slice(0, maxCount) : value;
 
   // Combine passed props with context tagStyles, with props taking precedence
   const finalTagStyles: TagFilterStyleProps = {
     ...tagStyles,
-    color: color || tagStyles?.color || 'blue',
-    size: size || tagStyles?.size || 'sm',
-    rounded: rounded || tagStyles?.rounded || 'full',
+    color: color || tagStyles?.color || "blue",
+    size: size || tagStyles?.size || "sm",
+    rounded: rounded || tagStyles?.rounded || "full",
   };
 
   return (
     <div
       ref={ref}
       className={cn(
-        'group relative cursor-pointer rounded-md border border-input bg-transparent px-3  text-start py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+        "group relative cursor-pointer rounded-md border border-input bg-transparent px-3  text-start py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
         className
       )}
       onClick={() => setOpen(!open)}
@@ -135,7 +147,7 @@ const MultiSelectorTrigger = forwardRef<
           {displayedTags.map((item) => (
             <TagFilter
               key={item}
-              label={options.find(opt => opt.value === item)?.label || item}
+              label={options.find((opt) => opt.value === item)?.label || item}
               onRemove={() => onValueChange(item)}
               {...finalTagStyles}
             />
@@ -159,7 +171,7 @@ const MultiSelectorTrigger = forwardRef<
   );
 });
 
-MultiSelectorTrigger.displayName = 'MultiSelectorTrigger';
+MultiSelectorTrigger.displayName = "MultiSelectorTrigger";
 
 const MultiSelectorContent = forwardRef<
   HTMLDivElement,
@@ -173,7 +185,7 @@ const MultiSelectorContent = forwardRef<
     <div
       ref={ref}
       className={cn(
-        'absolute left-0 top-full z-50 min-w-[200px] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 mt-2',
+        "absolute left-0 top-full z-50 min-w-[200px] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 mt-2",
         className
       )}
       {...props}
@@ -181,7 +193,7 @@ const MultiSelectorContent = forwardRef<
   );
 });
 
-MultiSelectorContent.displayName = 'MultiSelectorContent';
+MultiSelectorContent.displayName = "MultiSelectorContent";
 
 const MultiSelectorInput = forwardRef<
   HTMLInputElement,
@@ -194,26 +206,34 @@ const MultiSelectorInput = forwardRef<
       ref={ref}
       value={search}
       onValueChange={setSearch}
-      className={cn('border-none focus:ring-0', className)}
+      className={cn("border-none focus:ring-0", className)}
       {...props}
     />
   );
 });
 
-MultiSelectorInput.displayName = 'MultiSelectorInput';
+MultiSelectorInput.displayName = "MultiSelectorInput";
 
 const MultiSelectorList = forwardRef<
   HTMLDivElement,
   React.ComponentPropsWithoutRef<typeof CommandList>
 >(({ className, ...props }, ref) => {
-  const { options, value, onValueChange, search, isAllSelected, selectAll, deselectAll } = useMultiSelect();
+  const {
+    options,
+    value,
+    onValueChange,
+    search,
+    isAllSelected,
+    selectAll,
+    deselectAll,
+  } = useMultiSelect();
 
   return (
     <CommandList
       ref={ref}
       className={cn(
-        'max-h-[200px] overflow-y-auto overscroll-contain',
-        'scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500',
+        "max-h-[200px] overflow-y-auto overscroll-contain",
+        "scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500",
         className
       )}
       {...props}
@@ -231,17 +251,16 @@ const MultiSelectorList = forwardRef<
         >
           <div className="flex items-center">
             <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
-              {isAllSelected ? (
-                <Check className="h-4 w-4" />
-              ) : null}
+              {isAllSelected ? <Check className="h-4 w-4" /> : null}
             </div>
             Seleccionar Todo
           </div>
         </CommandItem>
         {options
-          .filter(option =>
-            option.label.toLowerCase().includes(search.toLowerCase()) ||
-            option.value.toLowerCase().includes(search.toLowerCase())
+          .filter(
+            (option) =>
+              option.label.toLowerCase().includes(search.toLowerCase()) ||
+              option.value.toLowerCase().includes(search.toLowerCase())
           )
           .map((option) => (
             <CommandItem
@@ -263,7 +282,7 @@ const MultiSelectorList = forwardRef<
   );
 });
 
-MultiSelectorList.displayName = 'MultiSelectorList';
+MultiSelectorList.displayName = "MultiSelectorList";
 
 const MultiSelectorFooter = forwardRef<
   HTMLDivElement,
@@ -274,14 +293,13 @@ const MultiSelectorFooter = forwardRef<
   return (
     <div
       ref={ref}
-      className={cn('border-t p-2 flex gap-2', className)}
+      className={cn("border-t p-2 flex gap-2", className)}
       {...props}
     >
       <Button
         onClick={() => setOpen(false)}
         variant="secondary"
         className="flex-1"
-
       >
         Cerrar
       </Button>
@@ -291,17 +309,21 @@ const MultiSelectorFooter = forwardRef<
           setOpen(false);
         }}
         variant="destructive"
-        size="icon"      >
+        size="icon"
+      >
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   );
 });
 
-MultiSelectorFooter.displayName = 'MultiSelectorFooter';
+MultiSelectorFooter.displayName = "MultiSelectorFooter";
 
 export {
-  MultiSelector, MultiSelectorContent, MultiSelectorFooter, MultiSelectorInput,
-  MultiSelectorList, MultiSelectorTrigger
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorFooter,
+  MultiSelectorInput,
+  MultiSelectorList,
+  MultiSelectorTrigger,
 };
-

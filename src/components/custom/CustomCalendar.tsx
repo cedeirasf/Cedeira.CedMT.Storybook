@@ -1,6 +1,7 @@
 import type { ICustomCalendar } from "@/types/components/custom-calendar.types";
 import { Calendar } from "@/components/ui/calendar";
 import clsx from "clsx";
+import React from "react";
 
 export const CustomCalendar: React.FC<ICustomCalendar> = ({
   selected,

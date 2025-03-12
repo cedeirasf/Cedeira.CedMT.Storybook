@@ -1,6 +1,7 @@
 import type { ICustomCalendarRange } from "../../types/components/custom-calendar-range.types";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 export const CustomCalendarRange: React.FC<ICustomCalendarRange> = ({
   selected,

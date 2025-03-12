@@ -1,30 +1,38 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
-import react from "@vitejs/plugin-react-swc";
+import { peerDependencies, dependencies } from "./package.json";
+import react from "@vitejs/plugin-react";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      jsxRuntime: "classic",
+    }),
+    dts({
+      include: ["src/**/*"],
+      exclude: ["src/mocks/**", "src/stories/**"],
+    }),
+  ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
-      components: resolve(__dirname, "src/components/"),
     },
   },
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
-      name: "MtchUI",
-      fileName: (format) => `mtch-ui.${format}.js`,
+      entry: resolve(__dirname, "src", "index.ts"),
+      formats: ["es", "cjs"],
+      fileName: (ext) => `index.${ext}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
-      output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-        },
-      },
+      external: [
+        ...Object.keys(peerDependencies),
+        ...Object.keys(dependencies),
+      ],
+      output: { preserveModules: true, exports: "named" },
     },
-    outDir: "dist",
+    target: "esnext",
+    sourcemap: true,
   },
 });
