@@ -248,7 +248,6 @@ const FilterDropdown = memo(function FilterDropdown({
               filters={filters}
               onSelect={onEdit}
               onRemove={onRemove}
-              variant="grid"
               filterScheme={filterScheme}
               sources={sources}
             />
