@@ -4,7 +4,6 @@ import type {
   Filter,
   FilterScheme,
 } from "@/types/components/custom-advanced-input-filter.type";
-import React, { memo } from "react";
 import {
   Sheet,
   SheetContent,
@@ -23,10 +22,11 @@ import { cn } from "@/lib/utils";
 import { FilterIcon, Plus, Trash2 } from "lucide-react";
 import { DropdownFilterList } from "./DropdownFilterList";
 import { useAdvancedFilter } from "@/hooks/components/use-advanced-filter";
-import { FilterForm } from "./FilterForm";
-import { FilterTagTooltip } from "./FilterTagTooltip";
 import { InputDebounce } from "./InputDebounce";
 import TagFilter from "../CustomTagFilter";
+import FilterForm from "./FilterForm";
+import FilterTagTooltip from "./FilterTagTooltip";
+import React, { memo } from "react";
 
 export function AdvancedFilterInput({
   selectedFilters,
@@ -71,7 +71,7 @@ export function AdvancedFilterInput({
           onSearch={handleSearch}
           onSelect={handleFilterSelect}
           placeholder="Buscar filtros..."
-          className="pl-10 pr-[90px]"
+          className="!pl-10 pr-[90px] !bg-card"
           filterScheme={localFilterScheme}
           sources={localSources}
           isLoading={isPending}
@@ -187,8 +187,8 @@ const FilterTags = memo(function FilterTags({
               onRemove={() => onRemove(filter)}
               color="neutral"
               size="sm"
-              rounded="md"
-              className="shrink-0 bg-secondary/80 text-xs hover:bg-secondary max-w-[100px]"
+              rounded="full"
+              className="shrink-0 !bg-secondary text-xs hover:bg-secondary max-w-[100px]"
               truncate
             />
           </div>
@@ -248,7 +248,6 @@ const FilterDropdown = memo(function FilterDropdown({
               filters={filters}
               onSelect={onEdit}
               onRemove={onRemove}
-              variant="grid"
               filterScheme={filterScheme}
               sources={sources}
             />

@@ -44,7 +44,6 @@ const meta: Meta<typeof AdvancedFilterInput> = {
     onFiltersChange: (filters) => console.log("Filtros actualizados:", filters),
     /** Función asíncrona para realizar búsquedas */
     onSearch: async (query) => {
-      console.log("Buscando:", query);
       return mockChannelViewFilterSchemeResponse;
     },
     /** Esquema que define los tipos de datos y operadores */
@@ -93,7 +92,6 @@ export const Predeterminado: Story = {
     );
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta);
       await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
@@ -125,7 +123,6 @@ export const Vacio: Story = {
     const [filtrosSeleccionados, setFiltrosSeleccionados] = useState([]);
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta);
       await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
@@ -159,7 +156,6 @@ export const ConClasePersonalizada: Story = {
     );
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta);
       await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,
@@ -215,7 +211,6 @@ export const ConListaFuentesLarga: Story = {
     ];
 
     const manejarBusqueda = async (consulta: string) => {
-      console.log("Buscando con la consulta:", consulta);
       await new Promise((resolve) => setTimeout(resolve, 500));
       return {
         ...mockChannelViewFilterSchemeResponse,

@@ -14,7 +14,6 @@ interface DropdownFilterListProps {
   filters: Filter[];
   onSelect?: (filter: Filter) => void;
   onRemove?: (filter: Filter) => void;
-  variant?: "grid" | "list";
   filterScheme: FilterScheme;
   sources: ChannelViewFilterSchemeResponse["sources"];
   className?: string;
@@ -24,7 +23,6 @@ export function DropdownFilterList({
   filters,
   onSelect,
   onRemove,
-  variant = "list",
   filterScheme,
   sources,
   className,
@@ -44,15 +42,17 @@ export function DropdownFilterList({
       className={cn("max-h-[320px] w-full", className)}
       scrollHideDelay={0}
     >
-      {variant === "list" ? (
+      <div className="block lg:hidden w-full">
         <ListView
           filters={filters}
           onSelect={onSelect}
           getFilterDisplayText={getFilterDisplayText}
           filterScheme={filterScheme}
           sources={sources}
+          onRemove={onRemove}
         />
-      ) : (
+      </div>
+      <div className="hidden lg:block w-full">
         <GridView
           filters={filters}
           onSelect={onSelect}
@@ -61,7 +61,7 @@ export function DropdownFilterList({
           filterScheme={filterScheme}
           sources={sources}
         />
-      )}
+      </div>
     </ScrollArea>
   );
 }
@@ -69,6 +69,7 @@ export function DropdownFilterList({
 interface ListViewProps {
   filters: Filter[];
   onSelect?: (filter: Filter) => void;
+  onRemove?: (filter: Filter) => void;
   getFilterDisplayText: (filter: Filter) => {
     label: string;
     source: string;
@@ -84,13 +85,13 @@ const ListView = React.memo(function ListView({
   filters,
   onSelect,
   getFilterDisplayText,
+  onRemove,
   filterScheme,
   sources,
 }: ListViewProps) {
   return (
-    <div className="p-1 pr-4">
+    <div className="flex flex-col gap-2 p-2 w-full">
       {filters.map((filter, index) => {
-        const { label } = getFilterDisplayText(filter);
         return (
           <FilterTagTooltip
             key={`filter-${filter.source}-${filter.field}-${filter.value}-${index}`}
@@ -98,11 +99,17 @@ const ListView = React.memo(function ListView({
             filterScheme={filterScheme}
             sources={sources}
           >
-            <div
-              onClick={() => onSelect?.(filter)}
-              className="w-full rounded-sm px-2 py-1.5 text-sm text-left hover:bg-accent hover:text-accent-foreground cursor-pointer"
-            >
-              {label}
+            <div className="w-full">
+              <TagFilter
+                label={getFilterDisplayText(filter).label}
+                onClick={() => onSelect?.(filter)}
+                onRemove={onRemove ? () => onRemove(filter) : undefined}
+                color="neutral"
+                size="md"
+                rounded="md"
+                className="w-full bg-secondary hover:bg-secondary/80 dark:bg-secondary dark:hover:bg-secondary/80"
+                truncate
+              />
             </div>
           </FilterTagTooltip>
         );
@@ -135,7 +142,7 @@ const GridView = React.memo(function GridView({
   sources,
 }: GridViewProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2">
+    <div className="grid grid-cols-2 gap-2 p-2">
       {filters.map((filter, index) => (
         <FilterTagTooltip
           key={`filter-${filter.source}-${filter.field}-${filter.value}-${index}`}

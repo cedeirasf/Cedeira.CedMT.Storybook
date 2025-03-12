@@ -1,15 +1,21 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import React from "react"
-import { useCallback, useEffect, useState, useMemo, useRef } from "react"
-import { Grid } from "../components/custom/ConciliationGrid/Grid"
-import { CBSTProvider } from "../context/ui/CBSTProvider"
-import { useToast } from "../hooks/ui/use-toast"
-import { mockData, generatePaginatedData, updateRandomRecords } from "../mocks/table-data"
-import type { GridDTO, GridProps } from "../types/components/custom-table-conciliation-type"
+import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
+import { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import { GridScheme } from "../components/custom/ConciliationGrid/GridScheme";
+import { useToast } from "../hooks/ui/use-toast";
+import {
+  mockData,
+  generatePaginatedData,
+  updateRandomRecords,
+} from "../mocks/table-data";
+import type {
+  GridDTO,
+  GridProps,
+} from "../types/components/custom-table-conciliation-type";
 
-const meta: Meta<typeof Grid> = {
+const meta: Meta<typeof GridScheme> = {
   title: "Components/ConciliationGrid",
-  component: Grid,
+  component: GridScheme,
   parameters: {
     layout: "fullscreen",
     docs: {
@@ -32,134 +38,161 @@ Un componente avanzado para visualizar y comparar datos de múltiples fuentes co
     },
   },
   decorators: [
-    (Story) => (
-      <div className="h-screen p-4 bg-gray-100">
-        <CBSTProvider>
-          <Story />
-        </CBSTProvider>
-      </div>
-    ),
-  ],
-}
+    (Story, context) => {
+      const theme =
+        context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
 
-export default meta
-type Story = StoryObj<typeof Grid>
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
+      }
+
+      return (
+        <div className="p-4">
+          <Story />
+        </div>
+      );
+    },
+  ],
+};
+
+export default meta;
+type Story = StoryObj<typeof GridScheme>;
 
 interface GridWithStateProps extends GridProps {
-  simulateError?: boolean
-  updateInterval?: number
+  simulateError?: boolean;
+  updateInterval?: number;
 }
 
 const GridWithState: React.FC<GridWithStateProps> = (args) => {
-  const [data, setData] = useState<GridDTO>(() => generatePaginatedData(1, args.data?.pagination?.rows || 10))
-  const [currentPage, setCurrentPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(args.data?.pagination?.rows || 10)
-  const [isLoading, setIsLoading] = useState(args.isLoading || false)
-  const { toast } = useToast()
+  const [data, setData] = useState<GridDTO>(() =>
+    generatePaginatedData(1, args.data?.pagination?.rows || 10)
+  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(
+    args.data?.pagination?.rows || 10
+  );
+  const [isLoading, setIsLoading] = useState(args.isLoading || false);
+  const { toast } = useToast();
 
-  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const previousDataRef = useRef<GridDTO | null>(null)
+  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const previousDataRef = useRef<GridDTO | null>(null);
 
   const loadData = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       if (args.simulateError) {
-        throw new Error("Error simulado en la carga de datos")
+        throw new Error("Error simulado en la carga de datos");
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      const newData = generatePaginatedData(currentPage, rowsPerPage)
-      setData(newData)
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const newData = generatePaginatedData(currentPage, rowsPerPage);
+      setData(newData);
     } catch (err) {
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : "An unknown error occurred",
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [currentPage, rowsPerPage, args.simulateError, toast])
+  }, [currentPage, rowsPerPage, args.simulateError, toast]);
 
   useEffect(() => {
-    loadData()
-  }, [loadData])
+    loadData();
+  }, [loadData]);
 
   useEffect(() => {
-    if (isLoading || args.simulateError) return
+    if (isLoading || args.simulateError) return;
 
     const updateData = () => {
       setData((prevData) => {
-        const prevDataSnapshot = previousDataRef.current
-        if (prevDataSnapshot && JSON.stringify(prevData) === JSON.stringify(prevDataSnapshot)) {
-          return prevData // Skip update if data hasn't changed
+        const prevDataSnapshot = previousDataRef.current;
+        if (
+          prevDataSnapshot &&
+          JSON.stringify(prevData) === JSON.stringify(prevDataSnapshot)
+        ) {
+          return prevData; // Skip update if data hasn't changed
         }
 
-        const { updatedData, updatedRows } = updateRandomRecords(prevData, 2)
-        previousDataRef.current = updatedData
+        const { updatedData, updatedRows } = updateRandomRecords(prevData, 2);
+        previousDataRef.current = updatedData;
 
         if (updatedRows.size > 0) {
           toast({
             title: "Datos actualizados",
             description: `Se actualizaron ${updatedRows.size} registros`,
             variant: "info",
-          })
+          });
         }
 
-        return updatedData
-      })
-    }
+        return updatedData;
+      });
+    };
 
-    updateTimeoutRef.current = setTimeout(updateData, args.updateInterval || 5000)
+    updateTimeoutRef.current = setTimeout(
+      updateData,
+      args.updateInterval || 5000
+    );
 
     return () => {
       if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current)
+        clearTimeout(updateTimeoutRef.current);
       }
-    }
-  }, [isLoading, args.simulateError, args.updateInterval, toast])
+    };
+  }, [isLoading, args.simulateError, args.updateInterval, toast]);
 
   const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page)
-  }, [])
+    setCurrentPage(page);
+  }, []);
 
   const handleRowsPerPageChange = useCallback((rows: number) => {
-    setRowsPerPage(rows)
-    setCurrentPage(1)
-  }, [])
+    setRowsPerPage(rows);
+    setCurrentPage(1);
+  }, []);
 
-  const handleSort = useCallback((column: string, direction: "asc" | "desc") => {
-    setData((prevData) => {
-      const sortedData = { ...prevData }
-      sortedData.sources = prevData.sources.map((source) => ({
-        ...source,
-        body: {
-          ...source.body,
-          datarows: [...source.body.datarows].sort((a, b) => {
-            const aValue = a[column]
-            const bValue = b[column]
+  const handleSort = useCallback(
+    (column: string, direction: "asc" | "desc") => {
+      setData((prevData) => {
+        const sortedData = { ...prevData };
+        sortedData.sources = prevData.sources.map((source) => ({
+          ...source,
+          body: {
+            ...source.body,
+            datarows: [...source.body.datarows].sort((a, b) => {
+              const aValue = a[column];
+              const bValue = b[column];
 
-            if (aValue == null && bValue == null) return 0
-            if (aValue == null) return direction === "asc" ? -1 : 1
-            if (bValue == null) return direction === "asc" ? 1 : -1
+              if (aValue == null && bValue == null) return 0;
+              if (aValue == null) return direction === "asc" ? -1 : 1;
+              if (bValue == null) return direction === "asc" ? 1 : -1;
 
-            if (typeof aValue === "string" && typeof bValue === "string") {
-              return direction === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
-            }
+              if (typeof aValue === "string" && typeof bValue === "string") {
+                return direction === "asc"
+                  ? aValue.localeCompare(bValue)
+                  : bValue.localeCompare(aValue);
+              }
 
-            if (typeof aValue === "number" && typeof bValue === "number") {
-              return direction === "asc" ? aValue - bValue : bValue - aValue
-            }
+              if (typeof aValue === "number" && typeof bValue === "number") {
+                return direction === "asc" ? aValue - bValue : bValue - aValue;
+              }
 
-            const aStr = String(aValue)
-            const bStr = String(bValue)
-            return direction === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr)
-          }),
-        },
-      }))
-      return sortedData
-    })
-  }, [])
+              const aStr = String(aValue);
+              const bStr = String(bValue);
+              return direction === "asc"
+                ? aStr.localeCompare(bStr)
+                : bStr.localeCompare(aStr);
+            }),
+          },
+        }));
+        return sortedData;
+      });
+    },
+    []
+  );
 
   const gridProps = useMemo(
     () => ({
@@ -170,11 +203,18 @@ const GridWithState: React.FC<GridWithStateProps> = (args) => {
       onRowsPerPageChange: handleRowsPerPageChange,
       onSort: handleSort,
     }),
-    [args, data, isLoading, handlePageChange, handleRowsPerPageChange, handleSort],
-  )
+    [
+      args,
+      data,
+      isLoading,
+      handlePageChange,
+      handleRowsPerPageChange,
+      handleSort,
+    ]
+  );
 
-  return <Grid {...gridProps} />
-}
+  return <GridScheme {...gridProps} />;
+};
 
 export const ConciliationGrid: Story = {
   render: (args) => <GridWithState {...args} />,
@@ -228,4 +268,4 @@ export const ConciliationGrid: Story = {
       description: "Clases CSS adicionales para el contenedor",
     },
   },
-}
+};

@@ -1,9 +1,11 @@
 import type { ICustomCalendarRange } from "../../types/components/custom-calendar-range.types";
+import type { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import React from "react";
 
-export const CustomCalendarRange: React.FC<ICustomCalendarRange> = ({
+const CustomCalendarRange: React.FC<ICustomCalendarRange> = ({
   selected,
   onSelect,
   disabled = false,
@@ -28,4 +30,12 @@ export const CustomCalendarRange: React.FC<ICustomCalendarRange> = ({
       {...props}
     />
   );
+};
+
+export {
+  type ICustomCalendarRange,
+  type DateRange,
+  CustomCalendarRange as CalendarRange,
+  Calendar as CalendarShadcn,
+  format,
 };

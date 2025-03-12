@@ -1,5 +1,8 @@
-import type { Datarow, GridDTO } from "@/types/components/custom-table-conciliation-type"
-import { v4 as uuidv4 } from "uuid"
+import type {
+  Datarow,
+  GridDTO,
+} from "@/types/components/custom-table-conciliation-type";
+import { v4 as uuidv4 } from "uuid";
 /* Mock del JSON DTO  */
 /*  export const mockData: GridDTO = {
   view: "conciliaciones",
@@ -643,16 +646,61 @@ import { v4 as uuidv4 } from "uuid"
 
 /* Mock de 192 registros */
 
-
 const estadoOptions = [
-  { value: "1", display: "CONCILIA", styles: ["text-green-600 bg-green-100", "icon-check"] },
-  { value: "2", display: "NO CONCILIA", styles: ["text-red-600 bg-red-100", "icon-x"] },
-  { value: "3", display: "NO APLICA", styles: ["text-gray-600 bg-white", "icon-arrow-up-right"] },
-  { value: "4", display: "PENDIENTE", styles: ["text-gray-600 bg-gray-100", "icon-clock"] },
-  { value: "5", display: "PARA AJUSTAR", styles: ["text-purple-600 bg-purple-100", "icon-alert-circle"] },
-  { value: "6", display: "PROCESANDO AJUSTE", styles: ["text-purple-700 bg-purple-200", "icon-loader"] },
-  { value: "7", display: "AJUSTADO", styles: ["text-purple-800 bg-purple-300", "icon-check-circle"] },
-]
+  {
+    value: "1",
+    display: "CONCILIA",
+    styles: [
+      "text-green-600 bg-green-200/90 dark:bg-green-950/90",
+      "icon-check",
+    ],
+  },
+  {
+    value: "2",
+    display: "NO CONCILIA",
+    styles: ["text-red-600 bg-red-100 dark:bg-red-950/90", "icon-x"],
+  },
+  {
+    value: "3",
+    display: "NO APLICA",
+    styles: [
+      "text-rose-400 bg-rose-100 dark:bg-rose-950/50 dark:text-rose-400",
+      "icon-arrow-up-right",
+    ],
+  },
+  {
+    value: "4",
+    display: "PENDIENTE",
+    styles: [
+      "text-gray-600 bg-gray-100 dark:bg-gray-800/50 dark:text-gray-300",
+      "icon-clock",
+    ],
+  },
+  {
+    value: "5",
+    display: "PARA AJUSTAR",
+    styles: [
+      "text-pink-400 bg-pink-100 dark:bg-pink-700/50 dark:text-pink-400",
+      "icon-alert-circle",
+    ],
+  },
+  {
+    value: "6",
+    display: "PROCESANDO AJUSTE",
+    styles: [
+      "text-cyan-600 bg-cyan-100 dark:bg-cyan-700/50 dark:text-cyan-400",
+      "icon-loader",
+    ],
+  },
+  {
+    value: "7",
+    display: "AJUSTADO",
+    styles: [
+      "text-blue-600 bg-blue-100 dark:bg-blue-950/50 dark:text-blue-400",
+      "icon-check-circle",
+    ],
+  },
+];
 
 const criterioOptions = [
   {
@@ -660,36 +708,66 @@ const criterioOptions = [
     display: "Diferencia de importes",
     styles: ["text-red-600", "icon-unequal"],
   },
-  { value: "8A28224E-0862-4E21-BF09-8D0DB23D08F3", display: "Estados distintos 3", styles: ["icon-git-branch"] },
-  { value: "CCFCE754-DE45-4541-9A5F-2DC2B206FC7D", display: "Solo Galicia en S/P", styles: ["icon-file-question"] },
-  { value: "11E97A98-0C2C-40F6-BFFA-9B3D127B7AB2", display: "Faltantes en Galicia", styles: ["icon-file-x"] },
-  { value: "671FA03F-04B9-4319-B1CF-123EC94C4DEB", display: "Estados iguales", styles: ["icon-check-circle-2"] },
-]
+  {
+    value: "8A28224E-0862-4E21-BF09-8D0DB23D08F3",
+    display: "Estados distintos 3",
+    styles: ["icon-git-branch"],
+  },
+  {
+    value: "CCFCE754-DE45-4541-9A5F-2DC2B206FC7D",
+    display: "Solo Galicia en S/P",
+    styles: ["icon-file-question"],
+  },
+  {
+    value: "11E97A98-0C2C-40F6-BFFA-9B3D127B7AB2",
+    display: "Faltantes en Galicia",
+    styles: ["icon-file-x"],
+  },
+  {
+    value: "671FA03F-04B9-4319-B1CF-123EC94C4DEB",
+    display: "Estados iguales",
+    styles: ["icon-check-circle-2"],
+  },
+];
 
 const tipoObjetoOptions = [
   { value: "CASHO", display: "(CASHO) CASHOUT", styles: ["icon-wallet"] },
-  { value: "COMAD", display: "(COMAD) COMISION ADQUIRENTE", styles: ["icon-percent"] },
-  { value: "COMBI", display: "(COMBI) COMISION BILLETERA", styles: ["icon-credit-card"] },
+  {
+    value: "COMAD",
+    display: "(COMAD) COMISION ADQUIRENTE",
+    styles: ["icon-percent"],
+  },
+  {
+    value: "COMBI",
+    display: "(COMBI) COMISION BILLETERA",
+    styles: ["icon-credit-card"],
+  },
   { value: "DEBIN", display: "(DEBIN)", styles: ["icon-banknote"] },
   { value: "TRXIN", display: "(TRXIN) TRANSFERENCIA", styles: ["icon-repeat"] },
-]
+];
 
 const generateRow = (index: number): Datarow => ({
   "[UUID]": uuidv4(),
-  "[UUIDEstadoConciliacion]": estadoOptions[Math.floor(Math.random() * estadoOptions.length)].value,
-  "[UUIDCriterioConciliacion]": criterioOptions[Math.floor(Math.random() * criterioOptions.length)].value,
+  "[UUIDEstadoConciliacion]":
+    estadoOptions[Math.floor(Math.random() * estadoOptions.length)].value,
+  "[UUIDCriterioConciliacion]":
+    criterioOptions[Math.floor(Math.random() * criterioOptions.length)].value,
   "[Completado]": ["S", "N", "P"][Math.floor(Math.random() * 3)],
-  "[TipoObjeto]": tipoObjetoOptions[Math.floor(Math.random() * tipoObjetoOptions.length)].value,
+  "[TipoObjeto]":
+    tipoObjetoOptions[Math.floor(Math.random() * tipoObjetoOptions.length)]
+      .value,
   "[IdObjeto]": `ID-${index + 1}`,
   "[TipoMov]": Math.random() > 0.5 ? "C" : "D",
-  "[FechaHoraMov]": new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
+  "[FechaHoraMov]": new Date(
+    Date.now() - Math.floor(Math.random() * 10000000000)
+  ).toISOString(),
   "[Importe]": (Math.random() * 1000000).toFixed(2),
   "[ContaDebinARSCoelsaId]": String(Math.floor(Math.random() * 1000000)),
   "[ContaDebinARSGaliciaId]": String(Math.floor(Math.random() * 1000000)),
   "[FuenteId]": String(Math.floor(Math.random() * 1000000)),
-})
+});
 
-const fullDataset = Array.from({ length: 198 }, (_, i) => generateRow(i))
+const fullDataset = Array.from({ length: 198 }, (_, i) => generateRow(i));
 
 export const mockData: GridDTO = {
   view: "conciliaciones",
@@ -748,9 +826,30 @@ export const mockData: GridDTO = {
             data_type: {
               primitive: "string",
               options: [
-                { value: "S", display: "Si", styles: ["text-green-600 bg-green-100", "icon-check"] },
-                { value: "N", display: "No", styles: ["text-red-600 bg-red-100", "icon-x"] },
-                { value: "P", display: "Pendiente", styles: ["text-gray-600 bg-gray-100", "icon-clock"] },
+                {
+                  value: "S",
+                  display: "Si",
+                  styles: [
+                    "text-green-600 bg-green-200/90 dark:bg-green-950/90",
+                    "icon-check",
+                  ],
+                },
+                {
+                  value: "N",
+                  display: "No",
+                  styles: [
+                    "text-red-600 bg-red-100 dark:text-red-300 dark:bg-red-950/90",
+                    "icon-x",
+                  ],
+                },
+                {
+                  value: "P",
+                  display: "Pendiente",
+                  styles: [
+                    "text-gray-600 bg-gray-100 dark:bg-gray-800/50 dark:text-gray-300",
+                    "icon-clock",
+                  ],
+                },
               ],
             },
             behaviors: { sortable: true, visible: true },
@@ -773,8 +872,19 @@ export const mockData: GridDTO = {
             data_type: {
               primitive: "string",
               options: [
-                { value: "C", display: "CREDITO", styles: ["text-green-600 bg-green-100", "icon-arrow-up-right"] },
-                { value: "D", display: "DEBITO", styles: ["text-red-600 bg-red-100", "icon-arrow-down-left"] },
+                {
+                  value: "C",
+                  display: "CREDITO",
+                  styles: [
+                    "text-green-600 bg-green-200/90 dark:bg-green-950/90",
+                    "icon-arrow-up-right",
+                  ],
+                },
+                {
+                  value: "D",
+                  display: "DEBITO",
+                  styles: ["text-red-600 bg-red-100", "icon-arrow-down-left"],
+                },
               ],
             },
             behaviors: { sortable: true, visible: true },
@@ -816,9 +926,27 @@ export const mockData: GridDTO = {
             data_type: {
               primitive: "string",
               options: [
-                { value: "S", display: "Si", styles: ["text-green-600 bg-green-100"] },
-                { value: "N", display: "No", styles: ["text-red-600 bg-red-100"] },
-                { value: "P", display: "Pendiente", styles: ["text-gray-600 bg-gray-100"] },
+                {
+                  value: "S",
+                  display: "Si",
+                  styles: [
+                    "text-green-600 bg-green-200/90 dark:bg-green-950/90",
+                  ],
+                },
+                {
+                  value: "N",
+                  display: "No",
+                  styles: [
+                    "text-red-600 bg-red-100 dark:text-red-300 dark:bg-red-950/90",
+                  ],
+                },
+                {
+                  value: "P",
+                  display: "Pendiente",
+                  styles: [
+                    "text-gray-600 bg-gray-100 dark:bg-gray-800/50 dark:text-gray-300",
+                  ],
+                },
               ],
             },
             behaviors: { sortable: true, visible: true },
@@ -841,8 +969,19 @@ export const mockData: GridDTO = {
             data_type: {
               primitive: "string",
               options: [
-                { value: "C", display: "CREDITO", styles: ["text-green-600 bg-green-100", "icon-arrow-up-right"] },
-                { value: "D", display: "DEBITO", styles: ["text-red-600 bg-red-100"] },
+                {
+                  value: "C",
+                  display: "CREDITO",
+                  styles: [
+                    "text-green-600 bg-green-100",
+                    "icon-arrow-up-right",
+                  ],
+                },
+                {
+                  value: "D",
+                  display: "DEBITO",
+                  styles: ["text-red-600 bg-red-100"],
+                },
               ],
             },
             behaviors: { sortable: true, visible: true },
@@ -882,18 +1021,21 @@ export const mockData: GridDTO = {
   "conditional-row-format": [
     {
       "index-rows": [1, 2],
-      styles: ["bg-red-50"],
+      styles: ["bg-red-50 dark:bg-red-950/40"],
     },
     {
       "index-rows": [5],
-      styles: ["bg-purple-50"],
+      styles: ["bg-purple-50 dark:bg-purple-950/40"],
     },
   ],
-}
+};
 
-export const generatePaginatedData = (page: number, rowsPerPage: number): GridDTO => {
-  const startIndex = (page - 1) * rowsPerPage
-  const endIndex = startIndex + rowsPerPage
+export const generatePaginatedData = (
+  page: number,
+  rowsPerPage: number
+): GridDTO => {
+  const startIndex = (page - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
 
   return {
     ...mockData,
@@ -910,32 +1052,34 @@ export const generatePaginatedData = (page: number, rowsPerPage: number): GridDT
         datarows: fullDataset.slice(startIndex, endIndex),
       },
     })),
-  }
-}
+  };
+};
 
-export const updateRandomRecords = (data: GridDTO, count = 3): { updatedData: GridDTO; updatedRows: Set<number> } => {
-  const recordsToUpdate = new Set<number>()
-  const totalRecords = data.sources[0].body.datarows.length
+export const updateRandomRecords = (
+  data: GridDTO,
+  count = 3
+): { updatedData: GridDTO; updatedRows: Set<number> } => {
+  const recordsToUpdate = new Set<number>();
+  const totalRecords = data.sources[0].body.datarows.length;
 
   while (recordsToUpdate.size < count) {
-    recordsToUpdate.add(Math.floor(Math.random() * totalRecords))
+    recordsToUpdate.add(Math.floor(Math.random() * totalRecords));
   }
 
-  const updatedData: GridDTO = JSON.parse(JSON.stringify(data))
+  const updatedData: GridDTO = JSON.parse(JSON.stringify(data));
 
   recordsToUpdate.forEach((index) => {
-    const newRow = generateRow(index)
+    const newRow = generateRow(index);
     updatedData.sources.forEach((source) => {
       source.body.datarows[index] = {
         ...source.body.datarows[index],
         ...newRow,
-      }
-    })
-  })
+      };
+    });
+  });
 
   return {
     updatedData,
     updatedRows: recordsToUpdate,
-  }
-}
-
+  };
+};

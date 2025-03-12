@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Badge from "../components/ui/badge"; // Ajusta la ruta si es necesario
 import { CheckIcon, InfoIcon, XIcon } from "lucide-react";
+import { Badge } from "../components/ui/badge";
 import React from "react";
 
 const meta: Meta<typeof Badge> = {
@@ -20,7 +20,15 @@ const meta: Meta<typeof Badge> = {
   argTypes: {
     color: {
       control: { type: "select" },
-      options: ["neutral", "green", "blue", "red", "orange", "yellow", "violet"],
+      options: [
+        "neutral",
+        "green",
+        "blue",
+        "red",
+        "orange",
+        "yellow",
+        "violet",
+      ],
       description: "Define el color de la etiqueta.",
     },
     size: {
@@ -88,13 +96,27 @@ export const Colores: Story = {
   },
   render: (args) => (
     <div className="flex flex-row flex-wrap gap-2">
-      <Badge {...args} color="neutral">Neutral</Badge>
-      <Badge {...args} color="green">Éxito</Badge>
-      <Badge {...args} color="blue">Información</Badge>
-      <Badge {...args} color="red">Error</Badge>
-      <Badge {...args} color="orange">Pendiente</Badge>
-      <Badge {...args} color="yellow">Advertencia</Badge>
-      <Badge {...args} color="violet">Etiqueta</Badge>
+      <Badge {...args} color="neutral">
+        Neutral
+      </Badge>
+      <Badge {...args} color="green">
+        Éxito
+      </Badge>
+      <Badge {...args} color="blue">
+        Información
+      </Badge>
+      <Badge {...args} color="red">
+        Error
+      </Badge>
+      <Badge {...args} color="orange">
+        Pendiente
+      </Badge>
+      <Badge {...args} color="yellow">
+        Advertencia
+      </Badge>
+      <Badge {...args} color="violet">
+        Etiqueta
+      </Badge>
     </div>
   ),
 };
@@ -108,9 +130,15 @@ export const Sombra: Story = {
   },
   render: (args) => (
     <div className="flex flex-row flex-wrap gap-2">
-      <Badge {...args} className="shadow-sm">Sombra pequeña</Badge>
-      <Badge {...args} className="shadow-md">Sombra mediana</Badge>
-      <Badge {...args} className="shadow-lg">Sombra grande</Badge>
+      <Badge {...args} className="shadow-sm">
+        Sombra pequeña
+      </Badge>
+      <Badge {...args} className="shadow-md">
+        Sombra mediana
+      </Badge>
+      <Badge {...args} className="shadow-lg">
+        Sombra grande
+      </Badge>
     </div>
   ),
 };
@@ -124,10 +152,16 @@ export const Gradientes: Story = {
   },
   render: (args) => (
     <div className="flex flex-row flex-wrap gap-2">
-      <Badge {...args} className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+      <Badge
+        {...args}
+        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
+      >
         Gradiente Azul-Púrpura
       </Badge>
-      <Badge {...args} className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
+      <Badge
+        {...args}
+        className="bg-gradient-to-r from-red-500 to-orange-500 text-white"
+      >
         Gradiente Rojo-Naranja
       </Badge>
     </div>
@@ -146,7 +180,11 @@ export const ConIconos: Story = {
       <Badge {...args} icon={<CheckIcon className="size-4" />}>
         Con icono al inicio
       </Badge>
-      <Badge {...args} icon={<InfoIcon className="size-4" />} iconPosition="end">
+      <Badge
+        {...args}
+        icon={<InfoIcon className="size-4" />}
+        iconPosition="end"
+      >
         Con icono al final
       </Badge>
       <Badge {...args} icon={<XIcon className="size-4" />}>

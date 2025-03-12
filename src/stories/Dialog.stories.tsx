@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
-import { CustomDialog } from "../components/custom/CustomDialog";
+import { Dialog } from "../components/custom/CustomDialog";
 import { Button } from "../components/ui/button";
 
-const meta: Meta<typeof CustomDialog> = {
+const meta: Meta<typeof Dialog> = {
   title: "Components/ui/Dialog",
-  component: CustomDialog,
+  component: Dialog,
   tags: ["autodocs"],
   parameters: {
     layout: "centered",
@@ -50,9 +50,9 @@ export default meta;
 
 const createStory = (
   label: string,
-  dialogProps: Partial<typeof CustomDialog.defaultProps> = {},
+  dialogProps: Partial<typeof Dialog.defaultProps> = {},
   buttonProps: Partial<typeof Button.defaultProps> = {}
-): StoryObj<typeof CustomDialog> => ({
+): StoryObj<typeof Dialog> => ({
   render: (args) => {
     function DialogComponent() {
       const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +61,7 @@ const createStory = (
           <Button {...buttonProps} onClick={() => setIsOpen(true)}>
             {label}
           </Button>
-          <CustomDialog
+          <Dialog
             {...dialogProps}
             {...args}
             isOpen={isOpen}
@@ -70,7 +70,7 @@ const createStory = (
             {dialogProps.children || (
               <p>This is the main content of the dialog.</p>
             )}
-          </CustomDialog>
+          </Dialog>
         </>
       );
     }

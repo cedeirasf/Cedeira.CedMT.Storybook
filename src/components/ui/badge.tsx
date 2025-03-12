@@ -1,17 +1,14 @@
-import * as React from "react";
-import { type VariantProps, cva } from "class-variance-authority";
-import { cn } from "../../lib/utils";
 import type { ReactNode } from "react";
+import { type VariantProps, cva } from "class-variance-authority";
+import * as React from "react";
+import { cn } from "../../lib/utils";
 
 const badgeColorVariants = {
-  neutral:
-    "text-neutral-600 bg-neutral-400/10 dark:text-neutral-200 dark:bg-neutral-700 border-neutral-500/20 dark:border-neutral-400",
+  neutral: "hover:bg-background",
   green:
     "text-green-600 bg-green-100 dark:text-green-300 dark:bg-green-800 border-green-200 dark:border-green-500",
-  blue:
-    "text-blue-600 bg-blue-100 dark:text-blue-300 dark:bg-blue-800 border-blue-200 dark:border-blue-500",
-  red:
-    "text-red-600 bg-red-100 dark:text-red-300 dark:bg-red-800 border-red-200 dark:border-red-500",
+  blue: "text-blue-600 bg-blue-100 dark:text-blue-300 dark:bg-blue-800 border-blue-200 dark:border-blue-500",
+  red: "text-red-600 bg-red-100 dark:text-red-300 dark:bg-red-800 border-red-200 dark:border-red-500",
   orange:
     "text-orange-600 bg-orange-100 dark:text-orange-300 dark:bg-orange-800 border-orange-200 dark:border-orange-500",
   yellow:
@@ -64,9 +61,7 @@ const badgesVariants = cva(
 // Corregimos los conflictos excluyendo `color` de las propiedades de HTML
 type DivProps = Omit<React.HTMLAttributes<HTMLDivElement>, "color">;
 
-export interface BadgeProps
-  extends DivProps,
-    VariantProps<typeof badgesVariants> {
+interface BadgeProps extends DivProps, VariantProps<typeof badgesVariants> {
   icon?: ReactNode;
 }
 
@@ -95,4 +90,4 @@ const Badge: React.FC<BadgeProps> = ({
   );
 };
 
-export default Badge;
+export { type BadgeProps, Badge };

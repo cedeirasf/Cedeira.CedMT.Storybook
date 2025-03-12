@@ -1,12 +1,12 @@
 import type { DateRange } from "../types/components/custom-calendar-range.types";
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
-import { CustomCalendarRange } from "../components/custom/CustomCalendarRange";
+import { CalendarRange } from "../components/custom/CustomCalendarRange";
 import { format } from "date-fns";
 
-const meta: Meta<typeof CustomCalendarRange> = {
+const meta: Meta<typeof CalendarRange> = {
   title: "Components/ui/CalendarRange",
-  component: CustomCalendarRange,
+  component: CalendarRange,
   tags: ["autodocs"],
   parameters: {
     layout: "centered",
@@ -49,8 +49,8 @@ const meta: Meta<typeof CustomCalendarRange> = {
 export default meta;
 
 const createStory = (
-  calendarProps: Partial<React.ComponentProps<typeof CustomCalendarRange>> = {}
-): StoryObj<typeof CustomCalendarRange> => ({
+  calendarProps: Partial<React.ComponentProps<typeof CalendarRange>> = {}
+): StoryObj<typeof CalendarRange> => ({
   render: (args) => {
     function CalendarRangeComponent() {
       const [range, setRange] = useState<DateRange>({
@@ -66,7 +66,7 @@ const createStory = (
 
       return (
         <div className="flex flex-col items-center gap-4">
-          <CustomCalendarRange
+          <CalendarRange
             mode="range"
             onSelect={onSelect}
             {...calendarProps}
