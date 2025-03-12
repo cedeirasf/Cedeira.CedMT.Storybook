@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import { GridScheme } from "../components/custom/ConciliationGrid/GridScheme";
-import { CBSTProvider } from "../context/ui/CBSTProvider";
 import { useToast } from "../hooks/ui/use-toast";
 import {
   mockData,
@@ -39,11 +38,22 @@ Un componente avanzado para visualizar y comparar datos de múltiples fuentes co
     },
   },
   decorators: [
-    (Story) => (
-      <div className="h-screen p-4 bg-gray-100">
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const theme =
+        context.globals.backgrounds?.value === "#1a202c" ? "dark" : "light";
+
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
+      }
+
+      return (
+        <div className="p-4">
+          <Story />
+        </div>
+      );
+    },
   ],
 };
 

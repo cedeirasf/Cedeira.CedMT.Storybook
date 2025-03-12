@@ -24,7 +24,6 @@ export const TableBody = ({
     () => adaptRowStyleDictionary(conditionalRowFormat),
     [conditionalRowFormat]
   );
-
   const { rows } = table.getRowModel();
 
   return (

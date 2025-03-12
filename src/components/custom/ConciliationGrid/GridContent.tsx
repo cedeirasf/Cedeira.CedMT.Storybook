@@ -125,11 +125,11 @@ const GridContentInner: React.FC<GridContentProps> = memo(
         {source.display && (
           <div
             className={cn(
-              "bg-white border-b border-gray-200",
+              "border-b",
               source.behaviors.isSticky && "sticky top-0 z-10"
             )}
           >
-            <div className="px-4 py-1 font-medium text-sm border-b border-gray-200">
+            <div className="px-4 py-1 font-medium text-sm text-muted-foreground border-b">
               {source.display}
             </div>
           </div>
@@ -170,15 +170,15 @@ export const GridContent: React.FC<GridContentProps> = (props) => {
         <div className="h-full flex flex-col">
           <div
             className={cn(
-              "bg-white border-b border-gray-200",
+              "border-b",
               props.source.behaviors.isSticky && "sticky top-0 z-10"
             )}
           >
-            <div className="px-4 py-1 font-medium text-sm border-b border-gray-200">
+            <div className="px-4 py-1 font-medium text-sm border-">
               {props.source.display}
             </div>
           </div>
-          <div className="flex-1 flex items-center justify-center text-gray-500">
+          <div className="flex-1 flex items-center justify-center text-card-foreground">
             Error al cargar los datos. Por favor, intente nuevamente.
           </div>
         </div>

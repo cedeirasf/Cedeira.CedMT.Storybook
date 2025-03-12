@@ -400,7 +400,7 @@ function InputDebounce({
       />
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
+        <div className="absolute z-50 mt-1 w-full rounded-md border !bg-card shadow-md">
           <div
             ref={suggestionsRef}
             className="max-h-[300px] overflow-auto p-1 space-y-0.5"
@@ -435,7 +435,7 @@ function InputDebounce({
         query &&
         !externalLoading &&
         !isPending && (
-          <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover p-4 shadow-md">
+          <div className="absolute z-50 mt-1 w-full rounded-md border bg-card p-4 shadow-md">
             <p className="text-sm text-muted-foreground">
               Presiona Enter para buscar "{query}" en todos los campos
             </p>

@@ -169,16 +169,15 @@ const GridWithContext: React.FC<GridProps> = ({
     [sortState]
   );
 
-  // Aplicar el ordenamiento a las fuentes de datos
   const sortedSources = useMemo(() => {
     return orderedSources.map(sortData);
   }, [orderedSources, sortData]);
 
   const gridContent = (
-    <div className="h-full overflow-hidden">
+    <div className="h-full overflow-hidden bg-card">
       <ResizablePanelGroup
         direction="horizontal"
-        className="h-full rounded-lg bg-white"
+        className="h-full rounded-lg"
         onLayout={(newSizes) => {
           setSizes(newSizes);
         }}

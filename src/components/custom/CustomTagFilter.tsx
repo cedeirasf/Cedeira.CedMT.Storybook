@@ -1,6 +1,6 @@
+import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
-import * as React from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 
@@ -77,7 +77,6 @@ const TagFilter: React.FC<TagFilterProps> = ({
         className
       )}
     >
-      {/* Lado izquierdo: Acción principal */}
       <Button
         type="button"
         onClick={onClick}
@@ -92,8 +91,6 @@ const TagFilter: React.FC<TagFilterProps> = ({
       >
         <span className="truncate">{label}</span>
       </Button>
-
-      {/* Botón de eliminar */}
       {onRemove && (
         <Button
           onClick={onRemove}

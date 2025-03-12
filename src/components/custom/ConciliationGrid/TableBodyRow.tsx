@@ -32,14 +32,14 @@ export const TableBodyRow = ({
       }}
       className={cn(
         format && format.length > 0 ? format.join(" ") : "",
-        "transition-all duration-700 hover:bg-gray-50 relative"
+        "transition-all duration-700 hover:bg-background relative"
       )}
     >
       {row.getVisibleCells().map((cell) => {
         return (
           <td
             className={cn(
-              "px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis border-b border-gray-200"
+              "px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis border-b text-muted-foreground"
             )}
             key={cell.id}
           >

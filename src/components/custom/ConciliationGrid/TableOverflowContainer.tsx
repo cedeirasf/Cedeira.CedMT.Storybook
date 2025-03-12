@@ -18,7 +18,7 @@ export const TableOverflowContainer = ({
       {Toolbar && (
         <div
           // ref={toolbarRef}
-          className="flex-shrink-0 bg-white border-b"
+          className="flex-shrink-0 border-b"
         >
           {Toolbar}
         </div>
@@ -27,7 +27,7 @@ export const TableOverflowContainer = ({
       {Pagination && (
         <div
           // ref={footerRef}
-          className="flex-shrink-0 bg-white border-t"
+          className="flex-shrink-0 border-t"
         >
           {Pagination}
         </div>
