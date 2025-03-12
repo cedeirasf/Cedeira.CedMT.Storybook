@@ -1,4 +1,9 @@
-import { memo } from "react";
+import type {
+  AdvancedFilterInputProps,
+  ChannelViewFilterSchemeResponse,
+  Filter,
+  FilterScheme,
+} from "@/types/components/custom-advanced-input-filter.type";
 import {
   Sheet,
   SheetContent,
@@ -14,12 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import type {
-  AdvancedFilterInputProps,
-  ChannelViewFilterSchemeResponse,
-  Filter,
-  FilterScheme,
-} from "@/types/components/custom-advanced-input-filter.type";
 import { FilterIcon, Plus, Trash2 } from "lucide-react";
 import { DropdownFilterList } from "./DropdownFilterList";
 import { useAdvancedFilter } from "@/hooks/components/use-advanced-filter";
@@ -27,7 +26,7 @@ import { InputDebounce } from "./InputDebounce";
 import TagFilter from "../CustomTagFilter";
 import FilterForm from "./FilterForm";
 import FilterTagTooltip from "./FilterTagTooltip";
-import React from "react";
+import React, { memo } from "react";
 
 export function AdvancedFilterInput({
   selectedFilters,
