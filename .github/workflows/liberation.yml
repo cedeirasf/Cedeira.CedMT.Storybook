@@ -14,8 +14,6 @@ jobs:
     secrets:
       github-token: ${{ secrets.GH_PROJECT_AUTOMATION || secrets.github-token || secrets.GITHUB_TOKEN }}
 
-      #demo de tag para actalizar version=2.0.0
-
   call-release-workflow:
     needs: call-versioning-workflow
     uses: cedeirasf/CedMT-devops-workflows/.github/workflows/release.yml@v1

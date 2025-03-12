@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useFilterForm } from "@/hooks/use-filter-form";
+import { useFilterForm } from "@/hooks/components/use-filter-form";
 import { parseRangeValue } from "@/lib/filters-utils";
 import {
   convertToISODate,

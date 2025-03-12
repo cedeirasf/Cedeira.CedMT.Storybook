@@ -7,7 +7,7 @@ import type {
   ChannelViewFilterSchemeResponse,
 } from "@/types/components/custom-advanced-input-filter.type";
 import { cn } from "@/lib/utils";
-import { useFilterTagTooltip } from "@/hooks/use-filter-tag-tooltip";
+import { useFilterTagTooltip } from "@/hooks/components/use-filter-tag-tooltip";
 import { CustomTooltip } from "../CustomTooltip";
 
 interface FilterTagTooltipProps {
