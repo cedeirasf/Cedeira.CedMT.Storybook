@@ -1,7 +1,7 @@
 import React, { JSX } from "react";
 
 interface Props {
-  Toolbar: JSX.Element;
+  Toolbar?: JSX.Element;
   Table: JSX.Element;
   Pagination: JSX.Element | null;
 }
@@ -15,19 +15,23 @@ export const TableOverflowContainer = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div
-        // ref={toolbarRef}
-        className="flex-shrink-0 bg-white border-b"
-      >
-        {Toolbar}
-      </div>
+      {Toolbar && (
+        <div
+          // ref={toolbarRef}
+          className="flex-shrink-0 bg-white border-b"
+        >
+          {Toolbar}
+        </div>
+      )}
       <div className="flex-1 min-h-0 overflow-auto">{Table}</div>
-      <div
-        // ref={footerRef}
-        className="flex-shrink-0 bg-white border-t"
-      >
-        {Pagination && Pagination}
-      </div>
+      {Pagination && (
+        <div
+          // ref={footerRef}
+          className="flex-shrink-0 bg-white border-t"
+        >
+          {Pagination}
+        </div>
+      )}
     </div>
   );
 };

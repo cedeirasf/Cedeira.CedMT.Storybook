@@ -34,6 +34,7 @@ const GridWithContext: React.FC<GridProps> = ({
   isLoading = false,
   onError,
   additionalSourceOrder,
+  ToolbarComponent,
 }) => {
   const [sizes, setSizes] = useState<number[]>(
     defaultPanelSizes ||
@@ -201,6 +202,7 @@ const GridWithContext: React.FC<GridProps> = ({
                   rowsPerPage={data.pagination.rows}
                   scrollRef={(el) => (scrollRefs.current[index] = el)}
                   isLoading={isLoading}
+                  displayVerticalScroll={index === sortedSources.length - 1}
                   onSort={handleSort}
                   sortState={sortState}
                 />
@@ -247,7 +249,7 @@ const GridWithContext: React.FC<GridProps> = ({
       >
         <div className={cn("h-full", className)}>
           <TableOverflowContainer
-            Toolbar={<div className="p-4">Toolbar placeholder</div>}
+            Toolbar={ToolbarComponent}
             Table={gridContent}
             Pagination={paginationComponent}
           />
@@ -257,7 +259,7 @@ const GridWithContext: React.FC<GridProps> = ({
   );
 };
 
-export const Grid: React.FC<GridProps> = (props) => (
+export const GridScheme: React.FC<GridProps> = (props) => (
   <CBSTProvider>
     <CustomToast />
     <GridWithContext {...props} />

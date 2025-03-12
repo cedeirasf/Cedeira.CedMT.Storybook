@@ -394,7 +394,7 @@ function InputDebounce({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onFocus={() => setShowSuggestions(true)}
-        className={cn("pl-10", className)}
+        className={cn("!pl-10", className)}
         placeholder={placeholder}
         size={size}
       />

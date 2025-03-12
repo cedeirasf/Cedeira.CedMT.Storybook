@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { Grid } from "../components/custom/ConciliationGrid/Grid";
+import { GridScheme } from "../components/custom/ConciliationGrid/GridScheme";
 import { CBSTProvider } from "../context/ui/CBSTProvider";
 import { useToast } from "../hooks/ui/use-toast";
 import {
@@ -14,9 +14,9 @@ import type {
   GridProps,
 } from "../types/components/custom-table-conciliation-type";
 
-const meta: Meta<typeof Grid> = {
+const meta: Meta<typeof GridScheme> = {
   title: "Components/ConciliationGrid",
-  component: Grid,
+  component: GridScheme,
   parameters: {
     layout: "fullscreen",
     docs: {
@@ -41,16 +41,14 @@ Un componente avanzado para visualizar y comparar datos de múltiples fuentes co
   decorators: [
     (Story) => (
       <div className="h-screen p-4 bg-gray-100">
-        <CBSTProvider>
-          <Story />
-        </CBSTProvider>
+        <Story />
       </div>
     ),
   ],
 };
 
 export default meta;
-type Story = StoryObj<typeof Grid>;
+type Story = StoryObj<typeof GridScheme>;
 
 interface GridWithStateProps extends GridProps {
   simulateError?: boolean;
@@ -205,7 +203,7 @@ const GridWithState: React.FC<GridWithStateProps> = (args) => {
     ]
   );
 
-  return <Grid {...gridProps} />;
+  return <GridScheme {...gridProps} />;
 };
 
 export const ConciliationGrid: Story = {

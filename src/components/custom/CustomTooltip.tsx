@@ -6,6 +6,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Portal as RadixTooltipPortal } from "@radix-ui/react-tooltip";
 
 const variantStyles = {
   default:
@@ -54,13 +55,15 @@ export const CustomTooltip = ({
         disableHoverableContent={disableHoverableContent}
       >
         {trigger && <TooltipTrigger>{trigger}</TooltipTrigger>}
-        <TooltipContent
-          side={side}
-          align={align}
-          className={cn(variantStyles[variant as keyof typeof variantStyles])}
-        >
-          {children}
-        </TooltipContent>
+        <RadixTooltipPortal>
+          <TooltipContent
+            side={side}
+            align={align}
+            className={cn(variantStyles[variant as keyof typeof variantStyles])}
+          >
+            {children}
+          </TooltipContent>
+        </RadixTooltipPortal>
       </Tooltip>
     </TooltipProvider>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { type RefObject, useState, useRef, useEffect } from "react";
 import { CBSTContext } from "./CBSTContext";

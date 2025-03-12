@@ -1,5 +1,3 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 import type {
   ConditionalRowFormat,
   Source,
@@ -7,16 +5,17 @@ import type {
 import {
   type ColumnDef,
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import React from "react";
+import { cn } from "@/lib/utils";
 import { memo, useEffect, useMemo, useRef } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { TableCell } from "./TableCell";
 import { TableHeader } from "./TableHeader";
+import { TableBody } from "./TableBody";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import React from "react";
 
 interface GridContentProps {
   source: Source;
@@ -27,58 +26,65 @@ interface GridContentProps {
   rowsPerPage: number;
   scrollRef: (el: HTMLDivElement | null) => void;
   isLoading?: boolean;
+  displayVerticalScroll?: boolean;
   onSort: (column: string) => void;
   sortState: { column: string | null; direction: "asc" | "desc" };
 }
 
-const ROW_HEIGHT = 52; // Altura fija de cada fila
+const ROW_HEIGHT = 40;
+const columnHelper = createColumnHelper<Record<string, unknown>>();
 
 const GridContentInner: React.FC<GridContentProps> = memo(
   ({
     source,
     currentPage,
     conditionalRowFormat,
-    onScroll,
     syncScroll,
     rowsPerPage,
     scrollRef,
+    onScroll,
     isLoading = false,
     onSort,
     sortState,
+    displayVerticalScroll,
   }) => {
     const parentRef = useRef<HTMLDivElement>(null);
-    const tableRef = useRef<HTMLTableElement>(null);
-
-    const columnHelper = createColumnHelper<Record<string, unknown>>();
+    const tableContainerRef = useRef<HTMLTableElement>(null);
 
     const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
-      return Object.entries(source.body.scheme)
-        .filter(([, column]) => column.behaviors.visible)
-        .map(([key, column]) => {
-          return columnHelper.accessor(key, {
-            header: () => (
-              <div
-                className="cursor-pointer select-none"
-                onClick={() => onSort(key)}
-              >
-                {column.display}
-                {sortState.column === key && (
-                  <span className="ml-2">
-                    {sortState.direction === "asc" ? "▲" : "▼"}
-                  </span>
-                )}
-              </div>
-            ),
-            cell: (info) => (
-              <TableCell
-                columnKey={key}
-                column={column}
-                value={info.getValue() as string | number | null}
-                isUpdated={false}
-              />
-            ),
-          });
-        });
+      const response: ColumnDef<Record<string, unknown>>[] = [];
+
+      for (const [key, column] of Object.entries(source.body.scheme)) {
+        if (column.behaviors.visible) {
+          response.push(
+            columnHelper.accessor(key, {
+              header: () => (
+                <div
+                  className="cursor-pointer select-none"
+                  onClick={() => onSort(key)}
+                >
+                  {column.display}
+                  {sortState.column === key && (
+                    <span className="ml-2">
+                      {sortState.direction === "asc" ? "▲" : "▼"}
+                    </span>
+                  )}
+                </div>
+              ),
+              cell: (info) => (
+                <TableCell
+                  columnKey={key}
+                  column={column}
+                  value={info.getValue() as string | number | null}
+                  isUpdated={false}
+                />
+              ),
+            })
+          );
+        }
+      }
+
+      return response;
     }, [source.body.scheme, columnHelper, onSort, sortState]);
 
     const data = useMemo(() => {
@@ -95,18 +101,10 @@ const GridContentInner: React.FC<GridContentProps> = memo(
 
     const virtualizer = useVirtualizer({
       count: rows.length,
-      getScrollElement: () => parentRef.current,
+      getScrollElement: () => tableContainerRef.current,
       estimateSize: () => ROW_HEIGHT,
-      overscan: 10,
+      overscan: 20,
     });
-
-    const virtualRows = virtualizer.getVirtualItems();
-    const totalSize = virtualizer.getTotalSize();
-    const paddingTop = virtualRows.length > 0 ? virtualRows[0].start : 0;
-    const paddingBottom =
-      virtualRows.length > 0
-        ? totalSize - (virtualRows[virtualRows.length - 1]?.end || 0)
-        : 0;
 
     useEffect(() => {
       if (parentRef.current) {
@@ -122,97 +120,43 @@ const GridContentInner: React.FC<GridContentProps> = memo(
       );
     }
 
-    const baseIndex = (currentPage - 1) * rowsPerPage;
-
     return (
       <div className="h-full flex flex-col">
-        <div
-          className={cn(
-            "bg-white border-b border-gray-200",
-            source.behaviors.isSticky && "sticky top-0 z-10"
-          )}
-        >
-          <div className="px-4 py-1 font-medium text-sm border-b border-gray-200">
-            {source.display}
+        {source.display && (
+          <div
+            className={cn(
+              "bg-white border-b border-gray-200",
+              source.behaviors.isSticky && "sticky top-0 z-10"
+            )}
+          >
+            <div className="px-4 py-1 font-medium text-sm border-b border-gray-200">
+              {source.display}
+            </div>
           </div>
-        </div>
+        )}
         <div
           ref={parentRef}
-          className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
           onScroll={syncScroll ? onScroll : undefined}
-          style={{
-            height: `calc(100% - ${
-              source.behaviors.isSticky ? "32px" : "0px"
-            })`,
-          }}
+          className={cn(
+            "overflow-auto h-full",
+            !displayVerticalScroll && "vertical-scrollbar-hide"
+          )}
         >
-          <table
-            ref={tableRef}
-            className="w-full border-separate border-spacing-0"
+          <div
+            ref={tableContainerRef}
+            style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
-            <TableHeader scheme={source.body.scheme} />
-            <tbody>
-              {paddingTop > 0 && (
-                <tr>
-                  <td
-                    style={{ height: `${paddingTop}px` }}
-                    colSpan={columns.length}
-                  />
-                </tr>
-              )}
-              {virtualRows.map((virtualRow) => {
-                const row = rows[virtualRow.index];
-                const rowIndex = virtualRow.index + baseIndex;
-                const matchingFormat = conditionalRowFormat.find((format) =>
-                  format["index-rows"].includes(rowIndex + 1)
-                );
-                const baseStyles = matchingFormat
-                  ? matchingFormat.styles.join(" ")
-                  : "";
-
-                return (
-                  <tr
-                    key={row.id}
-                    data-index={virtualRow.index}
-                    ref={virtualizer.measureElement}
-                    className={cn(
-                      baseStyles,
-                      "transition-all duration-700 hover:bg-gray-50 relative"
-                    )}
-                    role="row"
-                    aria-rowindex={rowIndex + 1}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className={cn(
-                          "px-4 py-2 whitespace-nowrap overflow-hidden text-ellipsis border-b border-gray-200"
-                        )}
-                        role="cell"
-                      >
-                        {isLoading ? (
-                          <Skeleton className="h-4 w-full" />
-                        ) : (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-              {paddingBottom > 0 && (
-                <tr>
-                  <td
-                    style={{ height: `${paddingBottom}px` }}
-                    colSpan={columns.length}
-                  />
-                </tr>
-              )}
-            </tbody>
-          </table>
+            <table style={{ width: "100%" }}>
+              <TableHeader headerGroups={table.getHeaderGroups()} />
+              <TableBody
+                virtualizer={virtualizer}
+                table={table}
+                conditionalRowFormat={conditionalRowFormat}
+                isLoading={isLoading}
+                baseIndex={(currentPage - 1) * rowsPerPage}
+              />
+            </table>
+          </div>
         </div>
       </div>
     );

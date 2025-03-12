@@ -72,7 +72,7 @@ export function AdvancedFilterInput({
           onSearch={handleSearch}
           onSelect={handleFilterSelect}
           placeholder="Buscar filtros..."
-          className="pl-10 pr-[90px]"
+          className="!pl-10 pr-[90px]"
           filterScheme={localFilterScheme}
           sources={localSources}
           isLoading={isPending}
