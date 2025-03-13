@@ -205,6 +205,7 @@ const GridWithContext: React.FC<GridProps> = ({
                   displayVerticalScroll={index === sortedSources.length - 1}
                   onSort={handleSort}
                   sortState={sortState}
+                  updatingRows={data["updating-rows"] }
                 />
               </div>
             </ResizablePanel>

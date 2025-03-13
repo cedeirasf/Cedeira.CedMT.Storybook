@@ -1,6 +1,7 @@
 import type {
   ConditionalRowFormat,
   Source,
+  UpdatingRows,
 } from "@/types/components/custom-table-conciliation-type";
 import {
   type ColumnDef,
@@ -29,6 +30,7 @@ interface GridContentProps {
   displayVerticalScroll?: boolean;
   onSort: (column: string) => void;
   sortState: { column: string | null; direction: "asc" | "desc" };
+  updatingRows?: UpdatingRows;
 }
 
 const ROW_HEIGHT = 40;
@@ -47,6 +49,7 @@ const GridContentInner: React.FC<GridContentProps> = memo(
     onSort,
     sortState,
     displayVerticalScroll,
+    updatingRows
   }) => {
     const parentRef = useRef<HTMLDivElement>(null);
     const tableContainerRef = useRef<HTMLTableElement>(null);
@@ -154,6 +157,7 @@ const GridContentInner: React.FC<GridContentProps> = memo(
                 conditionalRowFormat={conditionalRowFormat}
                 isLoading={isLoading}
                 baseIndex={(currentPage - 1) * rowsPerPage}
+                updatingRows={updatingRows}
               />
             </table>
           </div>
