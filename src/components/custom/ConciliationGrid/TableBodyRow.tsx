@@ -2,7 +2,7 @@ import type { Virtualizer, VirtualItem } from "@tanstack/react-virtual"
 import { flexRender, type Row } from "@tanstack/react-table"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
-import React,{ useEffect, useState, useRef } from "react"
+import React,{ useEffect, useState } from "react"
 import type { UpdatingRowStyle } from "@/types/components/custom-table-conciliation-type"
 
 interface Props {
@@ -20,7 +20,7 @@ const extractDurationMs = (delayStr?: string): number => {
 
   try {
     // Manejar duration-[XXXms]
-    const bracketMsMatch = delayStr.match(`duration-&lsqb;XXXms&rsqb;`)
+    const bracketMsMatch = delayStr.match(/duration-\[(\d+)ms\]/)
     if (bracketMsMatch && bracketMsMatch[1]) {
       return Number.parseInt(bracketMsMatch[1], 10)
     }
@@ -40,54 +40,25 @@ const extractDurationMs = (delayStr?: string): number => {
 
 export const TableBodyRow = ({ row, virtualRow, rowVirtualizer, rowIndex, format, isLoading, updateStyle }: Props) => {
   const [showUpdateStyle, setShowUpdateStyle] = useState(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Usar un key para forzar el re-renderizado cuando cambia el updateStyle
-  const updateStyleKey = updateStyle ? `${updateStyle.style.join("-")}-${updateStyle.delay}` : "none"
 
   useEffect(() => {
-    // Limpiar cualquier temporizador existente
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
-    }
-
     if (updateStyle && updateStyle.style.length > 0) {
-      // Forzar un reflow antes de aplicar el estilo
-      setShowUpdateStyle(false)
+      setShowUpdateStyle(true)
 
-      // Pequeño retraso para asegurar que el estado anterior se haya aplicado
-      setTimeout(() => {
-        setShowUpdateStyle(true)
+      const durationMs = extractDurationMs(updateStyle.delay)
+      console.log("Duration for update:", durationMs, "ms") // Para debugging
 
-        const durationMs = extractDurationMs(updateStyle.delay)
-        console.log(`Row ${rowIndex} update type: ${updateStyle.style.join(", ")} with duration: ${durationMs}ms`)
+      const timer = setTimeout(() => {
+        setShowUpdateStyle(false)
+      }, durationMs)
 
-        // Configurar un temporizador para eliminar el estilo después de la duración
-        timerRef.current = setTimeout(() => {
-          setShowUpdateStyle(false)
-          console.log(`Row ${rowIndex} animation completed after ${durationMs}ms`)
-        }, durationMs + 200) // Añadir un pequeño margen
-      }, 50)
-    } else {
-      setShowUpdateStyle(false)
+      return () => clearTimeout(timer)
     }
-
-    // Limpieza al desmontar
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-      }
-    }
-  }, [updateStyleKey, rowIndex, updateStyle])
-
-  // Determinar las clases de estilo
-  const updateClasses = showUpdateStyle && updateStyle ? [...updateStyle.style, updateStyle.delay] : []
+  }, [updateStyle])
 
   return (
     <tr
       data-index={virtualRow.index}
-      data-update-type={updateStyle?.style.join("-") || "none"}
       ref={rowVirtualizer.measureElement}
       style={{
         height: `${virtualRow.size}px`,
@@ -95,8 +66,8 @@ export const TableBodyRow = ({ row, virtualRow, rowVirtualizer, rowIndex, format
       }}
       className={cn(
         format && format.length > 0 ? format.join(" ") : "",
-        "transition-colors hover:bg-gray-50 relative",
-        ...updateClasses,
+        "transition-all hover:bg-gray-50 relative",
+        showUpdateStyle && updateStyle ? [...updateStyle.style, updateStyle.delay, "animation-fade"] : "",
       )}
     >
       {row.getVisibleCells().map((cell) => {
