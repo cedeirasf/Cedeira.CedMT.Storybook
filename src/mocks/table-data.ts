@@ -31,46 +31,7 @@ const tipoObjetoOptions = [
   { value: "TRXIN", display: "(TRXIN) TRANSFERENCIA", styles: ["icon-repeat"] },
 ]
 
-// Define the updating rows scheme
-const updatingRowsScheme = {
-  NEW: {
-    style: ["bg-green-100 dark:bg-green-900"],
-    delay: "duration-500 	transition-duration: initial",
-  },
-  UPDATED: {
-    style: ["bg-yellow-100 dark:bg-yellow-900"],
-    delay: "duration-500 	transition-duration: initial",
-  },
-  NONE: {
-    style: [],
-    delay: "duration-500 	transition-duration: initial",
-  },
-}
-
-// Helper function to generate a random update type
-const generateUpdateType = (): "NEW" | "UPDATED" | "NONE" => {
-  const types: ("NEW" | "UPDATED" | "NONE")[] = ["NEW", "UPDATED", "NONE"]
-  const weights = [0.1, 0.2, 0.7] // 10% NEW, 20% UPDATED, 70% NONE
-  const random = Math.random()
-  let sum = 0
-  for (let i = 0; i < weights.length; i++) {
-    sum += weights[i]
-    if (random < sum) {
-      return types[i]
-    }
-  }
-  return "NONE"
-}
-
-// Generate updating rows array
-const generateUpdatingRows = (count: number) => {
-  return Array(count)
-    .fill(null)
-    .map(() => ({
-      type: generateUpdateType(),
-    }))
-}
-
+// Asegurarse de que la función generateRow esté exportada
 export const generateRow = (index: number): Datarow => ({
   "[UUID]": uuidv4(),
   "[UUIDEstadoConciliacion]": estadoOptions[Math.floor(Math.random() * estadoOptions.length)].value,
@@ -88,6 +49,40 @@ export const generateRow = (index: number): Datarow => ({
 
 const fullDataset = Array.from({ length: 198 }, (_, i) => generateRow(i))
 
+// Definir el esquema de actualizaciones con las clases de Tailwind correctas
+const updatingRowsScheme = {
+  NEW: {
+    style: ["bg-green-200", "dark:bg-green-900"],
+    delay: "duration-[2000ms]", // Aumentado a 3 segundos para que sea más visible
+  },
+  UPDATED: {
+    style   : ["bg-yellow-200", "dark:bg-yellow-900"],
+    delay: "duration-[5000ms]",
+  },
+  PROCESSING: {
+    style: ["bg-blue-200", "dark:bg-blue-900"],
+    delay: "duration-[7000ms]",
+  },
+  ADJUSTED: {
+    style: ["bg-purple-200", "dark:bg-purple-900"],
+    delay: "duration-[10000ms]", // Reducido de 50000ms a 5000ms
+  },
+  ERROR: {
+    style: ["bg-red-200", "dark:bg-red-900"],
+    delay: "duration-[12000ms]",
+  },
+  NONE: {
+    style: [],
+    delay: "duration-500",
+  },
+} as const
+
+// Generar un array de tipos de actualización "NONE" para todas las filas
+const generateUpdatingRows = (count: number): { type: string }[] => {
+  return Array(count).fill({ type: "NONE" })
+}
+
+// Actualizar la definición de mockData para incluir updating-rows
 export const mockData: GridDTO = {
   view: "conciliaciones",
   pagination: {
@@ -318,6 +313,7 @@ export const generatePaginatedData = (page: number, rowsPerPage: number): GridDT
   }
 }
 
+// Actualizar la función updateRandomRecords para manejar correctamente las actualizaciones
 export const updateRandomRecords = (data: GridDTO, count = 3): { updatedData: GridDTO; updatedRows: Set<number> } => {
   const recordsToUpdate = new Set<number>()
   const totalRecords = data.sources[0].body.datarows.length
@@ -328,7 +324,7 @@ export const updateRandomRecords = (data: GridDTO, count = 3): { updatedData: Gr
 
   const updatedData: GridDTO = JSON.parse(JSON.stringify(data))
 
-  // Update the data rows
+  // Actualizar los datos de las filas
   recordsToUpdate.forEach((index) => {
     const newRow = generateRow(index)
     updatedData.sources.forEach((source) => {
@@ -339,18 +335,18 @@ export const updateRandomRecords = (data: GridDTO, count = 3): { updatedData: Gr
     })
   })
 
-  // Update the updating-rows status
+  // Actualizar el estado de actualización de las filas
   if (updatedData["updating-rows"]) {
     const updatingRows = [...updatedData["updating-rows"].rows]
 
-    // First, mark all previously updated rows as NONE
+    // Primero, marcar todas las filas actualizadas anteriormente como NONE
     updatingRows.forEach((row, idx) => {
       if (row.type === "UPDATED" || row.type === "NEW") {
         updatingRows[idx] = { type: "NONE" }
       }
     })
 
-    // Then, mark newly updated rows
+    // Luego, marcar las filas recién actualizadas
     recordsToUpdate.forEach((index) => {
       updatingRows[index] = { type: "UPDATED" }
     })
